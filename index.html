@@ -299,7 +299,7 @@ function statusChips(k,{withPay=true}={}){
  if(k.allergies)c.push(`<span class="chip ${k.severe?"bad":"warn"}">${I.warn}${esc(k.allergies)}</span>`);
  if(k.meds.length)c.push(`<span class="chip info">${I.pill}${k.meds.length>1?k.meds.length+" médicaments":"Médicament"}</span>`);
  if(k.patho)c.push(`<span class="chip info">${esc(k.patho)}</span>`);
- k.diet.forEach(d=>c.push(`<span class="chip">${esc(d)}</span>`));
+ k.diet.forEach(d=>c.push(`<span class="chip">${esc(d.length>36?d.slice(0,34)+"…":d)}</span>`));
  c.push(k.photos?'<span class="chip ok">Photos OK</span>':`<span class="chip bad">${I.nocam}Pas de photos</span>`);
  if(k.seul)c.push('<span class="chip info">Rentre seul</span>');
  if(k.obs)c.push('<span class="chip">Observation</span>');
@@ -430,7 +430,7 @@ function parentKid(k){
   </fieldset>
   <fieldset>
    <legend>Alimentation</legend>
-   <div class="checks">${DIETS.map((d,i)=>`<label for="fd${i}"><input type="checkbox" id="fd${i}" value="${d}" ${k.diet.includes(d)?"checked":""}>${d}</label>`).join("")}</div>
+   <label class="f" for="fRegime">Régime alimentaire particulier<textarea class="input" id="fRegime" placeholder="Décrivez ici ce que votre enfant mange ou ne mange pas">${esc(k.diet.join(", "))}</textarea></label>
    <label class="f" for="fAll">Allergies ou intolérances alimentaires<input class="input" id="fAll" placeholder="Ex. arachides, lactose…" value="${esc(k.allergies)}"></label>
    <div class="checks"><label for="fSev"><input type="checkbox" id="fSev" ${k.severe?"checked":""}>Allergie sévère (risque de choc anaphylactique)</label></div>
   </fieldset>
@@ -757,7 +757,7 @@ document.addEventListener("submit",e=>{
   k.seul=$("#fSeulY").checked;k.pickup=$("#fPick").value.trim();k.assMaladie=$("#fAM").value.trim();k.assAccident=$("#fAA").value.trim();k.rc=$("#fRC").value.trim();
   k.prenom=$("#fPrenom").value.trim()||k.prenom;k.nom=$("#fNom").value.trim()||k.nom;k.naissance=$("#fNaiss").value||k.naissance;
   k.tel=$("#fTel").value.trim();k.urgence=$("#fUrg").value.trim();
-  k.diet=DIETS.filter((d,i)=>$("#fd"+i).checked);k.allergies=$("#fAll").value.trim();k.severe=$("#fSev").checked&&!!k.allergies;
+  const rg=$("#fRegime").value.trim();k.diet=rg?[rg]:[];k.allergies=$("#fAll").value.trim();k.severe=$("#fSev").checked&&!!k.allergies;
   k.patho=$("#fPatho").value.trim();k.obs=$("#fObs").value.trim();k.photos=$("#fPhY").checked;
   k.meds=[...document.querySelectorAll(".med-row")].map(r=>{const [n,d,w]=r.querySelectorAll("input");return {name:n.value.trim(),dose:d.value.trim(),when:w.value.trim()}}).filter(m=>m.name);
   k.done=true;render();scrollTo(0,0);return toast("Fiche enregistrée. Merci !");

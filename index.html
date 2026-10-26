@@ -360,7 +360,8 @@ let recipes=[
 const MEDIA_CAPS=["Atelier cuisine","Chasse aux trésors","Pique-nique","Cueillette","Jeux d'eau","Relaxation","Visite de la ferme","Course relais","Dégustation","Goûter des familles","Potager","Balade en forêt"];
 const MEDIA_HUES=["#CDDF70","#F0F2BC","#A9C94F","#E9EFA0","#D8E88A","#BFD45F"];
 let media={};
-WEEKS.forEach(w=>{media[w.n]=MEDIA_CAPS.map((c,i)=>({id:w.n+"-"+i,type:i%5===3?"video":"photo",cap:c,hue:MEDIA_HUES[(i+w.n)%MEDIA_HUES.length],src:""})).slice(0,w.n<=2?12:(w.n===3?6:0))});
+const mk=(l,n)=>l+"|"+n;
+["Bernex","Laconnex","Ville de Genève","Cossonay"].forEach((l,li)=>WEEKS.forEach(w=>{media[mk(l,w.n)]=MEDIA_CAPS.map((c,i)=>({id:li+"-"+w.n+"-"+i,type:i%5===3?"video":"photo",cap:c,hue:MEDIA_HUES[(i+w.n+li)%MEDIA_HUES.length],src:""})).slice(0,w.n<=2?12-li*2:(w.n===3?6:0))}));
 
 /* ---------------- État ---------------- */
 const S={view:"login",me:null,ptab:"accueil",step:0,pweek:null,atab:"semaines",aweek:1,afilter:"tous",aq:"",amode:"liste",mweek:1,msel:new Set(),sheet:null,lieu:null,period:"Été 2027",gweek:1,prweek:1,prgroup:true,prcols:new Set(["age","paye","allergies","regime","meds","photos","presence"])};
@@ -433,7 +434,7 @@ const WEEK_START=n=>WEEKS[n-1].start;
 const LIEUX=["Bernex","Laconnex","Ville de Genève","Cossonay"];
 const PRICES={"Bernex":350,"Laconnex":350,"Ville de Genève":350,"Cossonay":350}; // exemples, tarifs à définir par lieu
 const LIEU_INFO={"Bernex":{nom:"Exemple : salle communale de Bernex",adresse:"Exemple : rue de l'Exemple 1, 1233 Bernex"},"Laconnex":{nom:"",adresse:""},"Ville de Genève":{nom:"",adresse:""},"Cossonay":{nom:"",adresse:""}};
-const REF={"Bernex|8":{nom:"Julie (exemple)",tel:"079 000 00 00"}};
+const REF={"Bernex|8":{nom:"Julie (exemple)",tel:"079 000 00 00",email:"julie@exemple.ch"},"Bernex|1":{nom:"Julie (exemple)",tel:"079 000 00 00",email:"julie@exemple.ch"}};
 const refOf=(lieu,n)=>REF[lieu+"|"+n]||{nom:"",tel:""};
 const priceOf=k=>PRICES[k.lieu]||0;
 const chf=n=>"CHF "+n.toLocaleString("fr-CH")+".–";
@@ -466,6 +467,7 @@ function loginView(){return `
    <div class="row">
     <button class="btn small" data-act="demoParent">Parent (commande 14817)</button>
     <button class="btn small" data-act="demoAdmin">Équipe Croc'n'Mouv</button>
+    <button class="btn small" data-act="demoResp">Responsable de camp</button>
    </div>
   </div>
  </div>
@@ -740,7 +742,7 @@ function mediaTile(m,selectable){
   ${inner}${m.type==="video"?`<span class="type">${I.play}Vidéo</span>`:""}${selectable?'<span class="sel" aria-hidden="true"></span>':""}<span class="cap">${esc(m.cap)}</span></${tag}>`;
 }
 function parentPhotos(k){
- const n=S.pweek&&k.weeks.includes(S.pweek)?S.pweek:k.weeks[0];const list=media[n]||[];
+ const n=S.pweek&&k.weeks.includes(S.pweek)?S.pweek:k.weeks[0];const list=media[mk(k.lieu,n)]||[];
  const byDay=WEEKS[n-1].days.map(([d],i)=>[d,list.filter((m,j)=>j%5===i)]).filter(x=>x[1].length);
  const full={Lun:"Lundi",Mar:"Mardi",Mer:"Mercredi",Jeu:"Jeudi",Ven:"Vendredi"};
  return `<div class="section">
@@ -769,7 +771,7 @@ function recipeSheet(r){return ()=>`<div class="sheet-bg" data-act="closeSheet">
 
 /* ---------------- Espace équipe ---------------- */
 function adminView(){
- const tabs=[["semaines","Semaines",I.list],["programme","Programme",I.cal],["medias","Photos",I.cam],["recettes","Recettes",I.pot],["imprimer","Imprimer",I.print]];
+ const tabs=isResp()?[["semaines","Enfants",I.list],["medias","Photos",I.cam],["imprimer","Imprimer",I.print]]:[["semaines","Semaines",I.list],["programme","Programme",I.cal],["medias","Photos",I.cam],["recettes","Recettes",I.pot],["imprimer","Imprimer",I.print]];
  let body="";
  if(S.atab==="semaines")body=adminWeeks();
  if(S.atab==="medias")body=adminMedia();
@@ -779,7 +781,7 @@ function adminView(){
  return `<div class="app">
  <header class="topbar"><div class="wrap">
   <img class="logo-img logo-black" src="${LOGO_BLACK}" alt="Croc'n'Mouv">
-  <div class="who"><b>Caroline</b>Espace équipe</div>
+  <div class="who">${isResp()?`<b>${esc(S.respName)}</b>Responsable · ${esc(S.lieu)}`:"<b>Caroline</b>Espace équipe"}</div>
   <button class="iconbtn" data-act="logout" aria-label="Se déconnecter">${I.out}</button>
  </div></header>
  <main><div class="wrap">${body}</div></main>
@@ -788,7 +790,10 @@ function adminView(){
  </div></nav></div>`;
 }
 const FILTERS=[["tous","Tous"],["impayes","Non payés"],["fiche","Fiche à compléter"],["allergies","Allergies"],["meds","Médicaments"],["nophoto","Pas de photos"],["obs","Observations"]];
-function periodSeg(){return `<div class="seg" role="group" aria-label="Période">${PERIODS.map(p=>`<button aria-pressed="${S.period===p}" data-period="${p}">${p}</button>`).join("")}</div>`}
+const isResp=()=>S.role==="resp";
+const myWeeks=()=>isResp()?S.respWeeks.filter(n=>WEEKS[n-1].period===S.period):periodWeeks(S.period);
+function periodSeg(){const ps=isResp()?PERIODS.filter(p=>S.respWeeks.some(n=>WEEKS[n-1].period===p)):PERIODS;if(ps.length<2)return "";return `<div class="seg" role="group" aria-label="Période">${ps.map(p=>`<button aria-pressed="${S.period===p}" data-period="${p}">${p}</button>`).join("")}</div>`}
+function periodSegOld(){return `<div class="seg" role="group" aria-label="Période">${PERIODS.map(p=>`<button aria-pressed="${S.period===p}" data-period="${p}">${p}</button>`).join("")}</div>`}
 function adminProgram(){
  const pw=periodWeeks(S.period),n=pw.includes(S.gweek)?S.gweek:pw[0],w=WEEKS[n-1];
  const ta=(id,arr)=>`<textarea class="input" id="${id}" style="min-height:120px">${esc(arr.join("\n"))}</textarea>`;
@@ -805,7 +810,9 @@ function adminProgram(){
     <label class="f" for="plAdr">Adresse complète<input class="input" id="plAdr" placeholder="Rue, NPA, localité" value="${esc(LIEU_INFO[S.lieu].adresse)}"></label>
     <label class="f" for="rfNom">Référent·e de la semaine ${WEEKS[n-1].code}<input class="input" id="rfNom" placeholder="Prénom et nom" value="${esc(refOf(S.lieu,n).nom)}"></label>
     <label class="f" for="rfTel">Téléphone du référent·e<input class="input" id="rfTel" type="tel" value="${esc(refOf(S.lieu,n).tel)}"></label>
+    <label class="f" for="rfMail">E-mail du référent·e<input class="input" id="rfMail" type="email" placeholder="Pour lui donner son accès" value="${esc(refOf(S.lieu,n).email||"")}"></label>
    </div>
+   <p class="hint">Le référent reçoit un accès « Responsable de camp » : il voit les enfants de sa semaine dans ce lieu et peut publier les photos. Il ne voit ni les paiements, ni les autres lieux.</p>
    <p class="hint">Le lieu et l'adresse valent pour toutes les semaines. Le référent se remplit semaine par semaine, même après les inscriptions.</p>
    <button class="btn primary" type="submit" style="justify-self:start">Enregistrer</button>
   </form>`:'<p class="hint">Choisissez un lieu pour renseigner son adresse et le référent de la semaine.</p>'}
@@ -824,7 +831,7 @@ function adminProgram(){
  </form>
  </div>`;
 }
-function lieuSeg(){return `<div class="seg lieux" role="group" aria-label="Lieu"><button aria-pressed="${!S.lieu}" data-lieu="">Tous les lieux</button>${LIEUX.map(l=>`<button aria-pressed="${S.lieu===l}" data-lieu="${l}">${l} <span class="hint">(${kids.filter(k=>k.lieu===l).length})</span></button>`).join("")}</div>`}
+function lieuSeg(){if(isResp())return "";return `<div class="seg lieux" role="group" aria-label="Lieu"><button aria-pressed="${!S.lieu}" data-lieu="">Tous les lieux</button>${LIEUX.map(l=>`<button aria-pressed="${S.lieu===l}" data-lieu="${l}">${l} <span class="hint">(${kids.filter(k=>k.lieu===l).length})</span></button>`).join("")}</div>`}
 function applyFilter(list){
  const f=S.afilter,q=S.aq.trim().toLowerCase();
  return list.filter(k=>(f==="tous"||(f==="impayes"&&!k.paid)||(f==="fiche"&&!k.done)||(f==="allergies"&&k.allergies)||(f==="meds"&&k.meds.length)||(f==="nophoto"&&!k.photos)||(f==="obs"&&k.obs))
@@ -847,7 +854,7 @@ function adminWeeks(){
    return `<div class="group"><div class="group-head"><h3>${g}</h3><span>${gl.length} enfant${gl.length>1?"s":""}</span></div>
    ${gl.map(k=>`<button class="kid-row" data-kid="${k.id}"><span class="avatar">${esc(k.prenom[0]+k.nom[0])}</span>
     <span class="name">${esc(kidName(k))}<small>${ageOf(k)} ans · ${esc(k.lieu)} · ${esc(k.parent)}</small></span>
-    <span class="pay-dot chip ${k.paid?"ok":"bad"}">${k.paid?"Payé":"Non payé"}</span>
+    ${isResp()?"<span></span>":`<span class="pay-dot chip ${k.paid?"ok":"bad"}">${k.paid?"Payé":"Non payé"}</span>`}
     <span class="chips">${statusChips(k,{withPay:false})}</span></button>`).join("")}</div>`}).join("")||`<div class="card plain"><p>Aucun enfant ne correspond à ce filtre.</p></div>`;
  }
  return `<div class="section">
@@ -855,12 +862,12 @@ function adminWeeks(){
  ${periodSeg()}
  ${lieuSeg()}
  <div class="seg" role="group" aria-label="Semaine">
-  ${WEEKS.filter(x=>x.period===S.period).map(x=>`<button aria-pressed="${wk===x.n}" data-aweek="${x.n}">${x.code} · ${x.from} <span class="hint">(${inLieu.filter(k=>k.weeks.includes(x.n)).length})</span></button>`).join("")}
-  <button aria-pressed="${!wk}" data-aweek="0">Toute la période</button>
+  ${myWeeks().map(n=>WEEKS[n-1]).map(x=>`<button aria-pressed="${wk===x.n}" data-aweek="${x.n}">${x.code} · ${x.from} <span class="hint">(${inLieu.filter(k=>k.weeks.includes(x.n)).length})</span></button>`).join("")}
+  ${isResp()?"":`<button aria-pressed="${!wk}" data-aweek="0">Toute la période</button>`}
  </div>
  <div class="stats">
   ${stat("tous",inWeek.length,"Inscrits")}
-  ${stat("impayes",cnt(k=>!k.paid),"Non payés",true)}
+  ${isResp()?"":stat("impayes",cnt(k=>!k.paid),"Non payés",true)}
   ${stat("fiche",cnt(k=>!k.done),"Fiches à compléter",true)}
   ${stat("allergies",cnt(k=>k.allergies),"Allergies")}
   ${stat("meds",cnt(k=>k.meds.length),"Médicaments")}
@@ -870,8 +877,8 @@ function adminWeeks(){
   <input class="input search" id="aSearch" placeholder="Rechercher un enfant, un parent, une commande" value="${esc(S.aq)}">
   <div class="seg" role="group" aria-label="Affichage"><button aria-pressed="${S.amode==="liste"}" data-amode="liste">Par âge</button><button aria-pressed="${S.amode==="tableau"}" data-amode="tableau">Tableau</button></div>
  </div>
- <div class="seg" role="group" aria-label="Filtre">${FILTERS.map(([id,l])=>`<button aria-pressed="${S.afilter===id}" data-filter="${id}">${l}</button>`).join("")}</div>
- ${(S.afilter==="impayes"||S.afilter==="fiche")&&list.length?`<div class="remind-bar"><span class="pm-ill">${I.mail}</span><div><b>${list.length} famille${list.length>1?"s":""} à relancer</b><p class="hint">${S.afilter==="impayes"?"Rappel du paiement":"Rappel pour compléter la fiche"}</p></div><button class="btn small primary" data-act="remind" data-type="${S.afilter==="impayes"?"pay":"form"}" data-ids="${list.map(k=>k.id).join(",")}">Envoyer un rappel</button></div>`:""}
+ <div class="seg" role="group" aria-label="Filtre">${FILTERS.filter(f=>!isResp()||f[0]!=="impayes").map(([id,l])=>`<button aria-pressed="${S.afilter===id}" data-filter="${id}">${l}</button>`).join("")}</div>
+ ${!isResp()&&(S.afilter==="impayes"||S.afilter==="fiche")&&list.length?`<div class="remind-bar"><span class="pm-ill">${I.mail}</span><div><b>${list.length} famille${list.length>1?"s":""} à relancer</b><p class="hint">${S.afilter==="impayes"?"Rappel du paiement":"Rappel pour compléter la fiche"}</p></div><button class="btn small primary" data-act="remind" data-type="${S.afilter==="impayes"?"pay":"form"}" data-ids="${list.map(k=>k.id).join(",")}">Envoyer un rappel</button></div>`:""}
  ${content}
  </div>`;
 }
@@ -879,9 +886,9 @@ function kidSheet(id){return ()=>{const k=kids.find(x=>x.id===id);return `<div c
  <div class="grab"></div>
  <div style="display:flex;gap:12px;align-items:center"><span class="avatar" style="width:54px;height:54px;font-size:1.1rem">${esc(k.prenom[0]+k.nom[0])}</span>
   <div><h2>${esc(kidName(k))}</h2><p class="hint">${ageOf(k)} ans · groupe ${groupOf(ageOf(k))} · ${esc(k.lieu)} · ${k.weeks.map(n=>WEEKS[n-1].code).join(", ")}</p></div></div>
- <div class="chips">${statusChips(k)}</div>
- <div class="toggle"><div><b>Inscription payée</b><p class="hint">Commande ${esc(k.order)} · ${chf(priceOf(k)*k.weeks.length)}. En cochant, l'attestation pour les impôts se débloque pour la famille.</p></div>
-  <button class="switch" role="switch" aria-checked="${k.paid}" aria-label="Inscription payée" data-act="togglePaid" data-id="${k.id}"></button></div>
+ <div class="chips">${statusChips(k,{withPay:!isResp()})}</div>
+ ${isResp()?"":`<div class="toggle"><div><b>Inscription payée</b><p class="hint">Commande ${esc(k.order)} · ${chf(priceOf(k)*k.weeks.length)}. En cochant, l'attestation pour les impôts se débloque pour la famille.</p></div>
+  <button class="switch" role="switch" aria-checked="${k.paid}" aria-label="Inscription payée" data-act="togglePaid" data-id="${k.id}"></button></div>`}
  ${k.allergies?`<div class="notice" style="${k.severe?"background:var(--bad-bg);color:var(--bad)":""}">${k.severe?"Allergie sévère : ":"Allergie : "}${esc(k.allergies)}</div>`:""}
  <dl class="kv">
   <dt>Retour</dt><dd>${k.seul?"<b>Rentre seul</b>":"Ne rentre pas seul"}${k.pickup?"<br>Autorisés : "+esc(k.pickup):""}</dd>
@@ -902,16 +909,18 @@ function kidSheet(id){return ()=>{const k=kids.find(x=>x.id===id);return `<div c
   <dt>Règlement</dt><dd>${k.cgv?"Accepté":"<b>Pas encore accepté</b>"}</dd>
  </dl>
  <label class="f" for="aObs">Observations de l'équipe<textarea class="input" id="aObs">${esc(k.obs)}</textarea></label>
- ${!k.paid||!k.done?`<div class="toolbar">${!k.paid?`<button class="btn small ghost" data-act="remind" data-type="pay" data-ids="${k.id}">${I.mail}Rappel paiement</button>`:""}${!k.done?`<button class="btn small ghost" data-act="remind" data-type="form" data-ids="${k.id}">${I.mail}Rappel fiche</button>`:""}</div>`:""}
+ ${!isResp()&&(!k.paid||!k.done)?`<div class="toolbar">${!k.paid?`<button class="btn small ghost" data-act="remind" data-type="pay" data-ids="${k.id}">${I.mail}Rappel paiement</button>`:""}${!k.done?`<button class="btn small ghost" data-act="remind" data-type="form" data-ids="${k.id}">${I.mail}Rappel fiche</button>`:""}</div>`:""}
  <div class="toolbar"><button class="btn primary" data-act="saveObs" data-id="${k.id}">Enregistrer</button><button class="btn" data-act="closeSheet">Fermer</button></div>
  </div></div>`}}
 function adminMedia(){
- const n=S.mweek,list=media[n]||[];const noPhoto=kids.filter(k=>k.weeks.includes(n)&&!k.photos);
+ const n=S.mweek,list=S.lieu?media[mk(S.lieu,n)]||[]:[];const noPhoto=kids.filter(k=>k.weeks.includes(n)&&k.lieu===S.lieu&&!k.photos);
+ if(!S.lieu)return `<div class="section"><div class="section-head"><div><span class="eyebrow">${wLabel(n)}</span><h1>Photos & vidéos</h1></div></div>${periodSeg()}${lieuSeg()}<div class="card plain"><p>Choisissez un lieu pour voir et publier ses photos.</p></div></div>`;
  const nPh=list.filter(m=>m.type==="photo").length,nV=list.length-nPh;
  return `<div class="section">
  <div class="section-head"><div><span class="eyebrow">${wLabel(n)} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span><h1>Photos & vidéos</h1></div></div>
  ${periodSeg()}
- ${weekSeg(periodWeeks(S.period),n,"mweek")}
+ ${lieuSeg()}
+ ${weekSeg(myWeeks(),n,"mweek")}
  ${noPhoto.length?`<div class="notice">${noPhoto.length} enfant${noPhoto.length>1?"s":""} sans autorisation photo cette semaine : ${noPhoto.map(k=>esc(kidName(k))).join(", ")}</div>`:""}
  <label class="upload" for="upMedia"><b>Ajouter des photos ou vidéos</b><span class="hint">Depuis la pellicule du téléphone</span>
   <input type="file" id="upMedia" accept="image/*,video/*" multiple></label>
@@ -945,7 +954,7 @@ const PCOLS=[
 function printData(){
  const wk=S.prweek;
  const list=kids.filter(k=>k.weeks.includes(wk)&&(!S.lieu||k.lieu===S.lieu)).sort((a,b)=>ageOf(a)-ageOf(b)||a.nom.localeCompare(b.nom));
- const cols=PCOLS.filter(c=>S.prcols.has(c[0]));
+ const cols=PCOLS.filter(c=>S.prcols.has(c[0])&&!(isResp()&&["paye","commande"].includes(c[0])));
  const groups=S.prgroup?GROUPS.map(g=>[g,list.filter(k=>groupOf(ageOf(k))===g)]).filter(g=>g[1].length):[["",list]];
  return {wk,list,cols,groups};
 }
@@ -957,11 +966,11 @@ function adminPrint(){
  return `<div class="section">
  <div class="section-head"><div><span class="eyebrow">Fiches à imprimer</span><h1>Imprimer une semaine</h1></div></div>
  <div class="card print-opts">
-  <div><b>Lieu</b></div>
+  ${isResp()?"":"<div><b>Lieu</b></div>"}
   ${lieuSeg()}
   <div><b>Période et semaine</b></div>
   ${periodSeg()}
-  ${weekSeg(periodWeeks(S.period),wk,"prweek")}
+  ${weekSeg(myWeeks(),wk,"prweek")}
   <div><b>Informations à imprimer</b></div>
   <div class="checks">${PCOLS.map(([id,l])=>`<label for="pc_${id}"><input type="checkbox" id="pc_${id}" data-pcol="${id}" ${S.prcols.has(id)?"checked":""}>${l}</label>`).join("")}</div>
   <div class="checks"><label for="pcGroup"><input type="checkbox" id="pcGroup" data-pgroup="1" ${S.prgroup?"checked":""}>Une liste par groupe d'âge</label></div>
@@ -1048,8 +1057,9 @@ document.addEventListener("click",e=>{
  const d=t.dataset;
  if(d.act==="closeSheet"){if(t.classList.contains("sheet-bg")&&e.target!==t)return;S.sheet=null;return render()}
  if(d.act==="demoParent"){S.me=kids[0];S.view="parent";S.ptab="accueil";S.step=0;return render()}
- if(d.act==="demoAdmin"){S.view="admin";return render()}
- if(d.act==="logout"){S.view="login";S.me=null;S.sheet=null;return render()}
+ if(d.act==="demoAdmin"){Object.assign(S,{view:"admin",role:"direction",lieu:null,atab:"semaines"});return render()}
+ if(d.act==="demoResp"){Object.assign(S,{view:"admin",role:"resp",respName:"Julie",lieu:"Bernex",respWeeks:Object.keys(REF).filter(k=>k.startsWith("Bernex|")&&REF[k].email==="julie@exemple.ch").map(k=>+k.split("|")[1]),period:"Été 2027",aweek:1,mweek:1,prweek:1,atab:"semaines",afilter:"tous"});return render()}
+ if(d.act==="logout"){Object.assign(S,{view:"login",me:null,sheet:null,role:"direction",lieu:null,period:"Été 2027",aweek:1,mweek:1,prweek:1});return render()}
  if(d.ptab){S.ptab=d.ptab;S.step=0;scrollTo(0,0);return render()}
  if(d.atab){S.atab=d.atab;scrollTo(0,0);return render()}
  if(d.pweek){S.pweek=+d.pweek;return render()}
@@ -1070,9 +1080,9 @@ document.addEventListener("click",e=>{
  if(d.act==="readRules"){$("#root").insertAdjacentHTML("beforeend",`<div class="sheet-bg" id="rulesSheet" data-act="closeRules"><div class="sheet" role="dialog" aria-modal="true" aria-label="Règlement général"><div class="grab"></div>${reglementHTML()}<button type="button" class="btn" data-act="closeRules">Fermer</button></div></div>`);return}
  if(d.act==="closeRules"){if(t.classList.contains("sheet-bg")&&e.target!==t)return;$("#rulesSheet")?.remove();return}
  if(d.act==="clearSel"){S.msel.clear();return render()}
- if(d.act==="dlAll"){return toast(`Dans l'app finale : un fichier .zip avec les ${(media[S.mweek]||[]).length} fichiers de la semaine ${S.mweek} se télécharge.`)}
+ if(d.act==="dlAll"){return toast(`Dans l'app finale : un fichier .zip avec les ${(media[mk(S.lieu,S.mweek)]||[]).length} fichiers de ${wLabel(S.mweek).toLowerCase()} se télécharge.`)}
  if(d.act==="dlSel"){return toast(`Dans l'app finale : un fichier .zip avec les ${S.msel.size} fichiers choisis se télécharge.`)}
- if(d.period){S.period=d.period;const f=periodWeeks(S.period)[0];S.aweek=f;S.mweek=f;S.prweek=f;S.gweek=f;S.msel.clear();return render()}
+ if(d.period){S.period=d.period;const f=myWeeks()[0];S.aweek=f;S.mweek=f;S.prweek=f;S.gweek=f;S.msel.clear();return render()}
  if(d.gweek){S.gweek=+d.gweek;return render()}
  if(d.pkid){S.me=kids.find(x=>x.id===+d.pkid);S.step=0;return render()}
  if(d.kidfiche){S.me=kids.find(x=>x.id===+d.kidfiche);S.ptab="enfant";S.step=0;scrollTo(0,0);return render()}
@@ -1096,7 +1106,7 @@ document.addEventListener("change",e=>{
  if(e.target.id==="upMedia"){
   const files=[...e.target.files];let left=files.length;if(!left)return;
   files.forEach(f=>{const isV=f.type.startsWith("video");
-   const add=src=>{media[S.mweek]=media[S.mweek]||[];media[S.mweek].unshift({id:"u"+Date.now()+Math.random(),type:isV?"video":"photo",cap:f.name.replace(/\.[^.]+$/,""),hue:"#CDDF70",src});if(--left===0){render();toast(files.length+" fichier"+(files.length>1?"s":"")+" ajouté"+(files.length>1?"s":""))}};
+   const add=src=>{const key=mk(S.lieu,S.mweek);media[key]=media[key]||[];media[key].unshift({id:"u"+Date.now()+Math.random(),type:isV?"video":"photo",cap:f.name.replace(/\.[^.]+$/,""),hue:"#CDDF70",src});if(--left===0){render();toast(files.length+" fichier"+(files.length>1?"s":"")+" ajouté"+(files.length>1?"s":""))}};
    if(isV)return add("");const rd=new FileReader();rd.onload=()=>add(rd.result);rd.readAsDataURL(f)});
  }
  if(e.target.id==="rImg"){const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{pendingImg=rd.result;$("#rImgLbl").textContent="Photo ajoutée : "+f.name};rd.readAsDataURL(f)}
@@ -1123,7 +1133,7 @@ document.addEventListener("submit",e=>{
  if(e.target.id==="placeForm"){
   const l=e.target.dataset.place,n=+e.target.dataset.week;
   LIEU_INFO[l]={nom:$("#plNom").value.trim(),adresse:$("#plAdr").value.trim()};
-  REF[l+"|"+n]={nom:$("#rfNom").value.trim(),tel:$("#rfTel").value.trim()};
+  REF[l+"|"+n]={nom:$("#rfNom").value.trim(),tel:$("#rfTel").value.trim(),email:$("#rfMail").value.trim()};
   render();return toast("Lieu et référent enregistrés, visibles par les familles");
  }
  if(e.target.id==="progForm"){

@@ -114,7 +114,7 @@ legend{font-weight:600;font-size:1.05rem;margin-bottom:4px;padding:0}
 .contact-row{display:grid;grid-template-columns:2fr 1.2fr auto;gap:8px;align-items:center}
 @media (max-width:560px){.contact-row{grid-template-columns:1fr auto}.contact-row .input:nth-child(2){grid-column:1}.contact-row .iconbtn{grid-row:1/3;grid-column:2}}
 .med-row{display:grid;grid-template-columns:2fr 1fr 1.4fr auto;gap:8px;align-items:center}
-@media (max-width:560px){.med-row{grid-template-columns:1fr 1fr}.med-row .input:first-child{grid-column:1/-1}}
+@media (max-width:560px){.med-row{grid-template-columns:1fr 1fr auto}.med-row .input:first-child{grid-column:1/3}.med-row .iconbtn{grid-column:3;grid-row:1/3}}
 .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
 .pillar{background:var(--surface);border-radius:var(--r);padding:20px}
 .pillar h3{font-size:1.25rem;margin-bottom:10px}
@@ -199,6 +199,71 @@ td.num{font-variant-numeric:tabular-nums}
   .paper{position:absolute;left:0;top:0;width:100%;box-shadow:none;border-radius:0;padding:0}
   @page{size:A4 landscape;margin:12mm}
 }
+/* ---------- Espace familles v2 ---------- */
+.login-hero{border-radius:28px 28px 28px 0;padding:24px 22px 120px;overflow:hidden;display:grid;gap:8px}
+.login-logo{width:120px;height:auto;filter:drop-shadow(0 2px 0 rgba(0,0,0,.05))}
+.login-ill{position:absolute;left:0;right:0;bottom:-6px;height:120px;pointer-events:none}
+.login-ill span{position:absolute;display:block}
+.login-ill .i1{width:78px;left:18px;bottom:16px;transform:rotate(-12deg)}
+.login-ill .i2{width:150px;left:50%;margin-left:-60px;bottom:4px;transform:rotate(-6deg)}
+.login-ill .i3{width:70px;right:14px;bottom:30px;transform:rotate(14deg)}
+.login-ill svg,.hero-ill svg,.pm-ill svg,.pillar-ill svg,.ph-ill svg,.art-ill svg,.empty-ill svg,.head-ill svg{display:block;width:100%;height:auto}
+.hero-home{position:relative;overflow:hidden;background:var(--lime);color:var(--on-lime);border-radius:28px 28px 28px 0;padding:22px 22px 26px;display:grid;gap:10px}
+.hero-home .eyebrow{color:var(--on-lime);opacity:.75}
+.hero-home>*:not(.hero-ill){position:relative;z-index:1;max-width:62%}
+.hero-home .chips{max-width:70%}
+.hero-home .chips .chip{background:rgba(255,255,255,.6);color:var(--on-lime)}
+.count-line{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.count{font-size:clamp(3rem,13vw,4.4rem);font-weight:700;line-height:.9;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.count-txt{font-size:1.05rem;font-weight:600;line-height:1.25}
+.hero-theme{font-size:.9rem}
+.hero-ill{position:absolute;pointer-events:none}
+.hero-ill.i1{width:min(40%,190px);right:-8px;bottom:6px;transform:rotate(-10deg)}
+.hero-ill.i2{width:min(22%,96px);right:18px;top:14px;transform:rotate(10deg)}
+.todo{display:grid;gap:4px}
+.todo h2{margin-bottom:6px}
+.todo-row{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.todo-row:first-of-type{border-top:0}
+.dot{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:700}
+.dot svg{width:18px;height:18px}
+.dot.ok{background:var(--ok-bg);color:var(--ok)}
+.dot.warn{background:var(--warn-bg);color:var(--warn)}
+.link{border:0;background:none;padding:4px 0;font-weight:600;text-decoration:underline;text-decoration-color:var(--lime-strong);text-decoration-thickness:3px;text-underline-offset:4px}
+.pillar-mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.pm{border:0;background:var(--surface);border-radius:var(--r);padding:14px 12px;display:grid;gap:4px;justify-items:start;text-align:left}
+.pm .hint{font-size:.76rem;line-height:1.3}
+.pm-ill{width:56px;height:46px;display:grid;align-items:end}
+@media (max-width:440px){.pillar-mini{grid-template-columns:1fr}.pm{grid-template-columns:56px 1fr;align-items:center;column-gap:12px}.pm-ill{grid-row:1/3}}
+.strip{display:grid;grid-auto-flow:column;grid-auto-columns:120px;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
+.ph-ill{width:46%;opacity:.9}
+.empty{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:center}
+.empty-ill{width:64px}
+.recipe.feature .art{aspect-ratio:16/9}
+.art-ill{width:34%}
+.info-card{display:grid;gap:10px;align-content:start}
+.times{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.times>div{background:var(--bg);border-radius:var(--r-sm);padding:10px 12px;display:grid}
+.times .t{font-size:1.25rem;font-weight:700;font-variant-numeric:tabular-nums}
+.head-ill{width:64px;flex:none;transform:rotate(8deg)}
+.stepper{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.step{border:0;background:transparent;display:grid;gap:6px;text-align:left;font-size:.74rem;line-height:1.25;color:var(--muted);padding:0}
+.step i{display:block;height:7px;border-radius:9px;background:var(--line)}
+.step.done i,.step[aria-current="step"] i{background:var(--lime-strong)}
+.step[aria-current="step"]{color:var(--ink);font-weight:600}
+@media (max-width:440px){.step span{display:none}.step[aria-current="step"] span{display:inline;white-space:nowrap}.stepper{grid-template-columns:repeat(4,1fr)}}
+.step-panel{display:grid;gap:22px}
+.step-nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.step-nav .btn.primary{margin-left:auto}
+.pillar{position:relative;overflow:hidden;padding-top:22px}
+.pillar-ill{position:absolute;top:10px;right:10px;width:64px;transform:rotate(8deg)}
+.pillar h3{max-width:calc(100% - 70px)}
+.timeline{list-style:none;margin:0;padding:0 0 0 6px;display:grid;gap:0}
+.timeline li{position:relative;display:grid;grid-template-columns:52px 1fr;gap:10px;padding:10px 0 14px 22px;border-left:3px solid var(--surface)}
+.timeline li::before{content:"";position:absolute;left:-9px;top:13px;width:15px;height:15px;border-radius:50%;background:var(--lime);border:3px solid var(--bg)}
+.timeline li:last-child{border-left-color:transparent}
+.timeline b{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;padding-top:1px}
+.pack{display:grid;gap:10px}
+.gallery.feature .ph:first-child{grid-column:span 2;aspect-ratio:2/1}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 html,body{height:100%}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -239,7 +304,7 @@ const DAYS=[
 ];
 const DIETS=["Végétarien","Sans porc","Sans gluten","Sans lactose","Halal","Vegan"];
 let kids=[
- {id:1,prenom:"Léa",nom:"Martin",naissance:"2019-03-14",weeks:[1,3],paid:true,order:"14817",email:"famille.martin@exemple.ch",parent:"Sophie Martin",tel:"079 123 45 67",diet:["Végétarien"],allergies:"Arachides",severe:true,patho:"",meds:[{name:"EpiPen Junior",dose:"0,15 mg",when:"En cas de réaction"}],photos:true,obs:"",done:true,urgence:"Paul Martin, 079 765 43 21"},
+ {id:1,prenom:"Léa",nom:"Martin",naissance:"2019-03-14",weeks:[1,3],paid:true,order:"14817",email:"famille.martin@exemple.ch",parent:"Sophie Martin",tel:"079 123 45 67",diet:["Végétarien"],allergies:"Arachides",severe:true,patho:"",meds:[{name:"EpiPen Junior",dose:"0,15 mg",when:"En cas de réaction"}],photos:true,obs:"",done:false,cgv:false,urgence:"Paul Martin, 079 765 43 21"},
  {id:2,prenom:"Noah",nom:"Dubois",naissance:"2017-08-02",weeks:[1,2],paid:false,order:"14822",email:"",parent:"Claire Dubois",tel:"078 222 11 00",diet:[],allergies:"",severe:false,patho:"Asthme léger",meds:[{name:"Ventolin",dose:"2 bouffées",when:"Avant le sport"}],photos:true,obs:"Timide le premier jour",done:true,urgence:""},
  {id:3,prenom:"Inès",nom:"Rochat",naissance:"2020-11-21",weeks:[1],paid:true,order:"14830",email:"",parent:"Marc Rochat",tel:"076 555 66 77",diet:["Sans lactose"],allergies:"Lactose (intolérance)",severe:false,patho:"",meds:[],photos:false,obs:"",done:true,urgence:""},
  {id:4,prenom:"Gabriel",nom:"Favre",naissance:"2015-05-09",weeks:[1,4,5],paid:true,order:"14834",email:"",parent:"Anne Favre",tel:"079 888 12 34",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""},
@@ -268,7 +333,7 @@ let media={};
 WEEKS.forEach(w=>{media[w.n]=MEDIA_CAPS.map((c,i)=>({id:w.n+"-"+i,type:i%5===3?"video":"photo",cap:c,hue:MEDIA_HUES[(i+w.n)%MEDIA_HUES.length],src:""})).slice(0,w.n<=2?12:(w.n===3?6:0))});
 
 /* ---------------- État ---------------- */
-const S={view:"login",me:null,ptab:"enfant",pweek:null,atab:"semaines",aweek:1,afilter:"tous",aq:"",amode:"liste",mweek:1,msel:new Set(),sheet:null,prweek:1,prgroup:true,prcols:new Set(["age","paye","allergies","regime","meds","photos","presence"])};
+const S={view:"login",me:null,ptab:"accueil",step:0,pweek:null,atab:"semaines",aweek:1,afilter:"tous",aq:"",amode:"liste",mweek:1,msel:new Set(),sheet:null,prweek:1,prgroup:true,prcols:new Set(["age","paye","allergies","regime","meds","photos","presence"])};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ageOf=k=>{const b=new Date(k.naissance),r=new Date("2027-07-01");let a=r.getFullYear()-b.getFullYear();if(r<new Date(r.getFullYear(),b.getMonth(),b.getDate()))a--;return a};
@@ -289,6 +354,8 @@ const I={
  warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3 2 21h20zM12 10v4M12 18h.01"/></svg>',
  pill:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="8" width="20" height="8" rx="4" transform="rotate(-35 12 12)"/><path d="m9 9 6 6" /></svg>',
  nocam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m2 2 20 20M9 4h6l2 3h4a2 2 0 0 1 2 2v9M3 7h1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h15"/></svg>',
+ home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>',
  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-5M12 8h.01"/></svg>',
  print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
  sprout:'<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 56V30"/><path d="M32 34c-10 0-16-6-16-16 10 0 16 6 16 16zM32 30c0-10 6-16 16-16 0 10-6 16-16 16z"/></svg>'
@@ -318,23 +385,37 @@ function render(){
  if(S.sheet)r.insertAdjacentHTML("beforeend",S.sheet());
 }
 
+/* ---------------- Illustrations ---------------- */
+const G='fill="none" stroke="#1B1D12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"';
+const ILL={
+ apple:`<svg viewBox="0 0 120 120" aria-hidden="true"><g ${G}><path d="M60 40c-16-12-42-6-40 24 2 26 20 42 32 38 4-1 6-3 8-3s4 2 8 3c12 4 30-12 32-38 2-30-24-36-40-24z" fill="#CDDF70"/><path d="M60 40c0-8 2-16 8-22"/><path d="M66 28c6-10 20-12 28-8-6 10-18 13-28 8z" fill="#A9C94F"/><path d="M34 62c0-6 4-11 9-13"/></g></svg>`,
+ sneaker:`<svg viewBox="0 0 160 100" aria-hidden="true"><g ${G}><path d="M14 74c-2-16 4-34 18-38l20-4c8 10 22 16 40 18 22 2 44 8 52 24z" fill="#CDDF70"/><path d="M10 74h140c4 0 5 12-2 12H18c-8 0-12-12-8-12z" fill="#fff"/><path d="M48 36l8 12M58 33l8 12M68 37l7 10"/><path d="M86 66c18-4 34-4 50 2"/><path d="M24 52c4-4 10-6 16-6"/></g></svg>`,
+ leaf:`<svg viewBox="0 0 120 120" aria-hidden="true"><g ${G}><path d="M22 98C20 54 52 22 100 18c2 46-28 80-78 80z" fill="#CDDF70"/><path d="M22 98C44 74 66 52 90 30"/><path d="M50 70l-6-16M50 70l16 4M68 52l-4-16M68 52l16 2"/></g></svg>`,
+ carrot:`<svg viewBox="0 0 120 120" aria-hidden="true"><g ${G}><path d="M80 32c-6-10-4-20 2-26 6 8 6 18-2 26z" fill="#A9C94F"/><path d="M84 36c8-6 20-8 28-2-8 8-20 8-28 2z" fill="#CDDF70"/><path d="M30 96c-6-6-4-12 2-20l40-46c6-6 16-6 20 0s2 14-4 20L44 94c-6 6-10 6-14 2z" fill="#F4B76A"/><path d="M52 58l8 6M42 72l8 6M64 44l6 4"/></g></svg>`,
+ sun:`<svg viewBox="0 0 120 120" aria-hidden="true"><g ${G}><circle cx="60" cy="60" r="22" fill="#F0F2BC"/><path d="M60 14v12M60 94v12M14 60h12M94 60h12M27 27l9 9M84 84l9 9M27 93l9-9M84 36l9-9"/></g></svg>`
+};
+const RECIPE_ILL=[ILL.apple,ILL.carrot,ILL.leaf];
+const WEEK_START=n=>new Date(2027,6,5+7*(n-1));
+const PACK=["Casquette","Gourde","Crème solaire","Habits qui peuvent se salir","Chaussures fermées"];
+
 /* ---------------- Connexion ---------------- */
 function loginView(){return `
 <section id="login" class="wrap">
  <div class="login-card">
   <div class="login-hero">
-   <h1>Espace familles</h1>
-   <p>Fiche de votre enfant, programme de la semaine, photos et recettes.</p>
-   <img class="badge-logo" src="${LOGO_LIME}" alt="Croc'n'Mouv">
+   <img class="login-logo" src="${LOGO_LIME}" alt="Croc'n'Mouv">
+   <h1>Bienvenue dans l'espace familles</h1>
+   <p>La fiche de votre enfant, le programme, les photos de la semaine et nos recettes.</p>
+   <div class="login-ill" aria-hidden="true"><span class="i1">${ILL.apple}</span><span class="i2">${ILL.sneaker}</span><span class="i3">${ILL.leaf}</span></div>
   </div>
-  <form class="form" id="loginForm" novalidate>
+  <form class="card form" id="loginForm" novalidate>
    <label class="f" for="lgOrder">Numéro de commande
     <input class="input" id="lgOrder" placeholder="14817" inputmode="numeric" autocomplete="off" required>
    </label>
    <label class="f" for="lgEmail">E-mail utilisé lors de l'inscription
     <input class="input" id="lgEmail" type="email" placeholder="vous@exemple.ch" autocomplete="email">
    </label>
-   <p class="hint">Le numéro se trouve dans l'e-mail de confirmation de commande Squarespace reçu après l'inscription.</p>
+   <p class="hint">Le numéro se trouve dans l'e-mail de confirmation de commande reçu après l'inscription.</p>
    <p class="err" id="lgErr" hidden></p>
    <button class="btn primary" type="submit">Accéder à mon espace</button>
   </form>
@@ -352,8 +433,9 @@ function loginView(){return `
 /* ---------------- Espace parent ---------------- */
 function parentView(){
  const k=S.me;
- const tabs=[["enfant","Mon enfant",I.kid],["programme","Programme",I.cal],["photos","Photos",I.cam],["recettes","Recettes",I.pot],["infos","Infos",I.info]];
+ const tabs=[["accueil","Accueil",I.home],["enfant","Fiche",I.kid],["programme","Programme",I.cal],["photos","Photos",I.cam],["recettes","Recettes",I.pot]];
  let body="";
+ if(S.ptab==="accueil")body=parentHome(k);
  if(S.ptab==="enfant")body=parentKid(k);
  if(S.ptab==="programme")body=parentProgram(k);
  if(S.ptab==="photos")body=parentPhotos(k);
@@ -363,6 +445,7 @@ function parentView(){
  <header class="topbar"><div class="wrap">
   <img class="logo-img logo-black" src="${LOGO_BLACK}" alt="Croc'n'Mouv">
   <div class="who"><b>${esc(k.parent)}</b>Commande ${esc(k.order)}</div>
+  <button class="iconbtn" data-ptab="infos" aria-label="Infos pratiques et règlement">${I.info}</button>
   <button class="iconbtn" data-act="logout" aria-label="Se déconnecter">${I.out}</button>
  </div></header>
  <main><div class="wrap">${body}</div></main>
@@ -371,27 +454,71 @@ function parentView(){
  </div></nav></div>`;
 }
 function completion(k){
+ if(k.done)return 100;
  let n=0;const t=6;
- if(k.prenom&&k.naissance)n++; if(k.tel)n++; if(k.contacts&&k.contacts.length)n++;
- if(k.done){n=t}else{ if(k.diet.length||k.allergies)n++; }
+ if(k.prenom&&k.naissance)n++; if(k.tel)n++; if(k.contacts&&k.contacts.length)n++; if(k.diet.length||k.allergies)n++;
  return Math.round(n/t*100);
 }
-function parentKid(k){
- const pct=completion(k);
+function countdown(k){
+ const n=k.weeks[0],start=WEEK_START(n),today=new Date();today.setHours(0,0,0,0);
+ const d=Math.round((start-today)/864e5);
+ if(d>0)return {num:d,txt:`jour${d>1?"s":""} avant la semaine&nbsp;${n}`};
+ if(d>-5)return {num:"",txt:`${esc(k.prenom)} est au camp cette semaine !`};
+ return {num:"",txt:"Merci pour ce bel été !"};
+}
+function parentHome(k){
+ const c=countdown(k),pct=completion(k),w=WEEKS[k.weeks[0]-1];
+ const pics=(media[k.weeks[0]]||[]).slice(0,8),r=recipes[0];
+ const todo=[
+  {ok:k.done,t:`Fiche de ${esc(k.prenom)}`,s:k.done?"Complète, merci !":`Complétée à ${pct} %. Il reste quelques questions.`,a:k.done?"":`<button class="btn small primary" data-ptab="enfant">Compléter</button>`},
+  {ok:k.cgv,t:"Règlement général",s:k.cgv?"Lu et accepté":"À lire et accepter dans la fiche",a:k.cgv?"":`<button class="btn small" data-act="readRules">Lire</button>`},
+  {ok:k.paid,t:"Paiement",s:k.paid?"Reçu, merci !":"Virement bancaire dans les 10 jours après l'inscription",a:""}
+ ];
  return `<div class="section">
- <div class="kid-hero">
-  <span class="eyebrow">Mon enfant</span>
-  <h1>${esc(kidName(k))}, ${ageOf(k)} ans</h1>
-  <div class="chips">
-   ${k.weeks.map(n=>`<span class="chip">Semaine ${n} · ${WEEKS[n-1].from}</span>`).join("")}
-   ${k.paid?'<span class="chip">Inscription payée</span>':'<span class="chip bad">Paiement en attente</span>'}
-  </div>
-  <div style="display:grid;gap:6px">
-   <span style="font-size:.88rem;font-weight:500">${k.done?"Fiche complète, merci !":"Fiche complétée à "+pct+" %"}</span>
-   <div class="progress" aria-hidden="true"><i style="width:${pct}%"></i></div>
+ <div class="hero-home">
+  <span class="eyebrow">Bonjour ${esc(k.parent.split(" ")[0])} !</span>
+  <div class="count-line">${c.num!==""?`<span class="count">${c.num}</span>`:""}<span class="count-txt">${c.txt}</span></div>
+  <div class="chips">${k.weeks.map(n=>`<span class="chip">S${n} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span>`).join("")}</div>
+  <p class="hero-theme">Première semaine : <b>${esc(w.theme)}</b></p>
+  <span class="hero-ill i1">${ILL.sneaker}</span><span class="hero-ill i2">${ILL.apple}</span>
+ </div>
+
+ <div class="card todo">
+  <h2>À faire avant le camp</h2>
+  ${todo.map(x=>`<div class="todo-row"><span class="dot ${x.ok?"ok":"warn"}" aria-hidden="true">${x.ok?I.check:"!"}</span><div><b>${x.t}</b><p class="hint">${x.s}</p></div>${x.a}</div>`).join("")}
+ </div>
+
+ <div class="section-head"><h2>Ce qui l'attend</h2><button class="link" data-ptab="programme">Voir le programme</button></div>
+ <div class="pillar-mini">
+  <button class="pm" data-ptab="programme"><span class="pm-ill">${ILL.carrot}</span><b>Alimentation</b><span class="hint">Cuisiner, goûter, découvrir</span></button>
+  <button class="pm" data-ptab="programme"><span class="pm-ill">${ILL.sneaker}</span><b>Mouvement</b><span class="hint">Sport, jeux, relaxation</span></button>
+  <button class="pm" data-ptab="programme"><span class="pm-ill">${ILL.leaf}</span><b>Nature</b><span class="hint">Ferme, potager, cueillette</span></button>
+ </div>
+
+ <div class="section-head"><h2>Photos de la semaine</h2>${pics.length?`<button class="link" data-ptab="photos">Tout voir</button>`:""}</div>
+ ${pics.length?`<div class="strip">${pics.map(m=>mediaTile(m,false)).join("")}</div>`:`<div class="card plain empty"><span class="empty-ill">${ILL.sun}</span><p>Les photos arrivent chaque soir pendant le camp. Revenez dès le ${w.from} !</p></div>`}
+
+ <div class="grid g2">
+  <button class="recipe feature" data-recipe="${r.id}"><div class="art" style="background:${r.hue}">${r.img?`<img src="${r.img}" alt="">`:`<span class="art-ill">${RECIPE_ILL[r.id%3]}</span>`}</div>
+   <div class="body"><span class="eyebrow">Recette du moment</span><span class="hand">${esc(r.title)}</span><span class="meta">${esc(r.time)} · ${esc(r.level)}</span></div></button>
+  <div class="card info-card">
+   <h2>Infos pratiques</h2>
+   <div class="times"><div><span class="t">8h–9h</span><span class="hint">Accueil du matin</span></div><div><span class="t">16h45–17h</span><span class="hint">Retour des enfants</span></div></div>
+   <p class="hint">Du lundi au vendredi. À prendre chaque jour : ${PACK.slice(0,3).join(", ").toLowerCase()}.</p>
+   <button class="btn small ghost" data-ptab="infos" style="justify-self:start">Règlement et contact</button>
   </div>
  </div>
+ </div>`;
+}
+const STEPS=["Enfant et parents","Alimentation et santé","Retour et assurances","Photos et règlement"];
+function parentKid(k){
+ const pct=completion(k),st=S.step||0;
+ const panel=(i,html)=>`<div class="step-panel" data-panel="${i}" ${i===st?"":"hidden"}>${html}</div>`;
+ return `<div class="section">
+ <div class="section-head"><div><span class="eyebrow">${k.done?"Fiche complète":"Fiche complétée à "+pct+" %"}</span><h1>Fiche de ${esc(k.prenom)}</h1></div><span class="head-ill">${ILL.apple}</span></div>
+ <nav class="stepper" aria-label="Étapes de la fiche">${STEPS.map((s,i)=>`<button type="button" class="step ${i<st?"done":""}" data-step="${i}" ${i===st?'aria-current="step"':""}><i></i><span>${i+1}. ${s}</span></button>`).join("")}</nav>
  <form class="card form" id="kidForm" novalidate>
+ ${panel(0,`
   <fieldset>
    <legend>Enfant</legend>
    <div class="grid g2">
@@ -417,7 +544,24 @@ function parentKid(k){
     <div id="contacts" style="display:grid;gap:8px">${k.contacts.map((c,i)=>contactRow(c,i)).join("")}</div>
     <button type="button" class="btn ghost small" data-act="addContact" style="justify-self:start">+ Ajouter une personne</button>
    </div>
+  </fieldset>`)}
+ ${panel(1,`
+  <fieldset>
+   <legend>Alimentation</legend>
+   <label class="f" for="fRegime">Régime alimentaire particulier<textarea class="input" id="fRegime" placeholder="Décrivez ici ce que votre enfant mange ou ne mange pas">${esc(k.diet.join(", "))}</textarea></label>
+   <label class="f" for="fAll">Allergies ou intolérances alimentaires<input class="input" id="fAll" placeholder="Ex. arachides, lactose…" value="${esc(k.allergies)}"></label>
+   <div class="checks"><label for="fSev"><input type="checkbox" id="fSev" ${k.severe?"checked":""}>Allergie sévère (risque de choc anaphylactique)</label></div>
   </fieldset>
+  <fieldset>
+   <legend>Santé</legend>
+   <label class="f" for="fPatho">Maladie chronique, besoin particulier ou restriction<textarea class="input" id="fPatho" placeholder="Ex. asthme, diabète, TDAH, port de lunettes…">${esc(k.patho)}</textarea></label>
+   <div class="f" style="display:grid;gap:8px">
+    <span style="font-weight:500;font-size:.9rem">Médicaments à donner pendant la journée</span>
+    <div id="meds" style="display:grid;gap:8px">${(k.meds.length?k.meds:[{name:"",dose:"",when:""}]).map((m,i)=>medRow(m,i)).join("")}</div>
+    <button type="button" class="btn ghost small" data-act="addMed" style="justify-self:start">+ Ajouter un médicament</button>
+   </div>
+  </fieldset>`)}
+ ${panel(2,`
   <fieldset>
    <legend>Retour à la maison</legend>
    <span style="font-weight:500;font-size:.9rem">Mon enfant peut rentrer seul</span>
@@ -435,22 +579,8 @@ function parentKid(k){
     <label class="f" for="fAA">Assurance accident<input class="input" id="fAA" value="${esc(k.assAccident)}"></label>
    </div>
    <label class="f" for="fRC">Responsabilité civile (RC) des parents<input class="input" id="fRC" value="${esc(k.rc)}"></label>
-  </fieldset>
-  <fieldset>
-   <legend>Alimentation</legend>
-   <label class="f" for="fRegime">Régime alimentaire particulier<textarea class="input" id="fRegime" placeholder="Décrivez ici ce que votre enfant mange ou ne mange pas">${esc(k.diet.join(", "))}</textarea></label>
-   <label class="f" for="fAll">Allergies ou intolérances alimentaires<input class="input" id="fAll" placeholder="Ex. arachides, lactose…" value="${esc(k.allergies)}"></label>
-   <div class="checks"><label for="fSev"><input type="checkbox" id="fSev" ${k.severe?"checked":""}>Allergie sévère (risque de choc anaphylactique)</label></div>
-  </fieldset>
-  <fieldset>
-   <legend>Santé</legend>
-   <label class="f" for="fPatho">Pathologie, besoin particulier ou restriction<textarea class="input" id="fPatho" placeholder="Ex. asthme, diabète, TDAH, port de lunettes…">${esc(k.patho)}</textarea></label>
-   <div class="f" style="display:grid;gap:8px">
-    <span style="font-weight:500;font-size:.9rem">Médicaments à donner pendant la journée</span>
-    <div id="meds" style="display:grid;gap:8px">${(k.meds.length?k.meds:[{name:"",dose:"",when:""}]).map((m,i)=>medRow(m,i)).join("")}</div>
-    <button type="button" class="btn ghost small" data-act="addMed" style="justify-self:start">+ Ajouter un médicament</button>
-   </div>
-  </fieldset>
+  </fieldset>`)}
+ ${panel(3,`
   <fieldset>
    <legend>Droit à l'image</legend>
    <p>Pendant la semaine de camp, notre équipe prend des photos et des vidéos des activités. Elles sont partagées sur cet espace avec les familles de la semaine et projetées lors de l'apéritif de fin de camp.</p>
@@ -470,10 +600,25 @@ function parentKid(k){
    <button type="button" class="btn ghost small" data-act="readRules" style="justify-self:start">Lire le règlement général</button>
    <div class="checks"><label for="fCgv"><input type="checkbox" id="fCgv" ${k.cgv?"checked":""}>J'ai lu et j'accepte le règlement général de Croc'n'Mouv</label></div>
   </fieldset>
-  <p class="err" id="kErr" hidden>Merci d'accepter le règlement général pour enregistrer la fiche.</p>
-  <button class="btn primary" type="submit">Enregistrer la fiche</button>
+  <p class="err" id="kErr" hidden>Merci d'accepter le règlement général pour enregistrer la fiche.</p>`)}
+  <div class="step-nav">
+   <button type="button" class="btn ghost" data-act="stepPrev" ${st===0?"hidden":""}>Retour</button>
+   <button type="button" class="btn primary" data-act="stepNext" ${st===3?"hidden":""}>Continuer</button>
+   <button type="submit" class="btn primary" ${st===3?"":"hidden"}>Enregistrer la fiche</button>
+  </div>
  </form>
+ <p class="hint" style="text-align:center">Vous pouvez revenir modifier la fiche à tout moment avant le camp.</p>
  </div>`;
+}
+function goStep(n){
+ S.step=Math.max(0,Math.min(3,n));
+ document.querySelectorAll(".step-panel").forEach(p=>p.hidden=+p.dataset.panel!==S.step);
+ document.querySelectorAll(".step").forEach((b,i)=>{b.classList.toggle("done",i<S.step);if(i===S.step)b.setAttribute("aria-current","step");else b.removeAttribute("aria-current")});
+ const nav=document.querySelector(".step-nav");
+ nav.querySelector('[data-act="stepPrev"]').hidden=S.step===0;
+ nav.querySelector('[data-act="stepNext"]').hidden=S.step===3;
+ nav.querySelector('[type="submit"]').hidden=S.step!==3;
+ document.querySelector(".stepper").scrollIntoView({block:"start",behavior:"smooth"});
 }
 function contactRow(c,i){return `<div class="contact-row">
  <input class="input" id="cN${i}" placeholder="Nom et lien (ex. grand-maman)" value="${esc(c.name)}" aria-label="Nom et lien">
@@ -487,31 +632,34 @@ function medRow(m,i){return `<div class="med-row">
 function weekSeg(list,cur,attr){return `<div class="seg" role="group" aria-label="Semaine">${list.map(n=>`<button aria-pressed="${cur===n}" data-${attr}="${n}">S${n} · ${WEEKS[n-1].from}</button>`).join("")}</div>`}
 function parentProgram(k){
  const n=S.pweek&&k.weeks.includes(S.pweek)?S.pweek:k.weeks[0];const w=WEEKS[n-1];
+ const pill=(t,ill,list)=>`<div class="pillar"><span class="pillar-ill">${ill}</span><h3>${t}</h3><ul>${list.map(x=>`<li>${x}</li>`).join("")}</ul></div>`;
  return `<div class="section">
  <div class="section-head"><div><span class="eyebrow">Semaine ${n} · du ${w.from} au ${w.to}</span><h1>${esc(w.theme)}</h1></div></div>
  ${k.weeks.length>1?weekSeg(k.weeks,n,"pweek"):""}
  <div class="pillars">
-  <div class="pillar"><h3>Alimentation</h3><ul>${PROGRAM.alimentation.map(x=>`<li>${x}</li>`).join("")}</ul></div>
-  <div class="pillar"><h3>Mouvement</h3><ul>${PROGRAM.mouvement.map(x=>`<li>${x}</li>`).join("")}</ul></div>
-  <div class="pillar"><h3>Nature</h3><ul>${PROGRAM.nature.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+  ${pill("Alimentation",ILL.carrot,PROGRAM.alimentation)}
+  ${pill("Mouvement",ILL.sneaker,PROGRAM.mouvement)}
+  ${pill("Nature",ILL.leaf,PROGRAM.nature)}
  </div>
  <h2>Jour par jour</h2>
- <div class="days">${DAYS.map(([d,t])=>`<div class="day"><b>${d}</b><span>${t}</span></div>`).join("")}</div>
- <div class="card plain"><h3>À prévoir chaque jour</h3><p style="margin-top:6px">Casquette, gourde, crème solaire, habits qui peuvent se salir et chaussures fermées. Le repas de midi et les collations sont préparés avec les enfants.</p></div>
+ <ol class="timeline">${DAYS.map(([d,t])=>`<li><b>${d}</b><span>${t}</span></li>`).join("")}</ol>
+ <div class="card plain pack"><h3>Dans le sac, chaque jour</h3><div class="chips">${PACK.map(p=>`<span class="chip ok">${I.check}${p}</span>`).join("")}</div><p class="hint">Le repas de midi et les collations sont préparés avec les enfants.</p></div>
  </div>`;
 }
 function mediaTile(m,selectable){
- const inner=m.src?`<img src="${m.src}" alt="${esc(m.cap)}">`:`<span style="width:44%;color:#1B1D12;opacity:.55">${I.sprout}</span>`;
+ const inner=m.src?`<img src="${m.src}" alt="${esc(m.cap)}">`:`<span class="ph-ill">${[ILL.apple,ILL.leaf,ILL.sneaker,ILL.carrot,ILL.sun][m.cap.length%5]}</span>`;
  const tag=selectable?"button":"div";
  return `<${tag} class="ph" style="background:${m.hue}" ${selectable?`aria-pressed="${S.msel.has(m.id)}" data-msel="${m.id}"`:""}>
   ${inner}${m.type==="video"?`<span class="type">${I.play}Vidéo</span>`:""}${selectable?'<span class="sel" aria-hidden="true"></span>':""}<span class="cap">${esc(m.cap)}</span></${tag}>`;
 }
 function parentPhotos(k){
  const n=S.pweek&&k.weeks.includes(S.pweek)?S.pweek:k.weeks[0];const list=media[n]||[];
+ const byDay=DAYS.map(([d],i)=>[d,list.filter((m,j)=>j%5===i)]).filter(x=>x[1].length);
+ const full={Lun:"Lundi",Mar:"Mardi",Mer:"Mercredi",Jeu:"Jeudi",Ven:"Vendredi"};
  return `<div class="section">
  <div class="section-head"><div><span class="eyebrow">Semaine ${n} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span><h1>Les photos de la semaine</h1></div></div>
  ${k.weeks.length>1?weekSeg(k.weeks,n,"pweek"):""}
- ${list.length?`<div class="gallery">${list.map(m=>mediaTile(m,false)).join("")}</div>`:`<div class="card plain"><p>Les photos de cette semaine seront publiées chaque soir pendant le centre.</p></div>`}
+ ${list.length?byDay.map(([d,l])=>`<h3>${full[d]}</h3><div class="gallery feature">${l.map(m=>mediaTile(m,false)).join("")}</div>`).join(""):`<div class="card plain empty"><span class="empty-ill">${ILL.sun}</span><p>Les photos de cette semaine seront publiées chaque soir pendant le camp.</p></div>`}
  </div>`;
 }
 function recipesList(admin){
@@ -519,13 +667,13 @@ function recipesList(admin){
  <div class="section-head"><div><span class="eyebrow">À refaire à la maison</span><h1>Nos recettes</h1></div>
  ${admin?'<button class="btn primary" data-act="newRecipe">+ Nouvelle recette</button>':""}</div>
  <div class="recipes">${recipes.map(r=>`<button class="recipe" data-recipe="${r.id}">
-  <div class="art" style="background:${r.hue}">${r.img?`<img src="${r.img}" alt="">`:`<span style="width:30%;color:#1B1D12;opacity:.5">${I.sprout}</span>`}</div>
+  <div class="art" style="background:${r.hue}">${r.img?`<img src="${r.img}" alt="">`:`<span class="art-ill">${RECIPE_ILL[r.id%3]}</span>`}</div>
   <div class="body"><span class="hand">${esc(r.title)}</span><span class="meta">${esc(r.time)} · ${esc(r.level)} · Semaine ${r.week}</span><div class="chips">${r.tags.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div></div>
  </button>`).join("")}</div></div>`;
 }
 function recipeSheet(r){return ()=>`<div class="sheet-bg" data-act="closeSheet"><div class="sheet recipe-detail" role="dialog" aria-modal="true" aria-label="${esc(r.title)}">
  <div class="grab"></div>
- <div class="recipe"><div class="art" style="background:${r.hue};border-radius:var(--r)">${r.img?`<img src="${r.img}" alt="">`:`<span style="width:22%;color:#1B1D12;opacity:.5">${I.sprout}</span>`}</div></div>
+ <div class="recipe"><div class="art" style="background:${r.hue};border-radius:var(--r)">${r.img?`<img src="${r.img}" alt="">`:`<span class="art-ill" style="width:24%">${RECIPE_ILL[r.id%3]}</span>`}</div></div>
  <div><span class="hand" style="font-size:2rem">${esc(r.title)}</span><p class="hint">${esc(r.time)} · ${esc(r.level)} · cuisinée en semaine ${r.week}</p></div>
  <div class="chips">${r.tags.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div>
  <h3>Ingrédients</h3><ul>${r.ing.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
@@ -743,14 +891,14 @@ function recipeForm(){return `<div class="sheet-bg" data-act="closeSheet"><div c
 /* ---------------- Interactions ---------------- */
 let pendingImg="";
 document.addEventListener("click",e=>{
- const t=e.target.closest("[data-act],[data-ptab],[data-atab],[data-pweek],[data-aweek],[data-mweek],[data-filter],[data-amode],[data-kid],[data-recipe],[data-msel],[data-prweek]");
+ const t=e.target.closest("[data-act],[data-ptab],[data-atab],[data-pweek],[data-aweek],[data-mweek],[data-filter],[data-amode],[data-kid],[data-recipe],[data-msel],[data-prweek],[data-step]");
  if(!t)return;
  const d=t.dataset;
  if(d.act==="closeSheet"){if(t.classList.contains("sheet-bg")&&e.target!==t)return;S.sheet=null;return render()}
- if(d.act==="demoParent"){S.me=kids[0];S.view="parent";S.ptab="enfant";return render()}
+ if(d.act==="demoParent"){S.me=kids[0];S.view="parent";S.ptab="accueil";S.step=0;return render()}
  if(d.act==="demoAdmin"){S.view="admin";return render()}
  if(d.act==="logout"){S.view="login";S.me=null;S.sheet=null;return render()}
- if(d.ptab){S.ptab=d.ptab;scrollTo(0,0);return render()}
+ if(d.ptab){S.ptab=d.ptab;S.step=0;scrollTo(0,0);return render()}
  if(d.atab){S.atab=d.atab;scrollTo(0,0);return render()}
  if(d.pweek){S.pweek=+d.pweek;return render()}
  if(d.aweek!==undefined){S.aweek=+d.aweek||null;return render()}
@@ -770,6 +918,9 @@ document.addEventListener("click",e=>{
  if(d.act==="clearSel"){S.msel.clear();return render()}
  if(d.act==="dlAll"){return toast(`Dans l'app finale : un fichier .zip avec les ${(media[S.mweek]||[]).length} fichiers de la semaine ${S.mweek} se télécharge.`)}
  if(d.act==="dlSel"){return toast(`Dans l'app finale : un fichier .zip avec les ${S.msel.size} fichiers choisis se télécharge.`)}
+ if(d.step!==undefined){return goStep(+d.step)}
+ if(d.act==="stepNext"){return goStep(S.step+1)}
+ if(d.act==="stepPrev"){return goStep(S.step-1)}
  if(d.prweek){S.prweek=+d.prweek;return render()}
  if(d.act==="doPrint"){try{window.print()}catch(_){}return toast("Dans l'app finale, la fenêtre d'impression s'ouvre avec cette page (bloquée dans la maquette).")}
  if(d.act==="copyPrint"){const {list,cols}=printData();const rows=[["Enfant",...cols.filter(c=>c[2]).map(c=>c[1])].join("\t"),...list.map(k=>[kidName(k),...cols.filter(c=>c[2]).map(c=>c[2](k))].join("\t"))].join("\n");
@@ -795,7 +946,7 @@ document.addEventListener("submit",e=>{
  if(e.target.id==="loginForm"){
   const o=$("#lgOrder").value.replace(/[#\s]/g,"").replace(/^0+/,""),k=kids.find(x=>x.order===o);
   if(!k){const er=$("#lgErr");er.textContent="Ce numéro de commande est introuvable. Vérifiez l'e-mail de confirmation (numéro de commande Squarespace, par ex. 14817).";er.hidden=false;return}
-  S.me=k;S.view="parent";S.ptab="enfant";return render();
+  S.me=k;S.view="parent";S.ptab="accueil";S.step=0;return render();
  }
  if(e.target.id==="kidForm"){
   const k=S.me;
@@ -807,7 +958,7 @@ document.addEventListener("submit",e=>{
   const rg=$("#fRegime").value.trim();k.diet=rg?[rg]:[];k.allergies=$("#fAll").value.trim();k.severe=$("#fSev").checked&&!!k.allergies;
   k.patho=$("#fPatho").value.trim();k.obs=$("#fObs").value.trim();k.photos=$("#fPhY").checked;
   k.meds=[...document.querySelectorAll(".med-row")].map(r=>{const [n,d,w]=r.querySelectorAll("input");return {name:n.value.trim(),dose:d.value.trim(),when:w.value.trim()}}).filter(m=>m.name);
-  k.done=true;render();scrollTo(0,0);return toast("Fiche enregistrée. Merci !");
+  k.done=true;S.step=0;S.ptab="accueil";render();scrollTo(0,0);return toast("Fiche enregistrée. Merci !");
  }
  if(e.target.id==="recipeForm"){
   const title=$("#rT").value.trim();if(!title){$("#rErr").hidden=false;return}

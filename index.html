@@ -200,26 +200,21 @@ td.num{font-variant-numeric:tabular-nums}
   @page{size:A4 landscape;margin:12mm}
 }
 /* ---------- Espace familles v2 ---------- */
-.login-hero{border-radius:28px 28px 28px 0;padding:24px 22px 120px;overflow:hidden;display:grid;gap:8px}
-.login-logo{width:120px;height:auto;filter:drop-shadow(0 2px 0 rgba(0,0,0,.05))}
-.login-ill{position:absolute;left:0;right:0;bottom:-6px;height:120px;pointer-events:none}
-.login-ill span{position:absolute;display:block}
-.login-ill .i1{width:78px;left:18px;bottom:16px;transform:rotate(-12deg)}
-.login-ill .i2{width:150px;left:50%;margin-left:-60px;bottom:4px;transform:rotate(-6deg)}
-.login-ill .i3{width:70px;right:14px;bottom:30px;transform:rotate(14deg)}
-.login-ill svg,.hero-ill svg,.pm-ill svg,.pillar-ill svg,.ph-ill svg,.art-ill svg,.empty-ill svg,.head-ill svg{display:block;width:100%;height:auto}
+.login-hero{border-radius:28px 28px 28px 0;padding:26px 22px 28px;overflow:hidden;display:grid;gap:8px}
+.login-hero>*:not(.deco){position:relative;z-index:1}
+.login-logo{width:120px;height:auto}
+.deco{position:absolute;right:-70px;top:-70px;width:230px;height:230px;border-radius:50%;background:rgba(255,255,255,.3);pointer-events:none}
+.deco::after{content:"";position:absolute;left:-30px;top:200px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.22)}
+.pm-ill svg,.pillar-ill svg,.ph-ill svg,.art-ill svg,.empty-ill svg{display:block;width:100%;height:100%}
 .hero-home{position:relative;overflow:hidden;background:var(--lime);color:var(--on-lime);border-radius:28px 28px 28px 0;padding:22px 22px 26px;display:grid;gap:10px}
 .hero-home .eyebrow{color:var(--on-lime);opacity:.75}
-.hero-home>*:not(.hero-ill){position:relative;z-index:1;max-width:62%}
+.hero-home>*:not(.deco){position:relative;z-index:1;max-width:80%}
 .hero-home .chips{max-width:70%}
 .hero-home .chips .chip{background:rgba(255,255,255,.6);color:var(--on-lime)}
 .count-line{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
 .count{font-size:clamp(3rem,13vw,4.4rem);font-weight:700;line-height:.9;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
 .count-txt{font-size:1.05rem;font-weight:600;line-height:1.25}
 .hero-theme{font-size:.9rem}
-.hero-ill{position:absolute;pointer-events:none}
-.hero-ill.i1{width:min(40%,190px);right:-8px;bottom:6px;transform:rotate(-10deg)}
-.hero-ill.i2{width:min(22%,96px);right:18px;top:14px;transform:rotate(10deg)}
 .todo{display:grid;gap:4px}
 .todo h2{margin-bottom:6px}
 .todo-row{display:grid;grid-template-columns:34px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
@@ -232,19 +227,19 @@ td.num{font-variant-numeric:tabular-nums}
 .pillar-mini{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .pm{border:0;background:var(--surface);border-radius:var(--r);padding:14px 12px;display:grid;gap:4px;justify-items:start;text-align:left}
 .pm .hint{font-size:.76rem;line-height:1.3}
-.pm-ill{width:56px;height:46px;display:grid;align-items:end}
-@media (max-width:440px){.pillar-mini{grid-template-columns:1fr}.pm{grid-template-columns:56px 1fr;align-items:center;column-gap:12px}.pm-ill{grid-row:1/3}}
+.pm-ill{width:44px;height:44px;border-radius:50%;background:var(--lime);color:var(--on-lime);padding:11px;margin-bottom:6px}
+@media (max-width:440px){.pillar-mini{grid-template-columns:1fr}.pm{grid-template-columns:44px 1fr;align-items:center;column-gap:14px}.pm-ill{grid-row:1/3;margin:0}}
 .strip{display:grid;grid-auto-flow:column;grid-auto-columns:120px;gap:10px;overflow-x:auto;padding-bottom:6px;scrollbar-width:thin}
-.ph-ill{width:46%;opacity:.9}
-.empty{display:grid;grid-template-columns:64px 1fr;gap:14px;align-items:center}
-.empty-ill{width:64px}
+.ph-ill{width:28%;color:#1B1D12;opacity:.3}
+.ph,.recipe .art{background-image:radial-gradient(rgba(27,29,18,.09) 1.4px,transparent 1.6px);background-size:14px 14px}
+.empty{display:grid;grid-template-columns:48px 1fr;gap:14px;align-items:center}
+.empty-ill{width:48px;height:48px;border-radius:50%;background:var(--lime);color:var(--on-lime);padding:12px}
 .recipe.feature .art{aspect-ratio:16/9}
-.art-ill{width:34%}
+.art-ill{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.75);color:#1B1D12;padding:16px}
 .info-card{display:grid;gap:10px;align-content:start}
 .times{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .times>div{background:var(--bg);border-radius:var(--r-sm);padding:10px 12px;display:grid}
 .times .t{font-size:1.25rem;font-weight:700;font-variant-numeric:tabular-nums}
-.head-ill{width:64px;flex:none;transform:rotate(8deg)}
 .stepper{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .step{border:0;background:transparent;display:grid;gap:6px;text-align:left;font-size:.74rem;line-height:1.25;color:var(--muted);padding:0}
 .step i{display:block;height:7px;border-radius:9px;background:var(--line)}
@@ -255,7 +250,7 @@ td.num{font-variant-numeric:tabular-nums}
 .step-nav{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
 .step-nav .btn.primary{margin-left:auto}
 .pillar{position:relative;overflow:hidden;padding-top:22px}
-.pillar-ill{position:absolute;top:10px;right:10px;width:64px;transform:rotate(8deg)}
+.pillar-ill{position:absolute;top:16px;right:16px;width:44px;height:44px;border-radius:50%;background:var(--lime);color:var(--on-lime);padding:11px}
 .pillar h3{max-width:calc(100% - 70px)}
 .timeline{list-style:none;margin:0;padding:0 0 0 6px;display:grid;gap:0}
 .timeline li{position:relative;display:grid;grid-template-columns:52px 1fr;gap:10px;padding:10px 0 14px 22px;border-left:3px solid var(--surface)}
@@ -323,8 +318,8 @@ let kids=[
 const ASS=["CSS","Helsana","Groupe Mutuel","Swica","Visana"],RCS=["Vaudoise","Zurich","Baloise","AXA","Generali"];
 function fillDemo(){kids.forEach((k,i)=>Object.assign(k,{contacts:k.contacts??(k.urgence?[{name:k.urgence.split(",")[0]+" (papa)",tel:(k.urgence.split(",")[1]||"").trim()}]:[]),seul:k.seul??(ageOf(k)>=10&&i%2===0),pickup:k.pickup??(i%3===0?"Grand-maman, 079 000 00 0"+(i%10):""),adresse:k.adresse??("Rue des Exemples "+(i+3)+", 1233 Bernex"),parent2:k.parent2??(i%2?"":"Parent "+(i+1)+" bis"),tel2:k.tel2??(i%2?"":"078 000 11 "+String(10+i)),assMaladie:k.assMaladie??ASS[i%5],assAccident:k.assAccident??ASS[i%5],rc:k.rc??RCS[i%5],cgv:k.cgv??k.done,email:k.email||("parent"+(i+1)+"@exemple.ch")}))}
 let recipes=[
- {id:1,title:"Brochettes arc-en-ciel",time:"15 min",level:"Facile",week:1,tags:["Sans cuisson","Végétarien"],ing:["1 barquette de fraises","2 kiwis","1 ananas","1 poignée de myrtilles","Piques en bois"],steps:["Laver et couper les fruits en cubes.","Enfiler les fruits en suivant les couleurs de l'arc-en-ciel.","Déguster bien frais !"],hue:"#F2A9A0",img:""},
- {id:2,title:"Houmous de betterave",time:"20 min",level:"Facile",week:1,tags:["Vegan","Sans gluten"],ing:["1 betterave cuite","1 boîte de pois chiches","2 c. à s. de tahini","1 citron","Sel, cumin"],steps:["Égoutter les pois chiches.","Mixer tous les ingrédients jusqu'à obtenir une crème lisse.","Servir avec des bâtonnets de légumes."],hue:"#C9708C",img:""},
+ {id:1,title:"Brochettes arc-en-ciel",time:"15 min",level:"Facile",week:1,tags:["Sans cuisson","Végétarien"],ing:["1 barquette de fraises","2 kiwis","1 ananas","1 poignée de myrtilles","Piques en bois"],steps:["Laver et couper les fruits en cubes.","Enfiler les fruits en suivant les couleurs de l'arc-en-ciel.","Déguster bien frais !"],hue:"#E9EFA0",img:""},
+ {id:2,title:"Houmous de betterave",time:"20 min",level:"Facile",week:1,tags:["Vegan","Sans gluten"],ing:["1 betterave cuite","1 boîte de pois chiches","2 c. à s. de tahini","1 citron","Sel, cumin"],steps:["Égoutter les pois chiches.","Mixer tous les ingrédients jusqu'à obtenir une crème lisse.","Servir avec des bâtonnets de légumes."],hue:"#D8E88A",img:""},
  {id:3,title:"Mini-muffins courgette & feta",time:"35 min",level:"Moyen",week:3,tags:["Végétarien"],ing:["1 courgette","100 g de feta","2 œufs","150 g de farine","1 sachet de levure","5 cl d'huile d'olive"],steps:["Râper la courgette et émietter la feta.","Mélanger œufs, farine, levure et huile.","Ajouter courgette et feta, remplir les moules.","Cuire 20 min à 180 °C."],hue:"#B7CC4A",img:""}
 ];
 const MEDIA_CAPS=["Atelier cuisine","Chasse aux trésors","Pique-nique","Cueillette","Jeux d'eau","Relaxation","Visite de la ferme","Course relais","Dégustation","Goûter des familles","Potager","Balade en forêt"];
@@ -385,16 +380,15 @@ function render(){
  if(S.sheet)r.insertAdjacentHTML("beforeend",S.sheet());
 }
 
-/* ---------------- Illustrations ---------------- */
-const G='fill="none" stroke="#1B1D12" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"';
+/* ---------------- Pictos ---------------- */
+const L=d=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`;
 const ILL={
- apple:`<svg viewBox="0 0 120 120" aria-hidden="true"><g ${G}><path d="M60 40c-16-12-42-6-40 24 2 26 20 42 32 38 4-1 6-3 8-3s4 2 8 3c12 4 30-12 32-38 2-30-24-36-40-24z" fill="#CDDF70"/><path d="M60 40c0-8 2-16 8-22"/><path d="M66 28c6-10 20-12 28-8-6 10-18 13-28 8z" fill="#A9C94F"/><path d="M34 62c0-6 4-11 9-13"/></g></svg>`,
- sneaker:`<svg viewBox="0 0 160 100" aria-hidden="true"><g ${G}><path d="M14 74c-2-16 4-34 18-38l20-4c8 10 22 16 40 18 22 2 44 8 52 24z" fill="#CDDF70"/><path d="M10 74h140c4 0 5 12-2 12H18c-8 0-12-12-8-12z" fill="#fff"/><path d="M48 36l8 12M58 33l8 12M68 37l7 10"/><path d="M86 66c18-4 34-4 50 2"/><path d="M24 52c4-4 10-6 16-6"/></g></svg>`,
- leaf:`<svg viewBox="0 0 120 120" aria-hidden="true"><g ${G}><path d="M22 98C20 54 52 22 100 18c2 46-28 80-78 80z" fill="#CDDF70"/><path d="M22 98C44 74 66 52 90 30"/><path d="M50 70l-6-16M50 70l16 4M68 52l-4-16M68 52l16 2"/></g></svg>`,
- carrot:`<svg viewBox="0 0 120 120" aria-hidden="true"><g ${G}><path d="M80 32c-6-10-4-20 2-26 6 8 6 18-2 26z" fill="#A9C94F"/><path d="M84 36c8-6 20-8 28-2-8 8-20 8-28 2z" fill="#CDDF70"/><path d="M30 96c-6-6-4-12 2-20l40-46c6-6 16-6 20 0s2 14-4 20L44 94c-6 6-10 6-14 2z" fill="#F4B76A"/><path d="M52 58l8 6M42 72l8 6M64 44l6 4"/></g></svg>`,
- sun:`<svg viewBox="0 0 120 120" aria-hidden="true"><g ${G}><circle cx="60" cy="60" r="22" fill="#F0F2BC"/><path d="M60 14v12M60 94v12M14 60h12M94 60h12M27 27l9 9M84 84l9 9M27 93l9-9M84 36l9-9"/></g></svg>`
+ food:L('<path d="M7 3v8M4 3v5a3 3 0 0 0 6 0V3M7 11v10M17 21V3c-2.5 1-4 4-4 8h4"/>'),
+ move:L('<path d="M3 12h4l3-8 4 16 3-8h4"/>'),
+ leaf:L('<path d="M5 21c0-9 5-16 15-17 0 10-6 16-15 17z"/><path d="M5 21 15 10"/>'),
+ sun:L('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/>')
 };
-const RECIPE_ILL=[ILL.apple,ILL.carrot,ILL.leaf];
+const RECIPE_ILL=[ILL.food,ILL.leaf,ILL.sun];
 const WEEK_START=n=>new Date(2027,6,5+7*(n-1));
 const PACK=["Casquette","Gourde","Crème solaire","Habits qui peuvent se salir","Chaussures fermées"];
 
@@ -406,7 +400,7 @@ function loginView(){return `
    <img class="login-logo" src="${LOGO_LIME}" alt="Croc'n'Mouv">
    <h1>Bienvenue dans l'espace familles</h1>
    <p>La fiche de votre enfant, le programme, les photos de la semaine et nos recettes.</p>
-   <div class="login-ill" aria-hidden="true"><span class="i1">${ILL.apple}</span><span class="i2">${ILL.sneaker}</span><span class="i3">${ILL.leaf}</span></div>
+   <span class="deco" aria-hidden="true"></span>
   </div>
   <form class="card form" id="loginForm" novalidate>
    <label class="f" for="lgOrder">Numéro de commande
@@ -480,7 +474,7 @@ function parentHome(k){
   <div class="count-line">${c.num!==""?`<span class="count">${c.num}</span>`:""}<span class="count-txt">${c.txt}</span></div>
   <div class="chips">${k.weeks.map(n=>`<span class="chip">S${n} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span>`).join("")}</div>
   <p class="hero-theme">Première semaine : <b>${esc(w.theme)}</b></p>
-  <span class="hero-ill i1">${ILL.sneaker}</span><span class="hero-ill i2">${ILL.apple}</span>
+  <span class="deco" aria-hidden="true"></span>
  </div>
 
  <div class="card todo">
@@ -490,8 +484,8 @@ function parentHome(k){
 
  <div class="section-head"><h2>Ce qui l'attend</h2><button class="link" data-ptab="programme">Voir le programme</button></div>
  <div class="pillar-mini">
-  <button class="pm" data-ptab="programme"><span class="pm-ill">${ILL.carrot}</span><b>Alimentation</b><span class="hint">Cuisiner, goûter, découvrir</span></button>
-  <button class="pm" data-ptab="programme"><span class="pm-ill">${ILL.sneaker}</span><b>Mouvement</b><span class="hint">Sport, jeux, relaxation</span></button>
+  <button class="pm" data-ptab="programme"><span class="pm-ill">${ILL.food}</span><b>Alimentation</b><span class="hint">Cuisiner, goûter, découvrir</span></button>
+  <button class="pm" data-ptab="programme"><span class="pm-ill">${ILL.move}</span><b>Mouvement</b><span class="hint">Sport, jeux, relaxation</span></button>
   <button class="pm" data-ptab="programme"><span class="pm-ill">${ILL.leaf}</span><b>Nature</b><span class="hint">Ferme, potager, cueillette</span></button>
  </div>
 
@@ -499,7 +493,7 @@ function parentHome(k){
  ${pics.length?`<div class="strip">${pics.map(m=>mediaTile(m,false)).join("")}</div>`:`<div class="card plain empty"><span class="empty-ill">${ILL.sun}</span><p>Les photos arrivent chaque soir pendant le camp. Revenez dès le ${w.from} !</p></div>`}
 
  <div class="grid g2">
-  <button class="recipe feature" data-recipe="${r.id}"><div class="art" style="background:${r.hue}">${r.img?`<img src="${r.img}" alt="">`:`<span class="art-ill">${RECIPE_ILL[r.id%3]}</span>`}</div>
+  <button class="recipe feature" data-recipe="${r.id}"><div class="art" style="background-color:${r.hue}">${r.img?`<img src="${r.img}" alt="">`:`<span class="art-ill">${RECIPE_ILL[r.id%3]}</span>`}</div>
    <div class="body"><span class="eyebrow">Recette du moment</span><span class="hand">${esc(r.title)}</span><span class="meta">${esc(r.time)} · ${esc(r.level)}</span></div></button>
   <div class="card info-card">
    <h2>Infos pratiques</h2>
@@ -515,7 +509,7 @@ function parentKid(k){
  const pct=completion(k),st=S.step||0;
  const panel=(i,html)=>`<div class="step-panel" data-panel="${i}" ${i===st?"":"hidden"}>${html}</div>`;
  return `<div class="section">
- <div class="section-head"><div><span class="eyebrow">${k.done?"Fiche complète":"Fiche complétée à "+pct+" %"}</span><h1>Fiche de ${esc(k.prenom)}</h1></div><span class="head-ill">${ILL.apple}</span></div>
+ <div class="section-head"><div><span class="eyebrow">${k.done?"Fiche complète":"Fiche complétée à "+pct+" %"}</span><h1>Fiche de ${esc(k.prenom)}</h1></div></div>
  <nav class="stepper" aria-label="Étapes de la fiche">${STEPS.map((s,i)=>`<button type="button" class="step ${i<st?"done":""}" data-step="${i}" ${i===st?'aria-current="step"':""}><i></i><span>${i+1}. ${s}</span></button>`).join("")}</nav>
  <form class="card form" id="kidForm" novalidate>
  ${panel(0,`
@@ -637,8 +631,8 @@ function parentProgram(k){
  <div class="section-head"><div><span class="eyebrow">Semaine ${n} · du ${w.from} au ${w.to}</span><h1>${esc(w.theme)}</h1></div></div>
  ${k.weeks.length>1?weekSeg(k.weeks,n,"pweek"):""}
  <div class="pillars">
-  ${pill("Alimentation",ILL.carrot,PROGRAM.alimentation)}
-  ${pill("Mouvement",ILL.sneaker,PROGRAM.mouvement)}
+  ${pill("Alimentation",ILL.food,PROGRAM.alimentation)}
+  ${pill("Mouvement",ILL.move,PROGRAM.mouvement)}
   ${pill("Nature",ILL.leaf,PROGRAM.nature)}
  </div>
  <h2>Jour par jour</h2>
@@ -647,9 +641,9 @@ function parentProgram(k){
  </div>`;
 }
 function mediaTile(m,selectable){
- const inner=m.src?`<img src="${m.src}" alt="${esc(m.cap)}">`:`<span class="ph-ill">${[ILL.apple,ILL.leaf,ILL.sneaker,ILL.carrot,ILL.sun][m.cap.length%5]}</span>`;
+ const inner=m.src?`<img src="${m.src}" alt="${esc(m.cap)}">`:`<span class="ph-ill">${I.cam}</span>`;
  const tag=selectable?"button":"div";
- return `<${tag} class="ph" style="background:${m.hue}" ${selectable?`aria-pressed="${S.msel.has(m.id)}" data-msel="${m.id}"`:""}>
+ return `<${tag} class="ph" style="background-color:${m.hue}" ${selectable?`aria-pressed="${S.msel.has(m.id)}" data-msel="${m.id}"`:""}>
   ${inner}${m.type==="video"?`<span class="type">${I.play}Vidéo</span>`:""}${selectable?'<span class="sel" aria-hidden="true"></span>':""}<span class="cap">${esc(m.cap)}</span></${tag}>`;
 }
 function parentPhotos(k){
@@ -667,13 +661,13 @@ function recipesList(admin){
  <div class="section-head"><div><span class="eyebrow">À refaire à la maison</span><h1>Nos recettes</h1></div>
  ${admin?'<button class="btn primary" data-act="newRecipe">+ Nouvelle recette</button>':""}</div>
  <div class="recipes">${recipes.map(r=>`<button class="recipe" data-recipe="${r.id}">
-  <div class="art" style="background:${r.hue}">${r.img?`<img src="${r.img}" alt="">`:`<span class="art-ill">${RECIPE_ILL[r.id%3]}</span>`}</div>
+  <div class="art" style="background-color:${r.hue}">${r.img?`<img src="${r.img}" alt="">`:`<span class="art-ill">${RECIPE_ILL[r.id%3]}</span>`}</div>
   <div class="body"><span class="hand">${esc(r.title)}</span><span class="meta">${esc(r.time)} · ${esc(r.level)} · Semaine ${r.week}</span><div class="chips">${r.tags.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div></div>
  </button>`).join("")}</div></div>`;
 }
 function recipeSheet(r){return ()=>`<div class="sheet-bg" data-act="closeSheet"><div class="sheet recipe-detail" role="dialog" aria-modal="true" aria-label="${esc(r.title)}">
  <div class="grab"></div>
- <div class="recipe"><div class="art" style="background:${r.hue};border-radius:var(--r)">${r.img?`<img src="${r.img}" alt="">`:`<span class="art-ill" style="width:24%">${RECIPE_ILL[r.id%3]}</span>`}</div></div>
+ <div class="recipe"><div class="art" style="background-color:${r.hue};border-radius:var(--r)">${r.img?`<img src="${r.img}" alt="">`:`<span class="art-ill">${RECIPE_ILL[r.id%3]}</span>`}</div></div>
  <div><span class="hand" style="font-size:2rem">${esc(r.title)}</span><p class="hint">${esc(r.time)} · ${esc(r.level)} · cuisinée en semaine ${r.week}</p></div>
  <div class="chips">${r.tags.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div>
  <h3>Ingrédients</h3><ul>${r.ing.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>

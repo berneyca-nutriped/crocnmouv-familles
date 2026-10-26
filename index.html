@@ -307,8 +307,7 @@ const WEEKS=[
  {n:5,from:"2 août",to:"6 août",theme:"À la ferme"},
  {n:6,from:"9 août",to:"13 août",theme:"Saveurs du monde"},
  {n:7,from:"16 août",to:"20 août",theme:"Le grand final de l'été"},
- {n:8,from:"29 mars",to:"2 avril",theme:"Le printemps des saveurs",period:"Pâques 2027",code:"P1",start:new Date(2027,2,29)},
- {n:9,from:"6 avril",to:"9 avril",theme:"Chasse aux œufs et nature",period:"Pâques 2027",code:"P2",start:new Date(2027,3,6)}
+ {n:8,from:"5 avril",to:"9 avril",theme:"Le printemps des saveurs",period:"Pâques 2027",code:"P1",start:new Date(2027,3,5)}
 ];
 WEEKS.forEach(w=>{if(!w.period){w.period="Été 2027";w.code="S"+w.n;w.start=new Date(2027,6,5+7*(w.n-1))}});
 const PERIODS=["Pâques 2027","Été 2027"];
@@ -330,7 +329,7 @@ WEEKS.forEach(w=>{w.program=JSON.parse(JSON.stringify(PROGRAM));w.days=(w.code==
 const DIETS=["Végétarien","Sans porc","Sans gluten","Sans lactose","Halal","Vegan"];
 let kids=[
  {id:1,prenom:"Léa",nom:"Martin",naissance:"2019-03-14",weeks:[8,1,3],paid:true,order:"14817",email:"famille.martin@exemple.ch",parent:"Sophie Martin",tel:"079 123 45 67",diet:["Végétarien"],allergies:"Arachides",severe:true,patho:"",meds:[{name:"EpiPen Junior",dose:"0,15 mg",when:"En cas de réaction"}],photos:true,obs:"",done:false,cgv:false,urgence:"Paul Martin, 079 765 43 21"},
- {id:2,prenom:"Noah",nom:"Dubois",naissance:"2017-08-02",weeks:[9,1,2],paid:false,order:"14822",email:"",parent:"Claire Dubois",tel:"078 222 11 00",diet:[],allergies:"",severe:false,patho:"Asthme léger",meds:[{name:"Ventolin",dose:"2 bouffées",when:"Avant le sport"}],photos:true,obs:"Timide le premier jour",done:true,urgence:""},
+ {id:2,prenom:"Noah",nom:"Dubois",naissance:"2017-08-02",weeks:[8,1,2],paid:false,order:"14822",email:"",parent:"Claire Dubois",tel:"078 222 11 00",diet:[],allergies:"",severe:false,patho:"Asthme léger",meds:[{name:"Ventolin",dose:"2 bouffées",when:"Avant le sport"}],photos:true,obs:"Timide le premier jour",done:true,urgence:""},
  {id:3,prenom:"Inès",nom:"Rochat",naissance:"2020-11-21",weeks:[1],paid:true,order:"14830",email:"",parent:"Marc Rochat",tel:"076 555 66 77",diet:["Sans lactose"],allergies:"Lactose (intolérance)",severe:false,patho:"",meds:[],photos:false,obs:"",done:true,urgence:""},
  {id:4,prenom:"Gabriel",nom:"Favre",naissance:"2015-05-09",weeks:[1,4,5],paid:true,order:"14834",email:"",parent:"Anne Favre",tel:"079 888 12 34",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""},
  {id:5,prenom:"Chloé",nom:"Perret",naissance:"2018-01-30",weeks:[1,2,3],paid:false,order:"14841",email:"",parent:"Julie Perret",tel:"077 432 10 98",diet:["Sans gluten"],allergies:"Gluten (maladie cœliaque)",severe:true,patho:"Maladie cœliaque",meds:[],photos:true,obs:"",done:false,urgence:""},
@@ -432,12 +431,12 @@ const ILL={
 const RECIPE_ILL=[ILL.food,ILL.leaf,ILL.sun];
 const WEEK_START=n=>WEEKS[n-1].start;
 const LIEUX=["Bernex","Laconnex","Ville de Genève","Cossonay"];
-const PRICES={"Bernex":350,"Laconnex":350,"Ville de Genève":350,"Cossonay":350}; // exemples, tarifs à définir par lieu
+const PRICES={"Bernex":0,"Laconnex":0,"Ville de Genève":0,"Cossonay":0}; // tarifs saisis par la direction dans Programme > Lieu
 const LIEU_INFO={"Bernex":{nom:"Exemple : salle communale de Bernex",adresse:"Exemple : rue de l'Exemple 1, 1233 Bernex"},"Laconnex":{nom:"",adresse:""},"Ville de Genève":{nom:"",adresse:""},"Cossonay":{nom:"",adresse:""}};
 const REF={"Bernex|8":{nom:"Julie (exemple)",tel:"079 000 00 00",email:"julie@exemple.ch"},"Bernex|1":{nom:"Julie (exemple)",tel:"079 000 00 00",email:"julie@exemple.ch"}};
 const refOf=(lieu,n)=>REF[lieu+"|"+n]||{nom:"",tel:""};
 const priceOf=k=>PRICES[k.lieu]||0;
-const chf=n=>"CHF "+n.toLocaleString("fr-CH")+".–";
+const chf=n=>n?"CHF "+n.toLocaleString("fr-CH")+".–":"tarif à définir";
 const PACK=["Crème solaire","Maillot de bain","Gourde","Casquette","Affaires de rechange","K-way","Tablier"];
 
 /* ---------------- Connexion ---------------- */
@@ -585,7 +584,7 @@ function parentBill(k){
   <div class="paper-head"><div><h2>Attestation de paiement ${yr}</h2><p class="sub">Frais de garde · centre aéré Croc'n'Mouv</p></div><img src="${LOGO_BLACK}" alt="Croc'n'Mouv"></div>
   <table style="min-width:0"><tbody>
    <tr><th>Lieu</th><td>Centre aéré de ${esc(k.lieu)}</td></tr>
-   <tr><th>Organisateur</th><td>Global Nutrition Sàrl · Croc'n'Mouv<br>Caroline Berney, 079 195 76 33</td></tr>
+   <tr><th>Organisateur</th><td>Global Nutrition Sàrl · Croc'n'Mouv<br>Chemin de Vuillonnex 36, 1232 Confignon<br>Caroline Berney, 079 195 76 33</td></tr>
    <tr><th>Parent</th><td>${esc(k.parent)}<br>${esc(k.adresse)}</td></tr>
    <tr><th>Enfant</th><td>${esc(kidName(k))}, né·e le ${new Date(k.naissance).toLocaleDateString("fr-CH")}</td></tr>
   </tbody></table>
@@ -802,18 +801,19 @@ function adminProgram(){
  ${periodSeg()}
  ${weekSeg(pw,n,"gweek")}
  <div class="card form">
-  <h2>Lieu et référent</h2>
+  <h2>${isResp()?"Lieu et référent":"Lieu, prix et référent"}</h2>
   ${lieuSeg()}
   ${S.lieu?`<form class="form" id="placeForm" data-week="${n}" data-place="${esc(S.lieu)}" novalidate>
    <div class="grid g2">
     <label class="f" for="plNom">Nom du lieu<input class="input" id="plNom" placeholder="Ex. salle communale" value="${esc(LIEU_INFO[S.lieu].nom)}"></label>
     <label class="f" for="plAdr">Adresse complète<input class="input" id="plAdr" placeholder="Rue, NPA, localité" value="${esc(LIEU_INFO[S.lieu].adresse)}"></label>
+    ${isResp()?"":`<label class="f" for="plPrix">Prix d'une semaine (CHF)<input class="input" id="plPrix" type="number" min="0" step="1" inputmode="numeric" placeholder="À compléter après la négociation" value="${PRICES[S.lieu]||""}"></label>`}
     <label class="f" for="rfNom">Référent·e de la semaine ${WEEKS[n-1].code}<input class="input" id="rfNom" placeholder="Prénom et nom" value="${esc(refOf(S.lieu,n).nom)}"></label>
     <label class="f" for="rfTel">Téléphone du référent·e<input class="input" id="rfTel" type="tel" value="${esc(refOf(S.lieu,n).tel)}"></label>
     <label class="f" for="rfMail">E-mail du référent·e<input class="input" id="rfMail" type="email" placeholder="Pour lui donner son accès" value="${esc(refOf(S.lieu,n).email||"")}"></label>
    </div>
    <p class="hint">Le référent reçoit un accès « Responsable de camp » : il voit les enfants de sa semaine dans ce lieu et peut publier les photos. Il ne voit ni les paiements, ni les autres lieux.</p>
-   <p class="hint">Le lieu et l'adresse valent pour toutes les semaines. Le référent se remplit semaine par semaine, même après les inscriptions.</p>
+   <p class="hint">Le lieu, l'adresse et le prix valent pour toutes les semaines. Tant que le prix est vide, les familles voient « tarif à définir ». Le référent se remplit semaine par semaine, même après les inscriptions.</p>
    <button class="btn primary" type="submit" style="justify-self:start">Enregistrer</button>
   </form>`:'<p class="hint">Choisissez un lieu pour renseigner son adresse et le référent de la semaine.</p>'}
  </div>
@@ -1132,9 +1132,9 @@ document.addEventListener("submit",e=>{
  }
  if(e.target.id==="placeForm"){
   const l=e.target.dataset.place,n=+e.target.dataset.week;
-  LIEU_INFO[l]={nom:$("#plNom").value.trim(),adresse:$("#plAdr").value.trim()};
+  LIEU_INFO[l]={nom:$("#plNom").value.trim(),adresse:$("#plAdr").value.trim()};if($("#plPrix"))PRICES[l]=Math.max(0,parseInt($("#plPrix").value,10)||0);
   REF[l+"|"+n]={nom:$("#rfNom").value.trim(),tel:$("#rfTel").value.trim(),email:$("#rfMail").value.trim()};
-  render();return toast("Lieu et référent enregistrés, visibles par les familles");
+  render();return toast("Enregistré, visible par les familles");
  }
  if(e.target.id==="progForm"){
   const w=WEEKS[+e.target.dataset.week-1],lines=id=>$("#"+id).value.split("\n").map(x=>x.trim()).filter(Boolean);

@@ -476,7 +476,6 @@ function countdown(k){
 }
 function parentHome(k){
  const c=countdown(k),pct=completion(k),w=WEEKS[k.weeks[0]-1];
- const pics=(media[k.weeks[0]]||[]).slice(0,8),r=recipes[0];
  const todo=[
   {ok:k.done,t:`Fiche de ${esc(k.prenom)}`,s:k.done?"Complète, merci !":`Complétée à ${pct} %. Il reste quelques questions.`,a:k.done?"":`<button class="btn small primary" data-ptab="enfant">Compléter</button>`},
   {ok:k.cgv,t:"Règlement général",s:k.cgv?"Lu et accepté":"À lire et accepter dans la fiche",a:k.cgv?"":`<button class="btn small" data-act="readRules">Lire</button>`},
@@ -514,19 +513,12 @@ function parentHome(k){
   <button class="pm" data-ptab="programme"><span class="pm-ill">${ILL.leaf}</span><b>Nature</b><span class="hint">Ferme, potager, cueillette</span></button>
  </div>
 
- <div class="section-head"><h2>Photos de la semaine</h2>${pics.length?`<button class="link" data-ptab="photos">Tout voir</button>`:""}</div>
- ${pics.length?`<div class="strip">${pics.map(m=>mediaTile(m,false)).join("")}</div>`:`<div class="card plain empty"><span class="empty-ill">${ILL.sun}</span><p>Les photos arrivent chaque soir pendant le camp. Revenez dès le ${w.from} !</p></div>`}
-
- <div class="grid g2">
-  <button class="recipe feature" data-recipe="${r.id}"><div class="art" style="background-color:${r.hue}">${r.img?`<img src="${r.img}" alt="">`:`<span class="art-ill">${RECIPE_ILL[r.id%3]}</span>`}</div>
-   <div class="body"><span class="eyebrow">Recette du moment</span><span class="hand">${esc(r.title)}</span><span class="meta">${esc(r.time)} · ${esc(r.level)}</span></div></button>
   <div class="card info-card">
    <h2>Infos pratiques</h2>
    <div class="times"><div><span class="t">8h–9h</span><span class="hint">Accueil du matin</span></div><div><span class="t">16h45–17h</span><span class="hint">Retour des enfants</span></div></div>
    <p class="hint">Du lundi au vendredi.</p>
    <button class="btn small ghost" data-ptab="infos" style="justify-self:start">Règlement et contact</button>
   </div>
- </div>
  </div>`;
 }
 function parentBill(k){

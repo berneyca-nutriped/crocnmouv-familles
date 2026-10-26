@@ -503,7 +503,7 @@ function parentHome(k){
  </div>
 
  <div class="card bag">
-  <div class="section-head"><h2>Dans mon sac</h2><span class="hint">Cochez en préparant le sac</span></div>
+  <div class="section-head"><h2>À mettre dans mon sac :</h2><span class="hint">Cochez en préparant le sac</span></div>
   <div class="checks">${PACK.map((x,i)=>`<label for="bag${i}"><input type="checkbox" id="bag${i}">${x}</label>`).join("")}</div>
  </div>
 
@@ -687,7 +687,7 @@ function parentProgram(k){
  </div>
  <h2>Jour par jour</h2>
  <ol class="timeline">${DAYS.map(([d,t])=>`<li><b>${d}</b><span>${t}</span></li>`).join("")}</ol>
- <div class="card plain pack"><h3>Dans mon sac, chaque jour</h3><div class="chips">${PACK.map(p=>`<span class="chip ok">${I.check}${p}</span>`).join("")}</div><p class="hint">Le repas de midi et les collations sont préparés avec les enfants.</p></div>
+ <div class="card plain pack"><h3>À mettre dans mon sac :</h3><div class="chips">${PACK.map(p=>`<span class="chip ok">${I.check}${p}</span>`).join("")}</div><p class="hint">Le repas de midi et les collations sont préparés avec les enfants.</p></div>
  </div>`;
 }
 function mediaTile(m,selectable){

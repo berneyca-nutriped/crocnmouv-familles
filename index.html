@@ -254,7 +254,7 @@ let kids=[
  {id:15,prenom:"Rose",nom:"Chevalley",naissance:"2017-05-22",weeks:[6,7],paid:false,order:"14896",email:"",parent:"Yann Chevalley",tel:"078 123 98 76",diet:["Vegan"],allergies:"Œuf",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""}
 ];
 const ASS=["CSS","Helsana","Groupe Mutuel","Swica","Visana"],RCS=["Vaudoise","Zurich","Baloise","AXA","Generali"];
-function fillDemo(){kids.forEach((k,i)=>Object.assign(k,{seul:k.seul??(ageOf(k)>=10&&i%2===0),pickup:k.pickup??(i%3===0?"Grand-maman, 079 000 00 0"+(i%10):""),adresse:k.adresse??("Rue des Exemples "+(i+3)+", 1233 Bernex"),parent2:k.parent2??"",assMaladie:k.assMaladie??ASS[i%5],assAccident:k.assAccident??ASS[i%5],rc:k.rc??RCS[i%5],cgv:k.cgv??k.done,email:k.email||("parent"+(i+1)+"@exemple.ch")}))}
+function fillDemo(){kids.forEach((k,i)=>Object.assign(k,{seul:k.seul??(ageOf(k)>=10&&i%2===0),pickup:k.pickup??(i%3===0?"Grand-maman, 079 000 00 0"+(i%10):""),adresse:k.adresse??("Rue des Exemples "+(i+3)+", 1233 Bernex"),parent2:k.parent2??(i%2?"":"Parent "+(i+1)+" bis"),tel2:k.tel2??(i%2?"":"078 000 11 "+String(10+i)),assMaladie:k.assMaladie??ASS[i%5],assAccident:k.assAccident??ASS[i%5],rc:k.rc??RCS[i%5],cgv:k.cgv??k.done,email:k.email||("parent"+(i+1)+"@exemple.ch")}))}
 let recipes=[
  {id:1,title:"Brochettes arc-en-ciel",time:"15 min",level:"Facile",week:1,tags:["Sans cuisson","Végétarien"],ing:["1 barquette de fraises","2 kiwis","1 ananas","1 poignée de myrtilles","Piques en bois"],steps:["Laver et couper les fruits en cubes.","Enfiler les fruits en suivant les couleurs de l'arc-en-ciel.","Déguster bien frais !"],hue:"#F2A9A0",img:""},
  {id:2,title:"Houmous de betterave",time:"20 min",level:"Facile",week:1,tags:["Vegan","Sans gluten"],ing:["1 betterave cuite","1 boîte de pois chiches","2 c. à s. de tahini","1 citron","Sel, cumin"],steps:["Égoutter les pois chiches.","Mixer tous les ingrédients jusqu'à obtenir une crème lisse.","Servir avec des bâtonnets de légumes."],hue:"#C9708C",img:""},
@@ -404,7 +404,10 @@ function parentKid(k){
     <label class="f" for="fEmail">E-mail<input class="input" id="fEmail" type="email" value="${esc(k.email)}"></label>
     <label class="f" for="fAdr">Adresse (rue, NPA, localité)<input class="input" id="fAdr" value="${esc(k.adresse)}"></label>
    </div>
-   <label class="f" for="fP2">Deuxième parent (facultatif)<input class="input" id="fP2" placeholder="Nom, téléphone" value="${esc(k.parent2)}"></label>
+   <div class="grid g2">
+    <label class="f" for="fP2">Nom du parent 2<input class="input" id="fP2" placeholder="Facultatif" value="${esc(k.parent2)}"></label>
+    <label class="f" for="fTel2">Téléphone du parent 2<input class="input" id="fTel2" type="tel" placeholder="Facultatif" value="${esc(k.tel2)}"></label>
+   </div>
    <label class="f" for="fUrg">Autre personne à contacter en urgence<input class="input" id="fUrg" placeholder="Nom, lien, téléphone" value="${esc(k.urgence)}"></label>
   </fieldset>
   <fieldset>
@@ -596,7 +599,8 @@ function kidSheet(id){return ()=>{const k=kids.find(x=>x.id===id);return `<div c
   <dt>Téléphone</dt><dd>${esc(k.tel)}</dd>
   <dt>E-mail</dt><dd>${esc(k.email)}</dd>
   <dt>Adresse</dt><dd>${esc(k.adresse)||"–"}</dd>
-  <dt>2e parent</dt><dd>${esc(k.parent2)||"–"}</dd>
+  <dt>Parent 2</dt><dd>${esc(k.parent2)||"–"}</dd>
+  <dt>Tél. parent 2</dt><dd>${esc(k.tel2)||"–"}</dd>
   <dt>Urgence</dt><dd>${esc(k.urgence)||"–"}</dd>
   <dt>Régime</dt><dd>${esc(k.diet.join(", "))||"Aucun"}</dd>
   <dt>Santé</dt><dd>${esc(k.patho)||"Rien de signalé"}</dd>
@@ -634,7 +638,7 @@ const PCOLS=[
  ["meds","Médicaments",k=>k.meds.map(m=>m.name+" "+m.dose+" ("+m.when+")").join(" ; ")],
  ["photos","Droit à l'image",k=>k.photos?"Oui":"NON"],
  ["retour","Retour à la maison",k=>k.seul?"Rentre seul":"Accompagné"+(k.pickup?" · autorisés : "+k.pickup:"")],
- ["parent","Parent et téléphone",k=>k.parent+" · "+k.tel],
+ ["parent","Parents et téléphones",k=>k.parent+" · "+k.tel+(k.tel2?" / "+(k.parent2?k.parent2+" · ":"")+k.tel2:"")],
  ["adresse","Adresse",k=>k.adresse],
  ["assurances","Assurances",k=>"Maladie : "+k.assMaladie+" · Accident : "+k.assAccident+" · RC : "+k.rc],
  ["urgence","Contact d'urgence",k=>k.urgence],
@@ -749,7 +753,7 @@ document.addEventListener("submit",e=>{
  if(e.target.id==="kidForm"){
   const k=S.me;
   if(!$("#fCgv").checked){const er=$("#kErr");er.hidden=false;er.scrollIntoView({block:"center"});return}
-  k.cgv=true;k.parent=$("#fParent").value.trim()||k.parent;k.email=$("#fEmail").value.trim();k.adresse=$("#fAdr").value.trim();k.parent2=$("#fP2").value.trim();
+  k.cgv=true;k.parent=$("#fParent").value.trim()||k.parent;k.email=$("#fEmail").value.trim();k.adresse=$("#fAdr").value.trim();k.parent2=$("#fP2").value.trim();k.tel2=$("#fTel2").value.trim();
   k.seul=$("#fSeulY").checked;k.pickup=$("#fPick").value.trim();k.assMaladie=$("#fAM").value.trim();k.assAccident=$("#fAA").value.trim();k.rc=$("#fRC").value.trim();
   k.prenom=$("#fPrenom").value.trim()||k.prenom;k.nom=$("#fNom").value.trim()||k.nom;k.naissance=$("#fNaiss").value||k.naissance;
   k.tel=$("#fTel").value.trim();k.urgence=$("#fUrg").value.trim();

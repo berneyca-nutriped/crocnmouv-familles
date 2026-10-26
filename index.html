@@ -273,6 +273,13 @@ td.num,th.num{white-space:nowrap;text-align:right}
 .remind-bar{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;background:var(--warn-bg);border-radius:var(--r-sm);padding:12px 14px}
 .remind-bar .pm-ill{margin:0}
 @media (max-width:440px){.remind-bar{grid-template-columns:44px 1fr}.remind-bar .btn{grid-column:1/-1}}
+.kid-switch{display:flex;gap:8px;overflow-x:auto;margin-bottom:16px;padding-bottom:2px}
+.kid-switch button{flex:none;display:flex;align-items:center;gap:8px;border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:4px 14px 4px 4px;font-weight:600;position:relative}
+.kid-switch .avatar{width:30px;height:30px;font-size:.8rem}
+.kid-switch button[aria-pressed="true"]{border-color:var(--lime-strong);background:var(--surface)}
+.mini-dot{width:8px;height:8px;border-radius:50%;background:var(--warn)}
+.shared-note{display:flex;gap:8px;align-items:flex-start;background:var(--ok-bg);color:var(--ok);border-radius:var(--r-sm);padding:10px 12px;font-size:.88rem;font-weight:500}
+.shared-note svg{width:18px;height:18px;flex:none;margin-top:2px}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 html,body{height:100%}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -327,10 +334,15 @@ let kids=[
  {id:12,prenom:"Jules",nom:"Morel",naissance:"2018-07-19",weeks:[3,5],paid:false,order:"14878",email:"",parent:"Léon Morel",tel:"077 111 22 33",diet:["Sans porc"],allergies:"",severe:false,patho:"",meds:[],photos:false,obs:"",done:true,urgence:""},
  {id:13,prenom:"Louise",nom:"Blanc",naissance:"2015-03-25",weeks:[4,5,6,7],paid:true,order:"14883",email:"",parent:"Iris Blanc",tel:"076 333 44 55",diet:[],allergies:"",severe:false,patho:"Diabète type 1",meds:[{name:"Insuline (pompe)",dose:"Selon glycémie",when:"Contrôle 10h, 12h, 15h"}],photos:true,obs:"Collation obligatoire à 10h",done:true,urgence:""},
  {id:14,prenom:"Adam",nom:"Fontana",naissance:"2019-12-01",weeks:[5,6,7],paid:true,order:"14890",email:"",parent:"Rita Fontana",tel:"079 999 00 11",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:false,urgence:""},
+ {id:16,prenom:"Tom",nom:"Martin",naissance:"2016-02-10",weeks:[1,3],paid:true,order:"14817",email:"famille.martin@exemple.ch",parent:"Sophie Martin",tel:"079 123 45 67",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:false,cgv:false,urgence:""},
+ {id:17,prenom:"Emma",nom:"Martin",naissance:"2020-06-02",weeks:[4],paid:false,order:"14899",email:"famille.martin@exemple.ch",parent:"Sophie Martin",tel:"079 123 45 67",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:false,cgv:false,urgence:""},
  {id:15,prenom:"Rose",nom:"Chevalley",naissance:"2017-05-22",weeks:[6,7],paid:false,order:"14896",email:"",parent:"Yann Chevalley",tel:"078 123 98 76",diet:["Vegan"],allergies:"Œuf",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""}
 ];
 const ASS=["CSS","Helsana","Groupe Mutuel","Swica","Visana"],RCS=["Vaudoise","Zurich","Baloise","AXA","Generali"];
-function fillDemo(){kids.forEach((k,i)=>Object.assign(k,{lieu:k.lieu??LIEUX[[0,0,1,0,2,0,3,1,0,2,0,3,1,2,0][i]??0],contacts:k.contacts??(k.urgence?[{name:k.urgence.split(",")[0]+" (papa)",tel:(k.urgence.split(",")[1]||"").trim()}]:[]),seul:k.seul??(ageOf(k)>=10&&i%2===0),pickup:k.pickup??(i%3===0?"Grand-maman, 079 000 00 0"+(i%10):""),adresse:k.adresse??("Rue des Exemples "+(i+3)+", 1233 Bernex"),parent2:k.parent2??(i%2?"":"Parent "+(i+1)+" bis"),tel2:k.tel2??(i%2?"":"078 000 11 "+String(10+i)),assMaladie:k.assMaladie??ASS[i%5],assAccident:k.assAccident??ASS[i%5],rc:k.rc??RCS[i%5],cgv:k.cgv??k.done,email:k.email||("parent"+(i+1)+"@exemple.ch")}))}
+const SHARED=["parent","tel","email","adresse","parent2","tel2","contacts","pickup","rc"];
+const familyOf=k=>kids.filter(x=>x.email.toLowerCase()===k.email.toLowerCase()).sort((a,b)=>a.naissance.localeCompare(b.naissance));
+function syncFamily(k){familyOf(k).forEach(x=>{if(x!==k)SHARED.forEach(f=>x[f]=f==="contacts"?k.contacts.map(c=>({...c})):k[f])})}
+function fillDemo(){kids.forEach((k,i)=>Object.assign(k,{lieu:k.lieu??LIEUX[[0,0,1,0,2,0,3,1,0,2,0,3,1,2,0][i]??0],contacts:k.contacts??(k.urgence?[{name:k.urgence.split(",")[0]+" (papa)",tel:(k.urgence.split(",")[1]||"").trim()}]:[]),seul:k.seul??(ageOf(k)>=10&&i%2===0),pickup:k.pickup??(i%3===0?"Grand-maman, 079 000 00 0"+(i%10):""),adresse:k.adresse??("Rue des Exemples "+(i+3)+", 1233 Bernex"),parent2:k.parent2??(i%2?"":"Parent "+(i+1)+" bis"),tel2:k.tel2??(i%2?"":"078 000 11 "+String(10+i)),assMaladie:k.assMaladie??ASS[i%5],assAccident:k.assAccident??ASS[i%5],rc:k.rc??RCS[i%5],cgv:k.cgv??k.done,email:k.email||("parent"+(i+1)+"@exemple.ch")}));syncFamily(kids[0])}
 let recipes=[
  {id:1,title:"Brochettes arc-en-ciel",time:"15 min",level:"Facile",week:1,tags:["Sans cuisson","Végétarien"],ing:["1 barquette de fraises","2 kiwis","1 ananas","1 poignée de myrtilles","Piques en bois"],steps:["Laver et couper les fruits en cubes.","Enfiler les fruits en suivant les couleurs de l'arc-en-ciel.","Déguster bien frais !"],hue:"#E9EFA0",img:""},
  {id:2,title:"Houmous de betterave",time:"20 min",level:"Facile",week:1,tags:["Vegan","Sans gluten"],ing:["1 betterave cuite","1 boîte de pois chiches","2 c. à s. de tahini","1 citron","Sel, cumin"],steps:["Égoutter les pois chiches.","Mixer tous les ingrédients jusqu'à obtenir une crème lisse.","Servir avec des bâtonnets de légumes."],hue:"#D8E88A",img:""},
@@ -448,7 +460,8 @@ function loginView(){return `
 
 /* ---------------- Espace parent ---------------- */
 function parentView(){
- const k=S.me;
+ const k=S.me,fam=familyOf(k);
+ const switcher=fam.length>1&&["accueil","enfant","programme","photos","facture"].includes(S.ptab)?`<div class="kid-switch" role="group" aria-label="Choisir l'enfant">${fam.map(x=>`<button aria-pressed="${x===k}" data-pkid="${x.id}"><span class="avatar">${esc(x.prenom[0])}</span>${esc(x.prenom)}${x.done?"":'<span class="mini-dot" aria-label="fiche à compléter"></span>'}</button>`).join("")}</div>`:"";
  const tabs=[["accueil","Accueil",I.home],["enfant","Fiche",I.kid],["programme","Programme",I.cal],["photos","Photos",I.cam],["recettes","Recettes",I.pot]];
  let body="";
  if(S.ptab==="accueil")body=parentHome(k);
@@ -461,11 +474,11 @@ function parentView(){
  return `<div class="app">
  <header class="topbar"><div class="wrap">
   <img class="logo-img logo-black" src="${LOGO_BLACK}" alt="Croc'n'Mouv">
-  <div class="who"><b>${esc(k.parent)}</b>Commande ${esc(k.order)}</div>
+  <div class="who"><b>${esc(k.parent)}</b>${fam.length>1?fam.length+" enfants":"Commande "+esc(k.order)}</div>
   <button class="iconbtn" data-ptab="infos" aria-label="Infos pratiques et règlement">${I.info}</button>
   <button class="iconbtn" data-act="logout" aria-label="Se déconnecter">${I.out}</button>
  </div></header>
- <main><div class="wrap">${body}</div></main>
+ <main><div class="wrap">${switcher}${body}</div></main>
  <nav class="tabs" aria-label="Navigation"><div class="wrap" role="tablist">
   ${tabs.map(([id,l,ic])=>`<button class="tab" role="tab" aria-selected="${S.ptab===id}" data-ptab="${id}">${ic}${l}</button>`).join("")}
  </div></nav></div>`;
@@ -485,14 +498,15 @@ function countdown(k){
 }
 function parentHome(k){
  const c=countdown(k),pct=completion(k),w=WEEKS[k.weeks[0]-1];
+ const fam=familyOf(k),orders=[...new Set(fam.map(x=>x.order))];
  const todo=[
-  {ok:k.done,t:`Fiche de ${esc(k.prenom)}`,s:k.done?"Complète, merci !":`Complétée à ${pct} %. Il reste quelques questions.`,a:k.done?"":`<button class="btn small primary" data-ptab="enfant">Compléter</button>`},
-  {ok:k.cgv,t:"Règlement général",s:k.cgv?"Lu et accepté":"À lire et accepter dans la fiche",a:k.cgv?"":`<button class="btn small" data-act="readRules">Lire</button>`},
-  {ok:k.paid,t:"Paiement",s:k.paid?"Reçu, merci !":"Virement bancaire dans les 10 jours après l'inscription",a:""}
+  ...fam.map(x=>{const p=completion(x);return {ok:x.done,t:`Fiche de ${esc(x.prenom)}`,s:x.done?"Complète, merci !":`Complétée à ${p} %. Il reste quelques questions.`,a:x.done?"":`<button class="btn small primary" data-kidfiche="${x.id}">Compléter</button>`}}),
+  {ok:fam.every(x=>x.cgv),t:"Règlement général",s:fam.every(x=>x.cgv)?"Lu et accepté":"À lire et accepter dans la fiche",a:fam.every(x=>x.cgv)?"":`<button class="btn small" data-act="readRules">Lire</button>`},
+  ...orders.map(o=>{const pd=fam.filter(x=>x.order===o).every(x=>x.paid);return {ok:pd,t:`Paiement${orders.length>1?" · commande "+o:""}`,s:pd?"Reçu, merci !":"Virement bancaire dans les 10 jours après l'inscription",a:""}})
  ];
  return `<div class="section">
  <div class="hero-home">
-  <span class="eyebrow">Bonjour ${esc(k.parent.split(" ")[0])} !</span>
+  <span class="eyebrow">Bonjour ${esc(k.parent.split(" ")[0])} !${fam.length>1?" · "+esc(k.prenom):""}</span>
   <div class="count-line">${c.num!==""?`<span class="count">${c.num}</span>`:""}<span class="count-txt">${c.txt}</span></div>
   <div class="chips"><span class="chip">${esc(k.lieu)}</span>${k.weeks.map(n=>`<span class="chip">S${n} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span>`).join("")}</div>
   <p class="hero-theme">Première semaine : <b>${esc(w.theme)}</b></p>
@@ -576,6 +590,7 @@ function parentKid(k){
   </fieldset>
   <fieldset>
    <legend>Parents</legend>
+   ${familyOf(k).length>1?`<p class="shared-note">${I.check}Ces informations sont communes à ${familyOf(k).map(x=>esc(x.prenom)).join(", ")}. Remplies une fois, elles sont reprises pour tous vos enfants.</p>`:""}
    <div class="grid g2">
     <label class="f" for="fParent">Nom du parent<input class="input" id="fParent" value="${esc(k.parent)}"></label>
     <label class="f" for="fTel">Téléphone<input class="input" id="fTel" type="tel" value="${esc(k.tel)}"></label>
@@ -807,6 +822,7 @@ function kidSheet(id){return ()=>{const k=kids.find(x=>x.id===id);return `<div c
  ${k.allergies?`<div class="notice" style="${k.severe?"background:var(--bad-bg);color:var(--bad)":""}">${k.severe?"Allergie sévère : ":"Allergie : "}${esc(k.allergies)}</div>`:""}
  <dl class="kv">
   <dt>Retour</dt><dd>${k.seul?"<b>Rentre seul</b>":"Ne rentre pas seul"}${k.pickup?"<br>Autorisés : "+esc(k.pickup):""}</dd>
+  ${familyOf(k).length>1?`<dt>Fratrie</dt><dd>${familyOf(k).filter(x=>x!==k).map(x=>esc(x.prenom)+" ("+ageOf(x)+" ans, "+x.weeks.map(n=>"S"+n).join(", ")+")").join("<br>")}</dd>`:""}
   <dt>Parent</dt><dd>${esc(k.parent)}</dd>
   <dt>Téléphone</dt><dd>${esc(k.tel)}</dd>
   <dt>E-mail</dt><dd>${esc(k.email)}</dd>
@@ -960,7 +976,7 @@ function recipeForm(){return `<div class="sheet-bg" data-act="closeSheet"><div c
 /* ---------------- Interactions ---------------- */
 let pendingImg="";
 document.addEventListener("click",e=>{
- const t=e.target.closest("[data-act],[data-ptab],[data-atab],[data-pweek],[data-aweek],[data-mweek],[data-filter],[data-amode],[data-kid],[data-recipe],[data-msel],[data-prweek],[data-step],[data-lieu]");
+ const t=e.target.closest("[data-act],[data-ptab],[data-atab],[data-pweek],[data-aweek],[data-mweek],[data-filter],[data-amode],[data-kid],[data-recipe],[data-msel],[data-prweek],[data-step],[data-lieu],[data-pkid],[data-kidfiche]");
  if(!t)return;
  const d=t.dataset;
  if(d.act==="closeSheet"){if(t.classList.contains("sheet-bg")&&e.target!==t)return;S.sheet=null;return render()}
@@ -989,6 +1005,8 @@ document.addEventListener("click",e=>{
  if(d.act==="clearSel"){S.msel.clear();return render()}
  if(d.act==="dlAll"){return toast(`Dans l'app finale : un fichier .zip avec les ${(media[S.mweek]||[]).length} fichiers de la semaine ${S.mweek} se télécharge.`)}
  if(d.act==="dlSel"){return toast(`Dans l'app finale : un fichier .zip avec les ${S.msel.size} fichiers choisis se télécharge.`)}
+ if(d.pkid){S.me=kids.find(x=>x.id===+d.pkid);S.step=0;return render()}
+ if(d.kidfiche){S.me=kids.find(x=>x.id===+d.kidfiche);S.ptab="enfant";S.step=0;scrollTo(0,0);return render()}
  if(d.lieu!==undefined){S.lieu=d.lieu||null;return render()}
  if(d.step!==undefined){return goStep(+d.step)}
  if(d.act==="stepNext"){return goStep(S.step+1)}
@@ -1019,7 +1037,7 @@ document.addEventListener("submit",e=>{
  if(e.target.id==="loginForm"){
   const o=$("#lgOrder").value.replace(/[#\s]/g,"").replace(/^0+/,""),k=kids.find(x=>x.order===o);
   if(!k){const er=$("#lgErr");er.textContent="Ce numéro de commande est introuvable. Vérifiez l'e-mail de confirmation (numéro de commande Squarespace, par ex. 14817).";er.hidden=false;return}
-  S.me=k;S.view="parent";S.ptab="accueil";S.step=0;return render();
+  S.me=familyOf(k).find(x=>!x.done)||k;S.view="parent";S.ptab="accueil";S.step=0;return render();
  }
  if(e.target.id==="kidForm"){
   const k=S.me;
@@ -1031,7 +1049,7 @@ document.addEventListener("submit",e=>{
   const rg=$("#fRegime").value.trim();k.diet=rg?[rg]:[];k.allergies=$("#fAll").value.trim();k.severe=$("#fSev").checked&&!!k.allergies;
   k.patho=$("#fPatho").value.trim();k.obs=$("#fObs").value.trim();k.photos=$("#fPhY").checked;
   k.meds=[...document.querySelectorAll(".med-row")].map(r=>{const [n,d,w]=r.querySelectorAll("input");return {name:n.value.trim(),dose:d.value.trim(),when:w.value.trim()}}).filter(m=>m.name);
-  k.done=true;S.step=0;S.ptab="accueil";render();scrollTo(0,0);return toast("Fiche enregistrée. Merci !");
+  k.done=true;syncFamily(k);S.step=0;S.ptab="accueil";render();scrollTo(0,0);return toast("Fiche enregistrée. Merci !");
  }
  if(e.target.id==="recipeForm"){
   const title=$("#rT").value.trim();if(!title){$("#rErr").hidden=false;return}

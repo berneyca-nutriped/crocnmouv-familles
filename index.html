@@ -1,0 +1,727 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#CDDF70">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icon-192.png">
+<meta name="apple-mobile-web-app-title" content="Croc'n'Mouv">
+<title>Croc'n'Mouv Familles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Caveat+Brush&display=swap">
+<style>
+/* Layout: app mobile d'abord, cartes arrondies vert pâle comme crocnmouv.ch, barre d'onglets en bas */
+:root{
+  --bg:#ffffff; --surface:#F0F2BC; --surface-2:#F7F8DE; --lime:#CDDF70; --lime-strong:#B7CC4A;
+  --ink:#1B1D12; --muted:#5E6248; --line:#E2E5B8; --on-lime:#1B1D12;
+  --ok:#2F7D3A; --ok-bg:#DDF0D9; --warn:#8A5A00; --warn-bg:#FBEACB; --bad:#A3271F; --bad-bg:#F9DAD6; --info-bg:#E6E9F7; --info:#33408A;
+  --font:'Poppins',system-ui,-apple-system,"Segoe UI",sans-serif; --hand:'Caveat Brush','Poppins',cursive;
+  --r:22px; --r-sm:14px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#13140D; --surface:#262A16; --surface-2:#1D2011; --lime:#CDDF70; --lime-strong:#D8E88A;
+  --ink:#F1F3DC; --muted:#AEB291; --line:#353A20; --on-lime:#1B1D12;
+  --ok:#8BD594; --ok-bg:#1E3A22; --warn:#F2C26B; --warn-bg:#3D2E10; --bad:#F59A90; --bad-bg:#45201B; --info-bg:#232A4A; --info:#AFBAF5; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13140D; --surface:#262A16; --surface-2:#1D2011; --lime:#CDDF70; --lime-strong:#D8E88A;
+  --ink:#F1F3DC; --muted:#AEB291; --line:#353A20; --on-lime:#1B1D12;
+  --ok:#8BD594; --ok-bg:#1E3A22; --warn:#F2C26B; --warn-bg:#3D2E10; --bad:#F59A90; --bad-bg:#45201B; --info-bg:#232A4A; --info:#AFBAF5; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--font);font-size:15px;line-height:1.5}
+h1,h2,h3{margin:0;line-height:1.2;text-wrap:balance;font-weight:600}
+h1{font-size:1.7rem} h2{font-size:1.3rem} h3{font-size:1.05rem}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:3px solid var(--lime-strong);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.logo-img{display:block;height:46px;width:auto}
+.logo-dark{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .logo-black{filter:invert(1)}}
+:root[data-theme="dark"] .logo-black{filter:invert(1)}
+
+/* ---------- Connexion ---------- */
+#login{min-height:100%;display:grid;place-items:center;padding-block:32px}
+.login-card{width:100%;max-width:440px;display:grid;gap:22px}
+.login-hero{background:var(--lime);border-radius:var(--r) var(--r) var(--r) 0;padding:28px 24px 0;position:relative;color:var(--on-lime)}
+.login-hero h1{font-size:1.6rem;max-width:14ch}
+.login-hero p{margin-top:6px;font-size:.95rem}
+.login-hero .badge-logo{display:block;width:170px;margin:10px 0 -24px auto;background:var(--bg);border-radius:var(--r) 0 0 0;padding:10px 6px 0 12px}
+.form{display:grid;gap:14px}
+label.f{display:grid;gap:6px;font-weight:500;font-size:.9rem}
+.input,select.input,textarea.input{width:100%;border:2px solid var(--line);background:var(--surface-2);border-radius:var(--r-sm);padding:12px 14px;min-height:48px}
+textarea.input{min-height:90px;resize:vertical}
+.input:focus{border-color:var(--lime-strong);outline:none}
+.btn{border:0;border-radius:999px;padding:13px 24px;font-weight:600;background:var(--surface);color:var(--ink);min-height:48px;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn.primary{background:var(--lime);color:var(--on-lime)}
+.btn.primary:hover{background:var(--lime-strong)}
+.btn.ghost{background:transparent;border:2px solid var(--line)}
+.btn.small{padding:8px 16px;min-height:38px;font-size:.88rem}
+.hint{font-size:.85rem;color:var(--muted)}
+.demo-box{background:var(--surface-2);border:2px dashed var(--line);border-radius:var(--r-sm);padding:14px;display:grid;gap:10px;font-size:.88rem}
+.demo-box .row{display:flex;flex-wrap:wrap;gap:8px}
+.err{color:var(--bad);font-size:.88rem;font-weight:500}
+
+/* ---------- Coque app ---------- */
+.app{min-height:100%;display:flex;flex-direction:column}
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.topbar .wrap{display:flex;align-items:center;gap:12px;padding-block:10px}
+.topbar .who{margin-left:auto;text-align:right;font-size:.85rem;line-height:1.3;min-width:0}
+.topbar .who b{display:block;font-size:.95rem}
+.iconbtn{border:0;background:var(--surface);border-radius:999px;width:42px;height:42px;display:grid;place-items:center;flex:none}
+.iconbtn svg{width:20px;height:20px}
+main{flex:1;padding-block:20px 110px}
+.tabs{position:fixed;left:0;right:0;bottom:0;z-index:6;background:var(--bg);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs .wrap{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:4px;padding-block:6px}
+.tab{border:0;background:transparent;border-radius:16px;padding:8px 4px;display:grid;justify-items:center;gap:2px;font-size:.75rem;font-weight:500;color:var(--muted)}
+.tab svg{width:22px;height:22px}
+.tab[aria-selected="true"]{background:var(--surface);color:var(--ink)}
+.section{display:grid;gap:18px}
+.section-head{display:flex;flex-wrap:wrap;align-items:end;justify-content:space-between;gap:10px}
+.eyebrow{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.hand{font-family:var(--hand);font-weight:400;font-size:1.5rem;letter-spacing:.01em}
+.card{background:var(--surface);border-radius:var(--r);padding:20px}
+.card.plain{background:var(--surface-2)}
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:5px;border-radius:999px;padding:3px 10px;font-size:.76rem;font-weight:600;background:var(--surface-2);color:var(--muted);white-space:nowrap}
+.chip svg{width:13px;height:13px}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}
+.chip.warn{background:var(--warn-bg);color:var(--warn)}
+.chip.bad{background:var(--bad-bg);color:var(--bad)}
+.chip.info{background:var(--info-bg);color:var(--info)}
+.seg{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.seg button{flex:none;border:2px solid var(--line);background:var(--bg);border-radius:999px;padding:7px 14px;font-weight:500;font-size:.88rem;white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--lime);border-color:var(--lime);color:var(--on-lime)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(88px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:14px;font-size:.9rem;z-index:30;max-width:calc(100% - 32px);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+
+/* ---------- Parent ---------- */
+.kid-hero{background:var(--lime);color:var(--on-lime);border-radius:var(--r) var(--r) var(--r) 0;padding:22px;display:grid;gap:12px}
+.kid-hero .chips .chip{background:rgba(255,255,255,.55);color:var(--on-lime)}
+.kid-hero .chips .chip.bad{background:var(--bad-bg);color:var(--bad)}
+.progress{height:10px;border-radius:999px;background:rgba(255,255,255,.5);overflow:hidden}
+.progress i{display:block;height:100%;background:var(--on-lime);border-radius:999px}
+fieldset{border:0;margin:0;padding:0;display:grid;gap:12px}
+legend{font-weight:600;font-size:1.05rem;margin-bottom:4px;padding:0}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.checks label{display:inline-flex;align-items:center;gap:8px;background:var(--bg);border:2px solid var(--line);border-radius:999px;padding:8px 14px;font-size:.9rem;cursor:pointer}
+.checks input{accent-color:var(--lime-strong);width:18px;height:18px}
+.checks label:has(input:checked){border-color:var(--lime-strong);background:var(--surface-2)}
+.med-row{display:grid;grid-template-columns:2fr 1fr 1.4fr auto;gap:8px;align-items:center}
+@media (max-width:560px){.med-row{grid-template-columns:1fr 1fr}.med-row .input:first-child{grid-column:1/-1}}
+.pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
+.pillar{background:var(--surface);border-radius:var(--r);padding:20px}
+.pillar h3{font-size:1.25rem;margin-bottom:10px}
+.pillar ul{margin:0;padding:0;list-style:none;display:grid;gap:4px}
+.pillar li::before{content:"- "}
+.days{display:grid;gap:8px}
+.day{display:grid;grid-template-columns:64px 1fr;gap:12px;align-items:baseline;padding:12px 16px;background:var(--surface-2);border-radius:var(--r-sm)}
+.day b{font-size:.85rem;text-transform:uppercase;letter-spacing:.06em}
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.ph{position:relative;aspect-ratio:1;border-radius:var(--r-sm);overflow:hidden;max-width:100%;background:var(--surface);display:grid;place-items:center;color:var(--on-lime);border:0;padding:0}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph .cap{position:absolute;left:6px;right:6px;bottom:6px;font-size:.72rem;font-weight:600;background:rgba(255,255,255,.8);color:#1B1D12;border-radius:8px;padding:2px 6px;text-align:left;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph .type{position:absolute;top:6px;right:6px;background:rgba(27,29,18,.75);color:#fff;border-radius:999px;padding:2px 8px;font-size:.7rem;display:flex;gap:4px;align-items:center}
+.ph .type svg{width:12px;height:12px}
+.ph .sel{position:absolute;top:6px;left:6px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,.85);border:2px solid #1B1D12;display:grid;place-items:center}
+.ph[aria-pressed="true"] .sel{background:var(--lime);}
+.ph[aria-pressed="true"]{outline:3px solid var(--lime-strong);outline-offset:-3px}
+.recipes{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+.recipe{background:var(--surface);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;border:0;padding:0;text-align:left}
+.recipe .art{aspect-ratio:16/10;max-width:100%;width:100%;display:grid;place-items:center;overflow:hidden}
+.recipe .art img{width:100%;height:100%;object-fit:cover}
+.recipe .body{padding:16px 18px 18px;display:grid;gap:8px}
+.recipe .meta{font-size:.82rem;color:var(--muted)}
+.recipe-detail ol,.recipe-detail ul{margin:0;padding-left:1.2em;display:grid;gap:6px}
+
+/* ---------- Admin ---------- */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px}
+.stat{background:var(--surface-2);border-radius:var(--r-sm);padding:12px 14px;border:0;text-align:left;display:grid;gap:2px}
+.stat .n{font-size:1.6rem;font-weight:700;font-variant-numeric:tabular-nums;line-height:1.1}
+.stat .l{font-size:.8rem;color:var(--muted);font-weight:500}
+.stat.alert .n{color:var(--bad)}
+.stat[aria-pressed="true"]{outline:3px solid var(--lime-strong)}
+.group{display:grid;gap:8px}
+.group-head{display:flex;align-items:baseline;gap:10px;padding:6px 2px}
+.group-head h3{font-size:1.1rem}
+.group-head span{color:var(--muted);font-size:.85rem}
+.kid-row{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;background:var(--surface-2);border-radius:var(--r-sm);padding:10px 12px;border:0;text-align:left;width:100%}
+.kid-row:hover{background:var(--surface)}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--lime);color:var(--on-lime);display:grid;place-items:center;font-weight:700;font-size:.9rem}
+.kid-row .name{font-weight:600;min-width:0}
+.kid-row .name small{display:block;font-weight:400;color:var(--muted);font-size:.8rem}
+.kid-row .chips{grid-column:2/-1}
+.pay-dot{font-size:.76rem;font-weight:700;padding:4px 10px;border-radius:999px}
+.table-wrap{overflow-x:auto;border-radius:var(--r-sm);border:1px solid var(--line)}
+table{border-collapse:collapse;width:100%;font-size:.85rem;min-width:720px}
+th,td{padding:9px 10px;text-align:left;border-bottom:1px solid var(--line);vertical-align:top}
+th{background:var(--surface);font-weight:600;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;position:sticky;top:0}
+td.num{font-variant-numeric:tabular-nums}
+.sheet-bg{position:fixed;inset:0;background:rgba(10,12,5,.45);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:640px;max-height:92%;overflow:auto;border-radius:24px 24px 0 0;padding:20px max(18px,env(safe-area-inset-left,0px)) calc(24px + env(safe-area-inset-bottom,0px));display:grid;gap:16px}
+@media (min-width:700px){.sheet-bg{align-items:center}.sheet{border-radius:24px;max-height:88%}}
+.sheet .grab{width:44px;height:5px;border-radius:9px;background:var(--line);margin:0 auto}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:6px 12px;font-size:.92rem}
+.kv dt{color:var(--muted);font-weight:500}
+.kv dd{margin:0;min-width:0}
+.toggle{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface-2);border-radius:var(--r-sm);padding:12px 14px}
+.switch{position:relative;width:52px;height:30px;border-radius:999px;border:0;background:var(--line);flex:none}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:left .15s}
+.switch[aria-checked="true"]{background:var(--ok)}
+.switch[aria-checked="true"]::after{left:25px}
+.notice{background:var(--warn-bg);color:var(--warn);border-radius:var(--r-sm);padding:12px 14px;font-size:.88rem;font-weight:500}
+.upload{border:2px dashed var(--lime-strong);border-radius:var(--r-sm);padding:16px;display:grid;justify-items:center;gap:6px;text-align:center;cursor:pointer;background:var(--surface-2)}
+.upload input{position:absolute;opacity:0;width:1px;height:1px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.search{flex:1 1 200px}
+/* ---------- Impression ---------- */
+.print-opts{display:grid;gap:14px}
+.paper{background:#fff;color:#111;border-radius:6px;box-shadow:0 2px 14px rgba(0,0,0,.15);padding:24px;display:grid;gap:14px;overflow-x:auto}
+.paper-head{display:flex;align-items:center;gap:14px;justify-content:space-between;flex-wrap:wrap}
+.paper-head img{height:52px}
+.paper h2{font-size:1.15rem;color:#111}
+.paper .sub{font-size:.8rem;color:#555}
+.paper h3{font-size:.95rem;color:#111;border-bottom:2px solid #CDDF70;padding-bottom:4px}
+.paper table{min-width:0;font-size:.78rem;color:#111}
+.paper th{background:#F0F2BC;color:#111;position:static}
+.paper td,.paper th{border:1px solid #ddd;padding:6px 7px}
+.paper .tick{display:inline-block;width:14px;height:14px;border:1.5px solid #333;border-radius:3px}
+.paper .alert{color:#A3271F;font-weight:700}
+@media print{
+  body *{visibility:hidden}
+  .paper,.paper *{visibility:visible}
+  .paper{position:absolute;left:0;top:0;width:100%;box-shadow:none;border-radius:0;padding:0}
+  @page{size:A4 landscape;margin:12mm}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+html,body{height:100%}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+
+<div id="root"></div>
+
+<script>
+const LOGO_LIME="assets/logo-lime.png";
+const LOGO_BLACK="assets/logo-black.png";
+
+/* ---------------- Données de démonstration (fictives) ---------------- */
+const WEEKS=[
+ {n:1,from:"5 juil.",to:"9 juil.",theme:"Les petits chefs du verger"},
+ {n:2,from:"12 juil.",to:"16 juil.",theme:"Explorateurs de la forêt"},
+ {n:3,from:"19 juil.",to:"23 juil.",theme:"Le potager en fête"},
+ {n:4,from:"26 juil.",to:"30 juil.",theme:"Olympiades de l'été"},
+ {n:5,from:"2 août",to:"6 août",theme:"À la ferme"},
+ {n:6,from:"9 août",to:"13 août",theme:"Saveurs du monde"},
+ {n:7,from:"16 août",to:"20 août",theme:"Le grand final de l'été"}
+];
+const PROGRAM={
+ alimentation:["Éducation nutritionnelle","Réalisation des repas","Activités sensorielles","Activités culinaires","Dégustations"],
+ mouvement:["Découverte d'un sport","Chasse aux trésors","Marche","Exercices de relaxation","Jeux en plein air"],
+ nature:["Visite d'une ferme pédagogique","Activités comment ça pousse","Cueillette de saison"]
+};
+const DAYS=[
+ ["Lun","Accueil, jeux de connaissance et atelier dégustation des fruits de saison"],
+ ["Mar","Découverte d'un sport le matin, préparation du pique-nique l'après-midi"],
+ ["Mer","Sortie nature : cueillette et marche (prévoir casquette et gourde)"],
+ ["Jeu","Atelier cuisine : les enfants préparent le repas de midi"],
+ ["Ven","Chasse aux trésors géante et goûter des familles dès 16h30"]
+];
+const DIETS=["Végétarien","Sans porc","Sans gluten","Sans lactose","Halal","Vegan"];
+let kids=[
+ {id:1,prenom:"Léa",nom:"Martin",naissance:"2019-03-14",weeks:[1,3],paid:true,order:"14817",email:"famille.martin@exemple.ch",parent:"Sophie Martin",tel:"079 123 45 67",diet:["Végétarien"],allergies:"Arachides",severe:true,patho:"",meds:[{name:"EpiPen Junior",dose:"0,15 mg",when:"En cas de réaction"}],photos:true,obs:"",done:true,urgence:"Paul Martin, 079 765 43 21"},
+ {id:2,prenom:"Noah",nom:"Dubois",naissance:"2017-08-02",weeks:[1,2],paid:false,order:"14822",email:"",parent:"Claire Dubois",tel:"078 222 11 00",diet:[],allergies:"",severe:false,patho:"Asthme léger",meds:[{name:"Ventolin",dose:"2 bouffées",when:"Avant le sport"}],photos:true,obs:"Timide le premier jour",done:true,urgence:""},
+ {id:3,prenom:"Inès",nom:"Rochat",naissance:"2020-11-21",weeks:[1],paid:true,order:"14830",email:"",parent:"Marc Rochat",tel:"076 555 66 77",diet:["Sans lactose"],allergies:"Lactose (intolérance)",severe:false,patho:"",meds:[],photos:false,obs:"",done:true,urgence:""},
+ {id:4,prenom:"Gabriel",nom:"Favre",naissance:"2015-05-09",weeks:[1,4,5],paid:true,order:"14834",email:"",parent:"Anne Favre",tel:"079 888 12 34",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""},
+ {id:5,prenom:"Chloé",nom:"Perret",naissance:"2018-01-30",weeks:[1,2,3],paid:false,order:"14841",email:"",parent:"Julie Perret",tel:"077 432 10 98",diet:["Sans gluten"],allergies:"Gluten (maladie cœliaque)",severe:true,patho:"Maladie cœliaque",meds:[],photos:true,obs:"",done:false,urgence:""},
+ {id:6,prenom:"Elias",nom:"Bonvin",naissance:"2016-06-17",weeks:[1],paid:true,order:"14845",email:"",parent:"Karim Bonvin",tel:"079 310 20 30",diet:["Halal"],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""},
+ {id:7,prenom:"Zoé",nom:"Mercier",naissance:"2019-09-05",weeks:[1,6],paid:true,order:"14850",email:"",parent:"Laura Mercier",tel:"078 901 23 45",diet:[],allergies:"Kiwi",severe:false,patho:"",meds:[],photos:false,obs:"Sieste possible après le repas",done:true,urgence:""},
+ {id:8,prenom:"Liam",nom:"Gerber",naissance:"2014-12-12",weeks:[1,2],paid:true,order:"14853",email:"",parent:"Tom Gerber",tel:"076 210 98 76",diet:[],allergies:"",severe:false,patho:"TDAH",meds:[{name:"Ritaline",dose:"10 mg",when:"12h00 après le repas"}],photos:true,obs:"",done:true,urgence:""},
+ {id:9,prenom:"Alice",nom:"Jaquet",naissance:"2020-04-28",weeks:[1,2],paid:false,order:"14860",email:"",parent:"Nina Jaquet",tel:"079 654 32 10",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:false,urgence:""},
+ {id:10,prenom:"Hugo",nom:"Pittet",naissance:"2017-02-11",weeks:[2,3],paid:true,order:"14866",email:"",parent:"Eva Pittet",tel:"078 777 88 99",diet:["Végétarien"],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""},
+ {id:11,prenom:"Maya",nom:"Rey",naissance:"2016-10-03",weeks:[2,4],paid:true,order:"14871",email:"",parent:"Sami Rey",tel:"079 432 87 65",diet:[],allergies:"Fruits à coque",severe:true,patho:"",meds:[{name:"EpiPen",dose:"0,3 mg",when:"En cas de réaction"},{name:"Aerius sirop",dose:"5 ml",when:"Si urticaire"}],photos:true,obs:"",done:true,urgence:""},
+ {id:12,prenom:"Jules",nom:"Morel",naissance:"2018-07-19",weeks:[3,5],paid:false,order:"14878",email:"",parent:"Léon Morel",tel:"077 111 22 33",diet:["Sans porc"],allergies:"",severe:false,patho:"",meds:[],photos:false,obs:"",done:true,urgence:""},
+ {id:13,prenom:"Louise",nom:"Blanc",naissance:"2015-03-25",weeks:[4,5,6,7],paid:true,order:"14883",email:"",parent:"Iris Blanc",tel:"076 333 44 55",diet:[],allergies:"",severe:false,patho:"Diabète type 1",meds:[{name:"Insuline (pompe)",dose:"Selon glycémie",when:"Contrôle 10h, 12h, 15h"}],photos:true,obs:"Collation obligatoire à 10h",done:true,urgence:""},
+ {id:14,prenom:"Adam",nom:"Fontana",naissance:"2019-12-01",weeks:[5,6,7],paid:true,order:"14890",email:"",parent:"Rita Fontana",tel:"079 999 00 11",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:false,urgence:""},
+ {id:15,prenom:"Rose",nom:"Chevalley",naissance:"2017-05-22",weeks:[6,7],paid:false,order:"14896",email:"",parent:"Yann Chevalley",tel:"078 123 98 76",diet:["Vegan"],allergies:"Œuf",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""}
+];
+let recipes=[
+ {id:1,title:"Brochettes arc-en-ciel",time:"15 min",level:"Facile",week:1,tags:["Sans cuisson","Végétarien"],ing:["1 barquette de fraises","2 kiwis","1 ananas","1 poignée de myrtilles","Piques en bois"],steps:["Laver et couper les fruits en cubes.","Enfiler les fruits en suivant les couleurs de l'arc-en-ciel.","Déguster bien frais !"],hue:"#F2A9A0",img:""},
+ {id:2,title:"Houmous de betterave",time:"20 min",level:"Facile",week:1,tags:["Vegan","Sans gluten"],ing:["1 betterave cuite","1 boîte de pois chiches","2 c. à s. de tahini","1 citron","Sel, cumin"],steps:["Égoutter les pois chiches.","Mixer tous les ingrédients jusqu'à obtenir une crème lisse.","Servir avec des bâtonnets de légumes."],hue:"#C9708C",img:""},
+ {id:3,title:"Mini-muffins courgette & feta",time:"35 min",level:"Moyen",week:3,tags:["Végétarien"],ing:["1 courgette","100 g de feta","2 œufs","150 g de farine","1 sachet de levure","5 cl d'huile d'olive"],steps:["Râper la courgette et émietter la feta.","Mélanger œufs, farine, levure et huile.","Ajouter courgette et feta, remplir les moules.","Cuire 20 min à 180 °C."],hue:"#B7CC4A",img:""}
+];
+const MEDIA_CAPS=["Atelier cuisine","Chasse aux trésors","Pique-nique","Cueillette","Jeux d'eau","Relaxation","Visite de la ferme","Course relais","Dégustation","Goûter des familles","Potager","Balade en forêt"];
+const MEDIA_HUES=["#CDDF70","#F0F2BC","#A9C94F","#E9EFA0","#D8E88A","#BFD45F"];
+let media={};
+WEEKS.forEach(w=>{media[w.n]=MEDIA_CAPS.map((c,i)=>({id:w.n+"-"+i,type:i%5===3?"video":"photo",cap:c,hue:MEDIA_HUES[(i+w.n)%MEDIA_HUES.length],src:""})).slice(0,w.n<=2?12:(w.n===3?6:0))});
+
+/* ---------------- État ---------------- */
+const S={view:"login",me:null,ptab:"enfant",pweek:null,atab:"semaines",aweek:1,afilter:"tous",aq:"",amode:"liste",mweek:1,msel:new Set(),sheet:null,prweek:1,prgroup:true,prcols:new Set(["age","paye","allergies","regime","meds","photos","presence"])};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const ageOf=k=>{const b=new Date(k.naissance),r=new Date("2027-07-01");let a=r.getFullYear()-b.getFullYear();if(r<new Date(r.getFullYear(),b.getMonth(),b.getDate()))a--;return a};
+const groupOf=a=>a<=8?"6–8 ans":"9–12 ans";
+const GROUPS=["6–8 ans","9–12 ans"];
+const kidName=k=>k.prenom+" "+k.nom;
+function toast(msg){const t=document.createElement("div");t.className="toast";t.setAttribute("role","status");t.textContent=msg;document.body.appendChild(t);setTimeout(()=>t.remove(),3200)}
+
+const I={
+ kid:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5 21v-2a7 7 0 0 1 14 0v2"/></svg>',
+ cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+ cam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>',
+ pot:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11h18v3a7 7 0 0 1-7 7h-4a7 7 0 0 1-7-7z"/><path d="M8 7c0-2 2-2 2-4M12 7c0-2 2-2 2-4M16 7c0-2 2-2 2-4"/></svg>',
+ list:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>',
+ out:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9"/></svg>',
+ play:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4v16l13-8z"/></svg>',
+ dl:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>',
+ warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3 2 21h20zM12 10v4M12 18h.01"/></svg>',
+ pill:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="8" width="20" height="8" rx="4" transform="rotate(-35 12 12)"/><path d="m9 9 6 6" /></svg>',
+ nocam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m2 2 20 20M9 4h6l2 3h4a2 2 0 0 1 2 2v9M3 7h1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h15"/></svg>',
+ print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
+ sprout:'<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 56V30"/><path d="M32 34c-10 0-16-6-16-16 10 0 16 6 16 16zM32 30c0-10 6-16 16-16 0 10-6 16-16 16z"/></svg>'
+};
+
+/* ---------------- Statut d'un enfant (chips) ---------------- */
+function statusChips(k,{withPay=true}={}){
+ const c=[];
+ if(withPay)c.push(k.paid?'<span class="chip ok">Payé</span>':'<span class="chip bad">Non payé</span>');
+ if(!k.done)c.push('<span class="chip warn">Fiche à compléter</span>');
+ if(k.allergies)c.push(`<span class="chip ${k.severe?"bad":"warn"}">${I.warn}${esc(k.allergies)}</span>`);
+ if(k.meds.length)c.push(`<span class="chip info">${I.pill}${k.meds.length>1?k.meds.length+" médicaments":"Médicament"}</span>`);
+ if(k.patho)c.push(`<span class="chip info">${esc(k.patho)}</span>`);
+ k.diet.forEach(d=>c.push(`<span class="chip">${esc(d)}</span>`));
+ c.push(k.photos?'<span class="chip ok">Photos OK</span>':`<span class="chip bad">${I.nocam}Pas de photos</span>`);
+ if(k.obs)c.push('<span class="chip">Observation</span>');
+ return c.join("");
+}
+
+/* ---------------- Rendu global ---------------- */
+function render(){
+ const r=$("#root");
+ if(S.view==="login")r.innerHTML=loginView();
+ else if(S.view==="parent")r.innerHTML=parentView();
+ else r.innerHTML=adminView();
+ if(S.sheet)r.insertAdjacentHTML("beforeend",S.sheet());
+}
+
+/* ---------------- Connexion ---------------- */
+function loginView(){return `
+<section id="login" class="wrap">
+ <div class="login-card">
+  <div class="login-hero">
+   <h1>Espace familles</h1>
+   <p>Fiche de votre enfant, programme de la semaine, photos et recettes.</p>
+   <img class="badge-logo" src="${LOGO_LIME}" alt="Croc'n'Mouv">
+  </div>
+  <form class="form" id="loginForm" novalidate>
+   <label class="f" for="lgOrder">Numéro de commande
+    <input class="input" id="lgOrder" placeholder="14817" inputmode="numeric" autocomplete="off" required>
+   </label>
+   <label class="f" for="lgEmail">E-mail utilisé lors de l'inscription
+    <input class="input" id="lgEmail" type="email" placeholder="vous@exemple.ch" autocomplete="email">
+   </label>
+   <p class="hint">Le numéro se trouve dans l'e-mail de confirmation de commande Squarespace reçu après l'inscription.</p>
+   <p class="err" id="lgErr" hidden></p>
+   <button class="btn primary" type="submit">Accéder à mon espace</button>
+  </form>
+  <div class="demo-box">
+   <b>Maquette : données fictives</b>
+   <span>Essayez les deux espaces :</span>
+   <div class="row">
+    <button class="btn small" data-act="demoParent">Parent (commande 14817)</button>
+    <button class="btn small" data-act="demoAdmin">Équipe Croc'n'Mouv</button>
+   </div>
+  </div>
+ </div>
+</section>`}
+
+/* ---------------- Espace parent ---------------- */
+function parentView(){
+ const k=S.me;
+ const tabs=[["enfant","Mon enfant",I.kid],["programme","Programme",I.cal],["photos","Photos",I.cam],["recettes","Recettes",I.pot]];
+ let body="";
+ if(S.ptab==="enfant")body=parentKid(k);
+ if(S.ptab==="programme")body=parentProgram(k);
+ if(S.ptab==="photos")body=parentPhotos(k);
+ if(S.ptab==="recettes")body=recipesList(false);
+ return `<div class="app">
+ <header class="topbar"><div class="wrap">
+  <img class="logo-img logo-black" src="${LOGO_BLACK}" alt="Croc'n'Mouv">
+  <div class="who"><b>${esc(k.parent)}</b>Commande ${esc(k.order)}</div>
+  <button class="iconbtn" data-act="logout" aria-label="Se déconnecter">${I.out}</button>
+ </div></header>
+ <main><div class="wrap">${body}</div></main>
+ <nav class="tabs" aria-label="Navigation"><div class="wrap" role="tablist">
+  ${tabs.map(([id,l,ic])=>`<button class="tab" role="tab" aria-selected="${S.ptab===id}" data-ptab="${id}">${ic}${l}</button>`).join("")}
+ </div></nav></div>`;
+}
+function completion(k){
+ let n=0;const t=6;
+ if(k.prenom&&k.naissance)n++; if(k.tel)n++; if(k.urgence)n++;
+ if(k.done){n=t}else{ if(k.diet.length||k.allergies)n++; }
+ return Math.round(n/t*100);
+}
+function parentKid(k){
+ const pct=completion(k);
+ return `<div class="section">
+ <div class="kid-hero">
+  <span class="eyebrow">Mon enfant</span>
+  <h1>${esc(kidName(k))}, ${ageOf(k)} ans</h1>
+  <div class="chips">
+   ${k.weeks.map(n=>`<span class="chip">Semaine ${n} · ${WEEKS[n-1].from}</span>`).join("")}
+   ${k.paid?'<span class="chip">Inscription payée</span>':'<span class="chip bad">Paiement en attente</span>'}
+  </div>
+  <div style="display:grid;gap:6px">
+   <span style="font-size:.88rem;font-weight:500">${k.done?"Fiche complète, merci !":"Fiche complétée à "+pct+" %"}</span>
+   <div class="progress" aria-hidden="true"><i style="width:${pct}%"></i></div>
+  </div>
+ </div>
+ <form class="card form" id="kidForm" novalidate>
+  <fieldset>
+   <legend>Identité</legend>
+   <div class="grid g2">
+    <label class="f" for="fPrenom">Prénom<input class="input" id="fPrenom" value="${esc(k.prenom)}"></label>
+    <label class="f" for="fNom">Nom<input class="input" id="fNom" value="${esc(k.nom)}"></label>
+    <label class="f" for="fNaiss">Date de naissance<input class="input" id="fNaiss" type="date" value="${esc(k.naissance)}"></label>
+    <label class="f" for="fTel">Téléphone du parent<input class="input" id="fTel" value="${esc(k.tel)}"></label>
+   </div>
+   <label class="f" for="fUrg">Autre personne à contacter en urgence<input class="input" id="fUrg" placeholder="Nom, lien, téléphone" value="${esc(k.urgence)}"></label>
+  </fieldset>
+  <fieldset>
+   <legend>Alimentation</legend>
+   <div class="checks">${DIETS.map((d,i)=>`<label for="fd${i}"><input type="checkbox" id="fd${i}" value="${d}" ${k.diet.includes(d)?"checked":""}>${d}</label>`).join("")}</div>
+   <label class="f" for="fAll">Allergies ou intolérances alimentaires<input class="input" id="fAll" placeholder="Ex. arachides, lactose…" value="${esc(k.allergies)}"></label>
+   <div class="checks"><label for="fSev"><input type="checkbox" id="fSev" ${k.severe?"checked":""}>Allergie sévère (risque de choc anaphylactique)</label></div>
+  </fieldset>
+  <fieldset>
+   <legend>Santé</legend>
+   <label class="f" for="fPatho">Pathologie, besoin particulier ou restriction<textarea class="input" id="fPatho" placeholder="Ex. asthme, diabète, TDAH, port de lunettes…">${esc(k.patho)}</textarea></label>
+   <div class="f" style="display:grid;gap:8px">
+    <span style="font-weight:500;font-size:.9rem">Médicaments à donner pendant la journée</span>
+    <div id="meds" style="display:grid;gap:8px">${(k.meds.length?k.meds:[{name:"",dose:"",when:""}]).map((m,i)=>medRow(m,i)).join("")}</div>
+    <button type="button" class="btn ghost small" data-act="addMed" style="justify-self:start">+ Ajouter un médicament</button>
+   </div>
+  </fieldset>
+  <fieldset>
+   <legend>Droit à l'image</legend>
+   <p>Pendant la semaine de camp, notre équipe prend des photos et des vidéos des activités. Elles sont partagées sur cet espace avec les familles de la semaine et projetées lors de l'apéritif de fin de camp.</p>
+   <p>Si vous préférez ne pas donner votre accord, nous veillons à ce que votre enfant n'apparaisse sur aucune photo ni vidéo diffusée. Il participe bien sûr à toutes les activités, comme les autres.</p>
+   <div class="checks">
+    <label for="fPhY"><input type="radio" name="photos" id="fPhY" value="1" ${k.photos?"checked":""}>J'autorise les photos et vidéos de mon enfant</label>
+    <label for="fPhN"><input type="radio" name="photos" id="fPhN" value="0" ${!k.photos?"checked":""}>Je refuse</label>
+   </div>
+   <p class="hint">Les photos restent visibles uniquement par les familles inscrites la même semaine.</p>
+  </fieldset>
+  <fieldset>
+   <legend>Autre chose à nous dire ?</legend>
+   <label class="f" for="fObs"><span class="hint">Habitudes, peurs, sieste, doudou…</span><textarea class="input" id="fObs">${esc(k.obs)}</textarea></label>
+  </fieldset>
+  <button class="btn primary" type="submit">Enregistrer la fiche</button>
+ </form>
+ </div>`;
+}
+function medRow(m,i){return `<div class="med-row">
+ <input class="input" id="mN${i}" placeholder="Médicament" value="${esc(m.name)}" aria-label="Médicament">
+ <input class="input" id="mD${i}" placeholder="Dose" value="${esc(m.dose)}" aria-label="Dose">
+ <input class="input" id="mW${i}" placeholder="Quand ?" value="${esc(m.when)}" aria-label="Quand le donner">
+ <button type="button" class="iconbtn" data-act="delMed" data-i="${i}" aria-label="Retirer">✕</button></div>`}
+function weekSeg(list,cur,attr){return `<div class="seg" role="group" aria-label="Semaine">${list.map(n=>`<button aria-pressed="${cur===n}" data-${attr}="${n}">S${n} · ${WEEKS[n-1].from}</button>`).join("")}</div>`}
+function parentProgram(k){
+ const n=S.pweek&&k.weeks.includes(S.pweek)?S.pweek:k.weeks[0];const w=WEEKS[n-1];
+ return `<div class="section">
+ <div class="section-head"><div><span class="eyebrow">Semaine ${n} · du ${w.from} au ${w.to}</span><h1>${esc(w.theme)}</h1></div></div>
+ ${k.weeks.length>1?weekSeg(k.weeks,n,"pweek"):""}
+ <div class="pillars">
+  <div class="pillar"><h3>Alimentation</h3><ul>${PROGRAM.alimentation.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+  <div class="pillar"><h3>Mouvement</h3><ul>${PROGRAM.mouvement.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+  <div class="pillar"><h3>Nature</h3><ul>${PROGRAM.nature.map(x=>`<li>${x}</li>`).join("")}</ul></div>
+ </div>
+ <h2>Jour par jour</h2>
+ <div class="days">${DAYS.map(([d,t])=>`<div class="day"><b>${d}</b><span>${t}</span></div>`).join("")}</div>
+ <div class="card plain"><h3>À prévoir chaque jour</h3><p style="margin-top:6px">Casquette, gourde, crème solaire, habits qui peuvent se salir et chaussures fermées. Le repas de midi et les collations sont préparés avec les enfants.</p></div>
+ </div>`;
+}
+function mediaTile(m,selectable){
+ const inner=m.src?`<img src="${m.src}" alt="${esc(m.cap)}">`:`<span style="width:44%;color:#1B1D12;opacity:.55">${I.sprout}</span>`;
+ const tag=selectable?"button":"div";
+ return `<${tag} class="ph" style="background:${m.hue}" ${selectable?`aria-pressed="${S.msel.has(m.id)}" data-msel="${m.id}"`:""}>
+  ${inner}${m.type==="video"?`<span class="type">${I.play}Vidéo</span>`:""}${selectable?'<span class="sel" aria-hidden="true"></span>':""}<span class="cap">${esc(m.cap)}</span></${tag}>`;
+}
+function parentPhotos(k){
+ const n=S.pweek&&k.weeks.includes(S.pweek)?S.pweek:k.weeks[0];const list=media[n]||[];
+ return `<div class="section">
+ <div class="section-head"><div><span class="eyebrow">Semaine ${n} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span><h1>Les photos de la semaine</h1></div></div>
+ ${k.weeks.length>1?weekSeg(k.weeks,n,"pweek"):""}
+ ${list.length?`<div class="gallery">${list.map(m=>mediaTile(m,false)).join("")}</div>`:`<div class="card plain"><p>Les photos de cette semaine seront publiées chaque soir pendant le centre.</p></div>`}
+ </div>`;
+}
+function recipesList(admin){
+ return `<div class="section">
+ <div class="section-head"><div><span class="eyebrow">À refaire à la maison</span><h1>Nos recettes</h1></div>
+ ${admin?'<button class="btn primary" data-act="newRecipe">+ Nouvelle recette</button>':""}</div>
+ <div class="recipes">${recipes.map(r=>`<button class="recipe" data-recipe="${r.id}">
+  <div class="art" style="background:${r.hue}">${r.img?`<img src="${r.img}" alt="">`:`<span style="width:30%;color:#1B1D12;opacity:.5">${I.sprout}</span>`}</div>
+  <div class="body"><span class="hand">${esc(r.title)}</span><span class="meta">${esc(r.time)} · ${esc(r.level)} · Semaine ${r.week}</span><div class="chips">${r.tags.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div></div>
+ </button>`).join("")}</div></div>`;
+}
+function recipeSheet(r){return ()=>`<div class="sheet-bg" data-act="closeSheet"><div class="sheet recipe-detail" role="dialog" aria-modal="true" aria-label="${esc(r.title)}">
+ <div class="grab"></div>
+ <div class="recipe"><div class="art" style="background:${r.hue};border-radius:var(--r)">${r.img?`<img src="${r.img}" alt="">`:`<span style="width:22%;color:#1B1D12;opacity:.5">${I.sprout}</span>`}</div></div>
+ <div><span class="hand" style="font-size:2rem">${esc(r.title)}</span><p class="hint">${esc(r.time)} · ${esc(r.level)} · cuisinée en semaine ${r.week}</p></div>
+ <div class="chips">${r.tags.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div>
+ <h3>Ingrédients</h3><ul>${r.ing.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
+ <h3>Préparation</h3><ol>${r.steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
+ <button class="btn" data-act="closeSheet">Fermer</button></div></div>`}
+
+/* ---------------- Espace équipe ---------------- */
+function adminView(){
+ const tabs=[["semaines","Semaines",I.list],["medias","Photos",I.cam],["recettes","Recettes",I.pot],["imprimer","Imprimer",I.print]];
+ let body="";
+ if(S.atab==="semaines")body=adminWeeks();
+ if(S.atab==="medias")body=adminMedia();
+ if(S.atab==="recettes")body=recipesList(true);
+ if(S.atab==="imprimer")body=adminPrint();
+ return `<div class="app">
+ <header class="topbar"><div class="wrap">
+  <img class="logo-img logo-black" src="${LOGO_BLACK}" alt="Croc'n'Mouv">
+  <div class="who"><b>Caroline</b>Espace équipe</div>
+  <button class="iconbtn" data-act="logout" aria-label="Se déconnecter">${I.out}</button>
+ </div></header>
+ <main><div class="wrap">${body}</div></main>
+ <nav class="tabs" aria-label="Navigation"><div class="wrap" role="tablist">
+  ${tabs.map(([id,l,ic])=>`<button class="tab" role="tab" aria-selected="${S.atab===id}" data-atab="${id}">${ic}${l}</button>`).join("")}
+ </div></nav></div>`;
+}
+const FILTERS=[["tous","Tous"],["impayes","Non payés"],["fiche","Fiche à compléter"],["allergies","Allergies"],["meds","Médicaments"],["nophoto","Pas de photos"],["obs","Observations"]];
+function applyFilter(list){
+ const f=S.afilter,q=S.aq.trim().toLowerCase();
+ return list.filter(k=>(f==="tous"||(f==="impayes"&&!k.paid)||(f==="fiche"&&!k.done)||(f==="allergies"&&k.allergies)||(f==="meds"&&k.meds.length)||(f==="nophoto"&&!k.photos)||(f==="obs"&&k.obs))
+  &&(!q||(kidName(k)+" "+k.parent+" "+k.order).toLowerCase().includes(q)));
+}
+function adminWeeks(){
+ const wk=S.aweek, w=wk?WEEKS[wk-1]:null;
+ const inWeek=kids.filter(k=>!wk||k.weeks.includes(wk));
+ const list=applyFilter(inWeek).sort((a,b)=>ageOf(a)-ageOf(b)||a.prenom.localeCompare(b.prenom));
+ const cnt=fn=>inWeek.filter(fn).length;
+ const stat=(id,n,l,alert)=>`<button class="stat ${alert&&n?"alert":""}" aria-pressed="${S.afilter===id}" data-filter="${id}"><span class="n">${n}</span><span class="l">${l}</span></button>`;
+ let content;
+ if(S.amode==="tableau"){
+  content=`<div class="table-wrap"><table><thead><tr><th>Enfant</th><th>Âge</th><th>Groupe</th><th>Paiement</th><th>Allergies</th><th>Régime</th><th>Médicaments</th><th>Photos</th><th>Observations</th></tr></thead><tbody>
+  ${list.map(k=>`<tr><td><b>${esc(kidName(k))}</b><br><span class="hint">${esc(k.order)}</span></td><td class="num">${ageOf(k)}</td><td>${groupOf(ageOf(k))}</td><td>${k.paid?'<span class="chip ok">Payé</span>':'<span class="chip bad">Non payé</span>'}</td><td>${k.allergies?`<span class="chip ${k.severe?"bad":"warn"}">${esc(k.allergies)}</span>`:"–"}</td><td>${esc(k.diet.join(", "))||"–"}</td><td>${k.meds.map(m=>esc(m.name+" "+m.dose+" ("+m.when+")")).join("<br>")||"–"}</td><td>${k.photos?"Oui":'<span class="chip bad">Non</span>'}</td><td>${esc(k.obs)||"–"}</td></tr>`).join("")}
+  </tbody></table></div>`;
+ } else {
+  content=GROUPS.map(g=>{const gl=list.filter(k=>groupOf(ageOf(k))===g);if(!gl.length)return"";
+   return `<div class="group"><div class="group-head"><h3>${g}</h3><span>${gl.length} enfant${gl.length>1?"s":""}</span></div>
+   ${gl.map(k=>`<button class="kid-row" data-kid="${k.id}"><span class="avatar">${esc(k.prenom[0]+k.nom[0])}</span>
+    <span class="name">${esc(kidName(k))}<small>${ageOf(k)} ans · ${esc(k.parent)}</small></span>
+    <span class="pay-dot chip ${k.paid?"ok":"bad"}">${k.paid?"Payé":"Non payé"}</span>
+    <span class="chips">${statusChips(k,{withPay:false})}</span></button>`).join("")}</div>`}).join("")||`<div class="card plain"><p>Aucun enfant ne correspond à ce filtre.</p></div>`;
+ }
+ return `<div class="section">
+ <div class="section-head"><div><span class="eyebrow">${w?`Semaine ${wk} · du ${w.from} au ${w.to}`:"Été 2027 · 7 semaines"}</span><h1>${w?esc(w.theme):"Toutes les semaines"}</h1></div></div>
+ <div class="seg" role="group" aria-label="Semaine">
+  ${WEEKS.map(x=>`<button aria-pressed="${wk===x.n}" data-aweek="${x.n}">S${x.n} · ${x.from} <span class="hint">(${kids.filter(k=>k.weeks.includes(x.n)).length})</span></button>`).join("")}
+  <button aria-pressed="${!wk}" data-aweek="0">Tout l'été</button>
+ </div>
+ <div class="stats">
+  ${stat("tous",inWeek.length,"Inscrits")}
+  ${stat("impayes",cnt(k=>!k.paid),"Non payés",true)}
+  ${stat("fiche",cnt(k=>!k.done),"Fiches à compléter",true)}
+  ${stat("allergies",cnt(k=>k.allergies),"Allergies")}
+  ${stat("meds",cnt(k=>k.meds.length),"Médicaments")}
+  ${stat("nophoto",cnt(k=>!k.photos),"Sans photos")}
+ </div>
+ <div class="toolbar">
+  <input class="input search" id="aSearch" placeholder="Rechercher un enfant, un parent, une commande" value="${esc(S.aq)}">
+  <div class="seg" role="group" aria-label="Affichage"><button aria-pressed="${S.amode==="liste"}" data-amode="liste">Par âge</button><button aria-pressed="${S.amode==="tableau"}" data-amode="tableau">Tableau</button></div>
+ </div>
+ <div class="seg" role="group" aria-label="Filtre">${FILTERS.map(([id,l])=>`<button aria-pressed="${S.afilter===id}" data-filter="${id}">${l}</button>`).join("")}</div>
+ ${content}
+ </div>`;
+}
+function kidSheet(id){return ()=>{const k=kids.find(x=>x.id===id);return `<div class="sheet-bg" data-act="closeSheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(kidName(k))}">
+ <div class="grab"></div>
+ <div style="display:flex;gap:12px;align-items:center"><span class="avatar" style="width:54px;height:54px;font-size:1.1rem">${esc(k.prenom[0]+k.nom[0])}</span>
+  <div><h2>${esc(kidName(k))}</h2><p class="hint">${ageOf(k)} ans · groupe ${groupOf(ageOf(k))} · ${k.weeks.map(n=>"S"+n).join(", ")}</p></div></div>
+ <div class="chips">${statusChips(k)}</div>
+ <div class="toggle"><div><b>Inscription payée</b><p class="hint">Commande ${esc(k.order)}</p></div>
+  <button class="switch" role="switch" aria-checked="${k.paid}" aria-label="Inscription payée" data-act="togglePaid" data-id="${k.id}"></button></div>
+ ${k.allergies?`<div class="notice" style="${k.severe?"background:var(--bad-bg);color:var(--bad)":""}">${k.severe?"Allergie sévère : ":"Allergie : "}${esc(k.allergies)}</div>`:""}
+ <dl class="kv">
+  <dt>Parent</dt><dd>${esc(k.parent)}</dd>
+  <dt>Téléphone</dt><dd>${esc(k.tel)}</dd>
+  <dt>Urgence</dt><dd>${esc(k.urgence)||"–"}</dd>
+  <dt>Régime</dt><dd>${esc(k.diet.join(", "))||"Aucun"}</dd>
+  <dt>Santé</dt><dd>${esc(k.patho)||"Rien de signalé"}</dd>
+  <dt>Médicaments</dt><dd>${k.meds.length?k.meds.map(m=>`<b>${esc(m.name)}</b> · ${esc(m.dose)} · ${esc(m.when)}`).join("<br>"):"Aucun"}</dd>
+  <dt>Photos</dt><dd>${k.photos?"Autorisées":"<b>Refusées</b>"}</dd>
+ </dl>
+ <label class="f" for="aObs">Observations de l'équipe<textarea class="input" id="aObs">${esc(k.obs)}</textarea></label>
+ <div class="toolbar"><button class="btn primary" data-act="saveObs" data-id="${k.id}">Enregistrer</button><button class="btn" data-act="closeSheet">Fermer</button></div>
+ </div></div>`}}
+function adminMedia(){
+ const n=S.mweek,list=media[n]||[];const noPhoto=kids.filter(k=>k.weeks.includes(n)&&!k.photos);
+ const nPh=list.filter(m=>m.type==="photo").length,nV=list.length-nPh;
+ return `<div class="section">
+ <div class="section-head"><div><span class="eyebrow">Semaine ${n} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span><h1>Photos & vidéos</h1></div></div>
+ ${weekSeg(WEEKS.map(w=>w.n),n,"mweek")}
+ ${noPhoto.length?`<div class="notice">${noPhoto.length} enfant${noPhoto.length>1?"s":""} sans autorisation photo cette semaine : ${noPhoto.map(k=>esc(kidName(k))).join(", ")}</div>`:""}
+ <label class="upload" for="upMedia"><b>Ajouter des photos ou vidéos</b><span class="hint">Depuis la pellicule du téléphone</span>
+  <input type="file" id="upMedia" accept="image/*,video/*" multiple></label>
+ <div class="toolbar">
+  <span class="hint" style="flex:1">${nPh} photos · ${nV} vidéo${nV>1?"s":""}${S.msel.size?` · ${S.msel.size} sélectionnée${S.msel.size>1?"s":""}`:""}</span>
+  ${S.msel.size?`<button class="btn small ghost" data-act="clearSel">Désélectionner</button><button class="btn small primary" data-act="dlSel">${I.dl}Télécharger la sélection</button>`:`<button class="btn small primary" data-act="dlAll" ${list.length?"":"disabled"}>${I.dl}Tout télécharger</button>`}
+ </div>
+ ${list.length?`<div class="gallery">${list.map(m=>mediaTile(m,true)).join("")}</div>`:`<div class="card plain"><p>Pas encore de photos pour cette semaine.</p></div>`}
+ </div>`;
+}
+const PCOLS=[
+ ["age","Âge",k=>ageOf(k)+" ans"],
+ ["groupe","Groupe",k=>groupOf(ageOf(k))],
+ ["paye","Paiement",k=>k.paid?"Payé":"NON PAYÉ"],
+ ["allergies","Allergies",k=>k.allergies?(k.severe?"SÉVÈRE : ":"")+k.allergies:""],
+ ["regime","Régime alimentaire",k=>k.diet.join(", ")],
+ ["sante","Santé / pathologie",k=>k.patho],
+ ["meds","Médicaments",k=>k.meds.map(m=>m.name+" "+m.dose+" ("+m.when+")").join(" ; ")],
+ ["photos","Droit à l'image",k=>k.photos?"Oui":"NON"],
+ ["parent","Parent et téléphone",k=>k.parent+" · "+k.tel],
+ ["urgence","Contact d'urgence",k=>k.urgence],
+ ["obs","Observations",k=>k.obs],
+ ["commande","N° de commande",k=>k.order],
+ ["presence","Cases de présence (lun.–ven.)",null]
+];
+function printData(){
+ const wk=S.prweek;
+ const list=kids.filter(k=>k.weeks.includes(wk)).sort((a,b)=>ageOf(a)-ageOf(b)||a.nom.localeCompare(b.nom));
+ const cols=PCOLS.filter(c=>S.prcols.has(c[0]));
+ const groups=S.prgroup?GROUPS.map(g=>[g,list.filter(k=>groupOf(ageOf(k))===g)]).filter(g=>g[1].length):[["",list]];
+ return {wk,list,cols,groups};
+}
+function adminPrint(){
+ const {wk,list,cols,groups}=printData();const w=WEEKS[wk-1];
+ const days=["Lu","Ma","Me","Je","Ve"];
+ const head=`<th>Enfant</th>${cols.map(c=>c[0]==="presence"?days.map(d=>`<th>${d}</th>`).join(""):`<th>${c[1]}</th>`).join("")}`;
+ const cell=(c,k)=>{if(c[0]==="presence")return days.map(()=>'<td><span class="tick"></span></td>').join("");const v=c[2](k);const al=(c[0]==="paye"&&!k.paid)||(c[0]==="photos"&&!k.photos)||(c[0]==="allergies"&&k.severe);return `<td class="${al?"alert":""}">${esc(v)||"–"}</td>`};
+ return `<div class="section">
+ <div class="section-head"><div><span class="eyebrow">Fiches à imprimer</span><h1>Imprimer une semaine</h1></div></div>
+ <div class="card print-opts">
+  <div><b>Semaine</b></div>
+  ${weekSeg(WEEKS.map(x=>x.n),wk,"prweek")}
+  <div><b>Informations à imprimer</b></div>
+  <div class="checks">${PCOLS.map(([id,l])=>`<label for="pc_${id}"><input type="checkbox" id="pc_${id}" data-pcol="${id}" ${S.prcols.has(id)?"checked":""}>${l}</label>`).join("")}</div>
+  <div class="checks"><label for="pcGroup"><input type="checkbox" id="pcGroup" data-pgroup="1" ${S.prgroup?"checked":""}>Une liste par groupe d'âge</label></div>
+  <div class="toolbar">
+   <button class="btn primary" data-act="doPrint">${I.print}Imprimer</button>
+   <button class="btn" data-act="copyPrint">Copier pour Excel</button>
+   <span class="hint">${list.length} enfant${list.length>1?"s":""} · ${cols.length} information${cols.length>1?"s":""}</span>
+  </div>
+ </div>
+ <h2>Aperçu</h2>
+ <div class="paper">
+  <div class="paper-head"><div><h2>Semaine ${wk} · du ${w.from} au ${w.to} 2027</h2><p class="sub">${esc(w.theme)} · ${list.length} enfants · imprimé le ${new Date().toLocaleDateString("fr-CH")}</p></div><img src="${LOGO_BLACK}" alt="Croc'n'Mouv"></div>
+  ${groups.map(([g,gl])=>`${g?`<h3>${g} · ${gl.length} enfant${gl.length>1?"s":""}</h3>`:""}
+  <table><thead><tr>${head}</tr></thead><tbody>${gl.map(k=>`<tr><td><b>${esc(k.nom.toUpperCase())}</b> ${esc(k.prenom)}</td>${cols.map(c=>cell(c,k)).join("")}</tr>`).join("")}</tbody></table>`).join("")}
+ </div>
+ </div>`;
+}
+function recipeForm(){return `<div class="sheet-bg" data-act="closeSheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="Nouvelle recette">
+ <div class="grab"></div><h2>Nouvelle recette</h2>
+ <form class="form" id="recipeForm" novalidate>
+  <label class="f" for="rT">Nom de la recette<input class="input" id="rT" placeholder="Ex. Smoothie vert du jardin" required></label>
+  <div class="grid g2">
+   <label class="f" for="rTime">Temps<input class="input" id="rTime" placeholder="20 min"></label>
+   <label class="f" for="rWeek">Cuisinée en<select class="input" id="rWeek">${WEEKS.map(w=>`<option value="${w.n}">Semaine ${w.n}</option>`).join("")}</select></label>
+  </div>
+  <label class="upload" for="rImg"><b id="rImgLbl">Ajouter une photo du plat</b><span class="hint">Facultatif</span><input type="file" id="rImg" accept="image/*"></label>
+  <label class="f" for="rTags">Étiquettes<input class="input" id="rTags" placeholder="Végétarien, Sans cuisson"></label>
+  <label class="f" for="rIng">Ingrédients (un par ligne)<textarea class="input" id="rIng" placeholder="2 bananes&#10;1 poignée d'épinards"></textarea></label>
+  <label class="f" for="rSteps">Étapes (une par ligne)<textarea class="input" id="rSteps" placeholder="Mettre tout dans le mixeur&#10;Mixer 1 minute"></textarea></label>
+  <p class="err" id="rErr" hidden>Donnez un nom à la recette.</p>
+  <div class="toolbar"><button class="btn primary" type="submit">Publier pour les familles</button><button class="btn" type="button" data-act="closeSheet">Annuler</button></div>
+ </form></div></div>`}
+
+/* ---------------- Interactions ---------------- */
+let pendingImg="";
+document.addEventListener("click",e=>{
+ const t=e.target.closest("[data-act],[data-ptab],[data-atab],[data-pweek],[data-aweek],[data-mweek],[data-filter],[data-amode],[data-kid],[data-recipe],[data-msel],[data-prweek]");
+ if(!t)return;
+ const d=t.dataset;
+ if(d.act==="closeSheet"){if(t.classList.contains("sheet-bg")&&e.target!==t)return;S.sheet=null;return render()}
+ if(d.act==="demoParent"){S.me=kids[0];S.view="parent";S.ptab="enfant";return render()}
+ if(d.act==="demoAdmin"){S.view="admin";return render()}
+ if(d.act==="logout"){S.view="login";S.me=null;S.sheet=null;return render()}
+ if(d.ptab){S.ptab=d.ptab;scrollTo(0,0);return render()}
+ if(d.atab){S.atab=d.atab;scrollTo(0,0);return render()}
+ if(d.pweek){S.pweek=+d.pweek;return render()}
+ if(d.aweek!==undefined){S.aweek=+d.aweek||null;return render()}
+ if(d.mweek){S.mweek=+d.mweek;S.msel.clear();return render()}
+ if(d.filter){S.afilter=S.afilter===d.filter&&d.filter!=="tous"?"tous":d.filter;return render()}
+ if(d.amode){S.amode=d.amode;return render()}
+ if(d.kid){S.sheet=kidSheet(+d.kid);return render()}
+ if(d.recipe){S.sheet=recipeSheet(recipes.find(r=>r.id===+d.recipe));return render()}
+ if(d.msel){S.msel.has(d.msel)?S.msel.delete(d.msel):S.msel.add(d.msel);return render()}
+ if(d.act==="togglePaid"){const k=kids.find(x=>x.id===+d.id);k.paid=!k.paid;render();return toast(k.paid?`${kidName(k)} : paiement reçu`:`${kidName(k)} : marqué non payé`)}
+ if(d.act==="saveObs"){const k=kids.find(x=>x.id===+d.id);k.obs=$("#aObs").value.trim();S.sheet=null;render();return toast("Observation enregistrée")}
+ if(d.act==="addMed"){const box=$("#meds");box.insertAdjacentHTML("beforeend",medRow({name:"",dose:"",when:""},box.children.length));return}
+ if(d.act==="delMed"){t.parentElement.remove();return}
+ if(d.act==="clearSel"){S.msel.clear();return render()}
+ if(d.act==="dlAll"){return toast(`Dans l'app finale : un fichier .zip avec les ${(media[S.mweek]||[]).length} fichiers de la semaine ${S.mweek} se télécharge.`)}
+ if(d.act==="dlSel"){return toast(`Dans l'app finale : un fichier .zip avec les ${S.msel.size} fichiers choisis se télécharge.`)}
+ if(d.prweek){S.prweek=+d.prweek;return render()}
+ if(d.act==="doPrint"){try{window.print()}catch(_){}return toast("Dans l'app finale, la fenêtre d'impression s'ouvre avec cette page (bloquée dans la maquette).")}
+ if(d.act==="copyPrint"){const {list,cols}=printData();const rows=[["Enfant",...cols.filter(c=>c[2]).map(c=>c[1])].join("\t"),...list.map(k=>[kidName(k),...cols.filter(c=>c[2]).map(c=>c[2](k))].join("\t"))].join("\n");
+  navigator.clipboard?.writeText(rows).then(()=>toast("Tableau copié, collez-le dans Excel ou Word"),()=>toast("Copie impossible dans cet affichage"));return}
+ if(d.act==="newRecipe"){pendingImg="";S.sheet=recipeForm;return render()}
+});
+document.addEventListener("input",e=>{
+ if(e.target.id==="aSearch"){S.aq=e.target.value;const pos=e.target.selectionStart;render();const i=$("#aSearch");i.focus();i.setSelectionRange(pos,pos)}
+});
+document.addEventListener("change",e=>{
+ if(e.target.dataset.pcol){const id=e.target.dataset.pcol;e.target.checked?S.prcols.add(id):S.prcols.delete(id);return render()}
+ if(e.target.dataset.pgroup){S.prgroup=e.target.checked;return render()}
+ if(e.target.id==="upMedia"){
+  const files=[...e.target.files];let left=files.length;if(!left)return;
+  files.forEach(f=>{const isV=f.type.startsWith("video");
+   const add=src=>{media[S.mweek]=media[S.mweek]||[];media[S.mweek].unshift({id:"u"+Date.now()+Math.random(),type:isV?"video":"photo",cap:f.name.replace(/\.[^.]+$/,""),hue:"#CDDF70",src});if(--left===0){render();toast(files.length+" fichier"+(files.length>1?"s":"")+" ajouté"+(files.length>1?"s":""))}};
+   if(isV)return add("");const rd=new FileReader();rd.onload=()=>add(rd.result);rd.readAsDataURL(f)});
+ }
+ if(e.target.id==="rImg"){const f=e.target.files[0];if(!f)return;const rd=new FileReader();rd.onload=()=>{pendingImg=rd.result;$("#rImgLbl").textContent="Photo ajoutée : "+f.name};rd.readAsDataURL(f)}
+});
+document.addEventListener("submit",e=>{
+ e.preventDefault();
+ if(e.target.id==="loginForm"){
+  const o=$("#lgOrder").value.replace(/[#\s]/g,"").replace(/^0+/,""),k=kids.find(x=>x.order===o);
+  if(!k){const er=$("#lgErr");er.textContent="Ce numéro de commande est introuvable. Vérifiez l'e-mail de confirmation (numéro de commande Squarespace, par ex. 14817).";er.hidden=false;return}
+  S.me=k;S.view="parent";S.ptab="enfant";return render();
+ }
+ if(e.target.id==="kidForm"){
+  const k=S.me;
+  k.prenom=$("#fPrenom").value.trim()||k.prenom;k.nom=$("#fNom").value.trim()||k.nom;k.naissance=$("#fNaiss").value||k.naissance;
+  k.tel=$("#fTel").value.trim();k.urgence=$("#fUrg").value.trim();
+  k.diet=DIETS.filter((d,i)=>$("#fd"+i).checked);k.allergies=$("#fAll").value.trim();k.severe=$("#fSev").checked&&!!k.allergies;
+  k.patho=$("#fPatho").value.trim();k.obs=$("#fObs").value.trim();k.photos=$("#fPhY").checked;
+  k.meds=[...document.querySelectorAll(".med-row")].map(r=>{const [n,d,w]=r.querySelectorAll("input");return {name:n.value.trim(),dose:d.value.trim(),when:w.value.trim()}}).filter(m=>m.name);
+  k.done=true;render();scrollTo(0,0);return toast("Fiche enregistrée. Merci !");
+ }
+ if(e.target.id==="recipeForm"){
+  const title=$("#rT").value.trim();if(!title){$("#rErr").hidden=false;return}
+  const lines=s=>s.split("\n").map(x=>x.trim()).filter(Boolean);
+  recipes.unshift({id:Date.now(),title,time:$("#rTime").value.trim()||"–",level:"Facile",week:+$("#rWeek").value,tags:$("#rTags").value.split(",").map(x=>x.trim()).filter(Boolean),ing:lines($("#rIng").value),steps:lines($("#rSteps").value),hue:"#CDDF70",img:pendingImg});
+  S.sheet=null;render();return toast("Recette publiée, les familles la voient déjà");
+ }
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&S.sheet){S.sheet=null;render()}});
+render();
+</script>
+
+</body>
+</html>

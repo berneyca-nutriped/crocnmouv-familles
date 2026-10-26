@@ -1,0 +1,13 @@
+{
+  "name": "Croc'n'Mouv Familles",
+  "short_name": "Croc'n'Mouv",
+  "lang": "fr",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#CDDF70",
+  "icons": [
+    { "src": "assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "assets/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

@@ -280,6 +280,8 @@ td.num,th.num{white-space:nowrap;text-align:right}
 .mini-dot{width:8px;height:8px;border-radius:50%;background:var(--warn)}
 .shared-note{display:flex;gap:8px;align-items:flex-start;background:var(--ok-bg);color:var(--ok);border-radius:var(--r-sm);padding:10px 12px;font-size:.88rem;font-weight:500}
 .shared-note svg{width:18px;height:18px;flex:none;margin-top:2px}
+.where{display:grid;gap:10px}
+.where .kv{grid-template-columns:110px 1fr}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 html,body{height:100%}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -304,8 +306,14 @@ const WEEKS=[
  {n:4,from:"26 juil.",to:"30 juil.",theme:"Olympiades de l'été"},
  {n:5,from:"2 août",to:"6 août",theme:"À la ferme"},
  {n:6,from:"9 août",to:"13 août",theme:"Saveurs du monde"},
- {n:7,from:"16 août",to:"20 août",theme:"Le grand final de l'été"}
+ {n:7,from:"16 août",to:"20 août",theme:"Le grand final de l'été"},
+ {n:8,from:"29 mars",to:"2 avril",theme:"Le printemps des saveurs",period:"Pâques 2027",code:"P1",start:new Date(2027,2,29)},
+ {n:9,from:"6 avril",to:"9 avril",theme:"Chasse aux œufs et nature",period:"Pâques 2027",code:"P2",start:new Date(2027,3,6)}
 ];
+WEEKS.forEach(w=>{if(!w.period){w.period="Été 2027";w.code="S"+w.n;w.start=new Date(2027,6,5+7*(w.n-1))}});
+const PERIODS=["Pâques 2027","Été 2027"];
+const wLabel=n=>{const w=WEEKS[n-1];return w.period.split(" ")[0]+" · semaine "+w.code.slice(1)};
+const periodWeeks=pr=>WEEKS.filter(w=>w.period===pr).map(w=>w.n);
 const PROGRAM={
  alimentation:["Éducation nutritionnelle","Réalisation des repas","Activités sensorielles","Activités culinaires","Dégustations"],
  mouvement:["Découverte d'un sport","Chasse aux trésors","Marche","Exercices de relaxation","Jeux en plein air"],
@@ -318,14 +326,15 @@ const DAYS=[
  ["Jeu","Atelier cuisine : les enfants préparent le repas de midi"],
  ["Ven","Chasse aux trésors géante. De 17h00 à 17h45, apéritif préparé par les enfants et film de la semaine avec les parents"]
 ];
+WEEKS.forEach(w=>{w.program=JSON.parse(JSON.stringify(PROGRAM));w.days=(w.code==="P2"?DAYS.slice(1):DAYS).map(d=>[...d])});
 const DIETS=["Végétarien","Sans porc","Sans gluten","Sans lactose","Halal","Vegan"];
 let kids=[
- {id:1,prenom:"Léa",nom:"Martin",naissance:"2019-03-14",weeks:[1,3],paid:true,order:"14817",email:"famille.martin@exemple.ch",parent:"Sophie Martin",tel:"079 123 45 67",diet:["Végétarien"],allergies:"Arachides",severe:true,patho:"",meds:[{name:"EpiPen Junior",dose:"0,15 mg",when:"En cas de réaction"}],photos:true,obs:"",done:false,cgv:false,urgence:"Paul Martin, 079 765 43 21"},
- {id:2,prenom:"Noah",nom:"Dubois",naissance:"2017-08-02",weeks:[1,2],paid:false,order:"14822",email:"",parent:"Claire Dubois",tel:"078 222 11 00",diet:[],allergies:"",severe:false,patho:"Asthme léger",meds:[{name:"Ventolin",dose:"2 bouffées",when:"Avant le sport"}],photos:true,obs:"Timide le premier jour",done:true,urgence:""},
+ {id:1,prenom:"Léa",nom:"Martin",naissance:"2019-03-14",weeks:[8,1,3],paid:true,order:"14817",email:"famille.martin@exemple.ch",parent:"Sophie Martin",tel:"079 123 45 67",diet:["Végétarien"],allergies:"Arachides",severe:true,patho:"",meds:[{name:"EpiPen Junior",dose:"0,15 mg",when:"En cas de réaction"}],photos:true,obs:"",done:false,cgv:false,urgence:"Paul Martin, 079 765 43 21"},
+ {id:2,prenom:"Noah",nom:"Dubois",naissance:"2017-08-02",weeks:[9,1,2],paid:false,order:"14822",email:"",parent:"Claire Dubois",tel:"078 222 11 00",diet:[],allergies:"",severe:false,patho:"Asthme léger",meds:[{name:"Ventolin",dose:"2 bouffées",when:"Avant le sport"}],photos:true,obs:"Timide le premier jour",done:true,urgence:""},
  {id:3,prenom:"Inès",nom:"Rochat",naissance:"2020-11-21",weeks:[1],paid:true,order:"14830",email:"",parent:"Marc Rochat",tel:"076 555 66 77",diet:["Sans lactose"],allergies:"Lactose (intolérance)",severe:false,patho:"",meds:[],photos:false,obs:"",done:true,urgence:""},
  {id:4,prenom:"Gabriel",nom:"Favre",naissance:"2015-05-09",weeks:[1,4,5],paid:true,order:"14834",email:"",parent:"Anne Favre",tel:"079 888 12 34",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""},
  {id:5,prenom:"Chloé",nom:"Perret",naissance:"2018-01-30",weeks:[1,2,3],paid:false,order:"14841",email:"",parent:"Julie Perret",tel:"077 432 10 98",diet:["Sans gluten"],allergies:"Gluten (maladie cœliaque)",severe:true,patho:"Maladie cœliaque",meds:[],photos:true,obs:"",done:false,urgence:""},
- {id:6,prenom:"Elias",nom:"Bonvin",naissance:"2016-06-17",weeks:[1],paid:true,order:"14845",email:"",parent:"Karim Bonvin",tel:"079 310 20 30",diet:["Halal"],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""},
+ {id:6,prenom:"Elias",nom:"Bonvin",naissance:"2016-06-17",weeks:[8,1],paid:true,order:"14845",email:"",parent:"Karim Bonvin",tel:"079 310 20 30",diet:["Halal"],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""},
  {id:7,prenom:"Zoé",nom:"Mercier",naissance:"2019-09-05",weeks:[1,6],paid:true,order:"14850",email:"",parent:"Laura Mercier",tel:"078 901 23 45",diet:[],allergies:"Kiwi",severe:false,patho:"",meds:[],photos:false,obs:"Porte des lunettes",done:true,urgence:""},
  {id:8,prenom:"Liam",nom:"Gerber",naissance:"2014-12-12",weeks:[1,2],paid:true,order:"14853",email:"",parent:"Tom Gerber",tel:"076 210 98 76",diet:[],allergies:"",severe:false,patho:"TDAH",meds:[{name:"Ritaline",dose:"10 mg",when:"12h00 après le repas"}],photos:true,obs:"",done:true,urgence:""},
  {id:9,prenom:"Alice",nom:"Jaquet",naissance:"2020-04-28",weeks:[1,2],paid:false,order:"14860",email:"",parent:"Nina Jaquet",tel:"079 654 32 10",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:false,urgence:""},
@@ -342,7 +351,7 @@ const ASS=["CSS","Helsana","Groupe Mutuel","Swica","Visana"],RCS=["Vaudoise","Zu
 const SHARED=["parent","tel","email","adresse","parent2","tel2","contacts","pickup","rc"];
 const familyOf=k=>kids.filter(x=>x.email.toLowerCase()===k.email.toLowerCase()).sort((a,b)=>a.naissance.localeCompare(b.naissance));
 function syncFamily(k){familyOf(k).forEach(x=>{if(x!==k)SHARED.forEach(f=>x[f]=f==="contacts"?k.contacts.map(c=>({...c})):k[f])})}
-function fillDemo(){kids.forEach((k,i)=>Object.assign(k,{lieu:k.lieu??LIEUX[[0,0,1,0,2,0,3,1,0,2,0,3,1,2,0][i]??0],contacts:k.contacts??(k.urgence?[{name:k.urgence.split(",")[0]+" (papa)",tel:(k.urgence.split(",")[1]||"").trim()}]:[]),seul:k.seul??(ageOf(k)>=10&&i%2===0),pickup:k.pickup??(i%3===0?"Grand-maman, 079 000 00 0"+(i%10):""),adresse:k.adresse??("Rue des Exemples "+(i+3)+", 1233 Bernex"),parent2:k.parent2??(i%2?"":"Parent "+(i+1)+" bis"),tel2:k.tel2??(i%2?"":"078 000 11 "+String(10+i)),assMaladie:k.assMaladie??ASS[i%5],assAccident:k.assAccident??ASS[i%5],rc:k.rc??RCS[i%5],cgv:k.cgv??k.done,email:k.email||("parent"+(i+1)+"@exemple.ch")}));syncFamily(kids[0])}
+function fillDemo(){kids.forEach((k,i)=>Object.assign(k,{nage:k.nage??(ageOf(k)>=8||i%3===1),lieu:k.lieu??LIEUX[[0,0,1,0,2,0,3,1,0,2,0,3,1,2,0][i]??0],contacts:k.contacts??(k.urgence?[{name:k.urgence.split(",")[0]+" (papa)",tel:(k.urgence.split(",")[1]||"").trim()}]:[]),seul:k.seul??(ageOf(k)>=10&&i%2===0),pickup:k.pickup??(i%3===0?"Grand-maman, 079 000 00 0"+(i%10):""),adresse:k.adresse??("Rue des Exemples "+(i+3)+", 1233 Bernex"),parent2:k.parent2??(i%2?"":"Parent "+(i+1)+" bis"),tel2:k.tel2??(i%2?"":"078 000 11 "+String(10+i)),assMaladie:k.assMaladie??ASS[i%5],assAccident:k.assAccident??ASS[i%5],rc:k.rc??RCS[i%5],cgv:k.cgv??k.done,email:k.email||("parent"+(i+1)+"@exemple.ch")}));syncFamily(kids[0]);kids.forEach(k=>k.weeks.sort((a,b)=>WEEKS[a-1].start-WEEKS[b-1].start))}
 let recipes=[
  {id:1,title:"Brochettes arc-en-ciel",time:"15 min",level:"Facile",week:1,tags:["Sans cuisson","Végétarien"],ing:["1 barquette de fraises","2 kiwis","1 ananas","1 poignée de myrtilles","Piques en bois"],steps:["Laver et couper les fruits en cubes.","Enfiler les fruits en suivant les couleurs de l'arc-en-ciel.","Déguster bien frais !"],hue:"#E9EFA0",img:""},
  {id:2,title:"Houmous de betterave",time:"20 min",level:"Facile",week:1,tags:["Vegan","Sans gluten"],ing:["1 betterave cuite","1 boîte de pois chiches","2 c. à s. de tahini","1 citron","Sel, cumin"],steps:["Égoutter les pois chiches.","Mixer tous les ingrédients jusqu'à obtenir une crème lisse.","Servir avec des bâtonnets de légumes."],hue:"#D8E88A",img:""},
@@ -354,7 +363,7 @@ let media={};
 WEEKS.forEach(w=>{media[w.n]=MEDIA_CAPS.map((c,i)=>({id:w.n+"-"+i,type:i%5===3?"video":"photo",cap:c,hue:MEDIA_HUES[(i+w.n)%MEDIA_HUES.length],src:""})).slice(0,w.n<=2?12:(w.n===3?6:0))});
 
 /* ---------------- État ---------------- */
-const S={view:"login",me:null,ptab:"accueil",step:0,pweek:null,atab:"semaines",aweek:1,afilter:"tous",aq:"",amode:"liste",mweek:1,msel:new Set(),sheet:null,lieu:null,prweek:1,prgroup:true,prcols:new Set(["age","paye","allergies","regime","meds","photos","presence"])};
+const S={view:"login",me:null,ptab:"accueil",step:0,pweek:null,atab:"semaines",aweek:1,afilter:"tous",aq:"",amode:"liste",mweek:1,msel:new Set(),sheet:null,lieu:null,period:"Été 2027",gweek:1,prweek:1,prgroup:true,prcols:new Set(["age","paye","allergies","regime","meds","photos","presence"])};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ageOf=k=>{const b=new Date(k.naissance),r=new Date("2027-07-01");let a=r.getFullYear()-b.getFullYear();if(r<new Date(r.getFullYear(),b.getMonth(),b.getDate()))a--;return a};
@@ -396,6 +405,7 @@ function statusChips(k,{withPay=true}={}){
  k.diet.forEach(d=>c.push(`<span class="chip">${esc(d.length>36?d.slice(0,34)+"…":d)}</span>`));
  c.push(k.photos?'<span class="chip ok">Photos OK</span>':`<span class="chip bad">${I.nocam}Pas de photos</span>`);
  if(k.seul)c.push('<span class="chip info">Rentre seul</span>');
+ if(!k.nage)c.push('<span class="chip warn">Ne sait pas nager</span>');
  if(k.obs)c.push('<span class="chip">Observation</span>');
  if(k.reminded&&(!k.paid||!k.done))c.push(`<span class="chip">${I.mail}Relancé le ${k.reminded}</span>`);
  return c.join("");
@@ -419,9 +429,12 @@ const ILL={
  sun:L('<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.5 1.5M17.5 17.5 19 19M5 19l1.5-1.5M17.5 6.5 19 5"/>')
 };
 const RECIPE_ILL=[ILL.food,ILL.leaf,ILL.sun];
-const WEEK_START=n=>new Date(2027,6,5+7*(n-1));
+const WEEK_START=n=>WEEKS[n-1].start;
 const LIEUX=["Bernex","Laconnex","Ville de Genève","Cossonay"];
 const PRICES={"Bernex":350,"Laconnex":350,"Ville de Genève":350,"Cossonay":350}; // exemples, tarifs à définir par lieu
+const LIEU_INFO={"Bernex":{nom:"Exemple : salle communale de Bernex",adresse:"Exemple : rue de l'Exemple 1, 1233 Bernex"},"Laconnex":{nom:"",adresse:""},"Ville de Genève":{nom:"",adresse:""},"Cossonay":{nom:"",adresse:""}};
+const REF={"Bernex|8":{nom:"Julie (exemple)",tel:"079 000 00 00"}};
+const refOf=(lieu,n)=>REF[lieu+"|"+n]||{nom:"",tel:""};
 const priceOf=k=>PRICES[k.lieu]||0;
 const chf=n=>"CHF "+n.toLocaleString("fr-CH")+".–";
 const PACK=["Crème solaire","Maillot de bain","Gourde","Casquette","Affaires de rechange","K-way","Tablier"];
@@ -492,7 +505,7 @@ function completion(k){
 function countdown(k){
  const n=k.weeks[0],start=WEEK_START(n),today=new Date();today.setHours(0,0,0,0);
  const d=Math.round((start-today)/864e5);
- if(d>0)return {num:d,txt:`jour${d>1?"s":""} avant la semaine&nbsp;${n}`};
+ if(d>0)return {num:d,txt:`jour${d>1?"s":""} avant le camp`};
  if(d>-5)return {num:"",txt:`${esc(k.prenom)} est au camp cette semaine !`};
  return {num:"",txt:"Merci pour ce bel été !"};
 }
@@ -508,9 +521,17 @@ function parentHome(k){
  <div class="hero-home">
   <span class="eyebrow">Bonjour ${esc(k.parent.split(" ")[0])} !${fam.length>1?" · "+esc(k.prenom):""}</span>
   <div class="count-line">${c.num!==""?`<span class="count">${c.num}</span>`:""}<span class="count-txt">${c.txt}</span></div>
-  <div class="chips"><span class="chip">${esc(k.lieu)}</span>${k.weeks.map(n=>`<span class="chip">S${n} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span>`).join("")}</div>
+  <div class="chips"><span class="chip">${esc(k.lieu)}</span>${k.weeks.map(n=>`<span class="chip">${WEEKS[n-1].code} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span>`).join("")}</div>
   <p class="hero-theme">Première semaine : <b>${esc(w.theme)}</b></p>
   <span class="deco" aria-hidden="true"></span>
+ </div>
+
+ <div class="card where">
+  <h2>Lieu et référent</h2>
+  <dl class="kv">
+   <dt>Lieu</dt><dd><b>${esc(LIEU_INFO[k.lieu]?.nom||"Croc'n'Mouv "+k.lieu)}</b><br>${esc(LIEU_INFO[k.lieu]?.adresse)||'<span class="hint">Adresse communiquée prochainement</span>'}</dd>
+   ${k.weeks.map(n=>{const r=refOf(k.lieu,n);return `<dt>${WEEKS[n-1].code} · ${WEEKS[n-1].from}</dt><dd>${r.nom?`Référent·e : <b>${esc(r.nom)}</b><br><span style="font-variant-numeric:tabular-nums">${esc(r.tel)}</span>`:'<span class="hint">Référent·e communiqué·e avant le camp</span>'}</dd>`}).join("")}
+  </dl>
  </div>
 
  <div class="card todo">
@@ -547,7 +568,7 @@ function parentHome(k){
 }
 function parentBill(k){
  const total=priceOf(k)*k.weeks.length,yr=2027;
- const rows=k.weeks.map(n=>`<tr><td>Semaine ${n} · du ${WEEKS[n-1].from} au ${WEEKS[n-1].to} ${yr}</td><td class="num">${chf(priceOf(k))}</td></tr>`).join("");
+ const rows=k.weeks.map(n=>`<tr><td>${wLabel(n)} · du ${WEEKS[n-1].from} au ${WEEKS[n-1].to} ${yr}</td><td class="num">${chf(priceOf(k))}</td></tr>`).join("");
  const head=`<div class="section-head"><div><span class="eyebrow">Commande ${esc(k.order)}</span><h1>Facturation</h1></div></div>`;
  if(!k.paid)return `<div class="section">${head}
   <div class="card locked"><span class="pm-ill">${I.lock}</span><div><h2>Attestation pour les impôts</h2><p>Elle sera disponible ici dès que nous aurons reçu votre paiement. Vous recevrez un e-mail à ce moment-là.</p></div></div>
@@ -602,9 +623,8 @@ function parentKid(k){
     <label class="f" for="fTel2">Téléphone du parent 2<input class="input" id="fTel2" type="tel" placeholder="Facultatif" value="${esc(k.tel2)}"></label>
    </div>
    <div class="f" style="display:grid;gap:8px">
-    <span style="font-weight:500;font-size:.9rem">Autres personnes de contact</span>
     <div id="contacts" style="display:grid;gap:8px">${k.contacts.map((c,i)=>contactRow(c,i)).join("")}</div>
-    <button type="button" class="btn ghost small" data-act="addContact" style="justify-self:start">+ Ajouter une personne</button>
+    <button type="button" class="btn ghost small" data-act="addContact" style="justify-self:start">+ Ajouter une personne à contacter</button>
    </div>
   </fieldset>`)}
  ${panel(1,`
@@ -621,6 +641,11 @@ function parentKid(k){
     <span style="font-weight:500;font-size:.9rem">Médicaments à donner pendant la journée</span>
     <div id="meds" style="display:grid;gap:8px">${(k.meds.length?k.meds:[{name:"",dose:"",when:""}]).map((m,i)=>medRow(m,i)).join("")}</div>
     <button type="button" class="btn ghost small" data-act="addMed" style="justify-self:start">+ Ajouter un médicament</button>
+   </div>
+   <span style="font-weight:500;font-size:.9rem">Mon enfant sait nager</span>
+   <div class="checks">
+    <label for="fNageY"><input type="radio" name="nage" id="fNageY" ${k.nage?"checked":""}>Oui</label>
+    <label for="fNageN"><input type="radio" name="nage" id="fNageN" ${!k.nage?"checked":""}>Non</label>
    </div>
   </fieldset>`)}
  ${panel(2,`
@@ -691,21 +716,21 @@ function medRow(m,i){return `<div class="med-row">
  <input class="input" id="mD${i}" placeholder="Dose" value="${esc(m.dose)}" aria-label="Dose">
  <input class="input" id="mW${i}" placeholder="Quand ?" value="${esc(m.when)}" aria-label="Quand le donner">
  <button type="button" class="iconbtn" data-act="delMed" data-i="${i}" aria-label="Retirer">✕</button></div>`}
-function weekSeg(list,cur,attr){return `<div class="seg" role="group" aria-label="Semaine">${list.map(n=>`<button aria-pressed="${cur===n}" data-${attr}="${n}">S${n} · ${WEEKS[n-1].from}</button>`).join("")}</div>`}
+function weekSeg(list,cur,attr){return `<div class="seg" role="group" aria-label="Semaine">${list.map(n=>`<button aria-pressed="${cur===n}" data-${attr}="${n}">${WEEKS[n-1].code} · ${WEEKS[n-1].from}</button>`).join("")}</div>`}
 function parentProgram(k){
  const n=S.pweek&&k.weeks.includes(S.pweek)?S.pweek:k.weeks[0];const w=WEEKS[n-1];
  const pill=(t,ill,list)=>`<div class="pillar"><span class="pillar-ill">${ill}</span><h3>${t}</h3><ul>${list.map(x=>`<li>${x}</li>`).join("")}</ul></div>`;
  return `<div class="section">
- <div class="section-head"><div><span class="eyebrow">Semaine ${n} · du ${w.from} au ${w.to}</span><h1>${esc(w.theme)}</h1></div></div>
+ <div class="section-head"><div><span class="eyebrow">${wLabel(n)} · du ${w.from} au ${w.to}</span><h1>${esc(w.theme)}</h1></div></div>
+ <p class="hint">${esc(LIEU_INFO[k.lieu]?.nom||"Croc'n'Mouv "+k.lieu)}${refOf(k.lieu,n).nom?" · Référent·e : "+esc(refOf(k.lieu,n).nom)+", "+esc(refOf(k.lieu,n).tel):""}</p>
  ${k.weeks.length>1?weekSeg(k.weeks,n,"pweek"):""}
  <div class="pillars">
-  ${pill("Alimentation",ILL.food,PROGRAM.alimentation)}
-  ${pill("Mouvement",ILL.move,PROGRAM.mouvement)}
-  ${pill("Nature",ILL.leaf,PROGRAM.nature)}
+  ${pill("Alimentation",ILL.food,w.program.alimentation)}
+  ${pill("Mouvement",ILL.move,w.program.mouvement)}
+  ${pill("Nature",ILL.leaf,w.program.nature)}
  </div>
  <h2>Jour par jour</h2>
- <ol class="timeline">${DAYS.map(([d,t])=>`<li><b>${d}</b><span>${t}</span></li>`).join("")}</ol>
- <div class="card plain pack"><h3>À mettre dans mon sac :</h3><div class="chips">${PACK.map(p=>`<span class="chip ok">${I.check}${p}</span>`).join("")}</div><p class="hint">Le repas de midi et les collations sont préparés avec les enfants.</p></div>
+ <ol class="timeline">${w.days.map(([d,t])=>`<li><b>${d}</b><span>${t}</span></li>`).join("")}</ol>
  </div>`;
 }
 function mediaTile(m,selectable){
@@ -716,10 +741,10 @@ function mediaTile(m,selectable){
 }
 function parentPhotos(k){
  const n=S.pweek&&k.weeks.includes(S.pweek)?S.pweek:k.weeks[0];const list=media[n]||[];
- const byDay=DAYS.map(([d],i)=>[d,list.filter((m,j)=>j%5===i)]).filter(x=>x[1].length);
+ const byDay=WEEKS[n-1].days.map(([d],i)=>[d,list.filter((m,j)=>j%5===i)]).filter(x=>x[1].length);
  const full={Lun:"Lundi",Mar:"Mardi",Mer:"Mercredi",Jeu:"Jeudi",Ven:"Vendredi"};
  return `<div class="section">
- <div class="section-head"><div><span class="eyebrow">Semaine ${n} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span><h1>Les photos de la semaine</h1></div></div>
+ <div class="section-head"><div><span class="eyebrow">${wLabel(n)} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span><h1>Les photos de la semaine</h1></div></div>
  ${k.weeks.length>1?weekSeg(k.weeks,n,"pweek"):""}
  ${list.length?byDay.map(([d,l])=>`<h3>${full[d]}</h3><div class="gallery feature">${l.map(m=>mediaTile(m,false)).join("")}</div>`).join(""):`<div class="card plain empty"><span class="empty-ill">${ILL.sun}</span><p>Les photos de cette semaine seront publiées chaque soir pendant le camp.</p></div>`}
  </div>`;
@@ -730,13 +755,13 @@ function recipesList(admin){
  ${admin?'<button class="btn primary" data-act="newRecipe">+ Nouvelle recette</button>':""}</div>
  <div class="recipes">${recipes.map(r=>`<button class="recipe" data-recipe="${r.id}">
   <div class="art" style="background-color:${r.hue}">${r.img?`<img src="${r.img}" alt="">`:`<span class="art-ill">${RECIPE_ILL[r.id%3]}</span>`}</div>
-  <div class="body"><span class="hand">${esc(r.title)}</span><span class="meta">${esc(r.time)} · ${esc(r.level)} · Semaine ${r.week}</span><div class="chips">${r.tags.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div></div>
+  <div class="body"><span class="hand">${esc(r.title)}</span><span class="meta">${esc(r.time)} · ${esc(r.level)} · ${wLabel(r.week)}</span><div class="chips">${r.tags.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div></div>
  </button>`).join("")}</div></div>`;
 }
 function recipeSheet(r){return ()=>`<div class="sheet-bg" data-act="closeSheet"><div class="sheet recipe-detail" role="dialog" aria-modal="true" aria-label="${esc(r.title)}">
  <div class="grab"></div>
  <div class="recipe"><div class="art" style="background-color:${r.hue};border-radius:var(--r)">${r.img?`<img src="${r.img}" alt="">`:`<span class="art-ill">${RECIPE_ILL[r.id%3]}</span>`}</div></div>
- <div><span class="hand" style="font-size:2rem">${esc(r.title)}</span><p class="hint">${esc(r.time)} · ${esc(r.level)} · cuisinée en semaine ${r.week}</p></div>
+ <div><span class="hand" style="font-size:2rem">${esc(r.title)}</span><p class="hint">${esc(r.time)} · ${esc(r.level)} · cuisinée en ${wLabel(r.week).toLowerCase()}</p></div>
  <div class="chips">${r.tags.map(t=>`<span class="chip">${esc(t)}</span>`).join("")}</div>
  <h3>Ingrédients</h3><ul>${r.ing.map(x=>`<li>${esc(x)}</li>`).join("")}</ul>
  <h3>Préparation</h3><ol>${r.steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ol>
@@ -744,12 +769,13 @@ function recipeSheet(r){return ()=>`<div class="sheet-bg" data-act="closeSheet">
 
 /* ---------------- Espace équipe ---------------- */
 function adminView(){
- const tabs=[["semaines","Semaines",I.list],["medias","Photos",I.cam],["recettes","Recettes",I.pot],["imprimer","Imprimer",I.print]];
+ const tabs=[["semaines","Semaines",I.list],["programme","Programme",I.cal],["medias","Photos",I.cam],["recettes","Recettes",I.pot],["imprimer","Imprimer",I.print]];
  let body="";
  if(S.atab==="semaines")body=adminWeeks();
  if(S.atab==="medias")body=adminMedia();
  if(S.atab==="recettes")body=recipesList(true);
  if(S.atab==="imprimer")body=adminPrint();
+ if(S.atab==="programme")body=adminProgram();
  return `<div class="app">
  <header class="topbar"><div class="wrap">
   <img class="logo-img logo-black" src="${LOGO_BLACK}" alt="Croc'n'Mouv">
@@ -762,6 +788,42 @@ function adminView(){
  </div></nav></div>`;
 }
 const FILTERS=[["tous","Tous"],["impayes","Non payés"],["fiche","Fiche à compléter"],["allergies","Allergies"],["meds","Médicaments"],["nophoto","Pas de photos"],["obs","Observations"]];
+function periodSeg(){return `<div class="seg" role="group" aria-label="Période">${PERIODS.map(p=>`<button aria-pressed="${S.period===p}" data-period="${p}">${p}</button>`).join("")}</div>`}
+function adminProgram(){
+ const pw=periodWeeks(S.period),n=pw.includes(S.gweek)?S.gweek:pw[0],w=WEEKS[n-1];
+ const ta=(id,arr)=>`<textarea class="input" id="${id}" style="min-height:120px">${esc(arr.join("\n"))}</textarea>`;
+ return `<div class="section">
+ <div class="section-head"><div><span class="eyebrow">Visible par les familles inscrites</span><h1>Programme</h1></div></div>
+ ${periodSeg()}
+ ${weekSeg(pw,n,"gweek")}
+ <div class="card form">
+  <h2>Lieu et référent</h2>
+  ${lieuSeg()}
+  ${S.lieu?`<form class="form" id="placeForm" data-week="${n}" data-place="${esc(S.lieu)}" novalidate>
+   <div class="grid g2">
+    <label class="f" for="plNom">Nom du lieu<input class="input" id="plNom" placeholder="Ex. salle communale" value="${esc(LIEU_INFO[S.lieu].nom)}"></label>
+    <label class="f" for="plAdr">Adresse complète<input class="input" id="plAdr" placeholder="Rue, NPA, localité" value="${esc(LIEU_INFO[S.lieu].adresse)}"></label>
+    <label class="f" for="rfNom">Référent·e de la semaine ${WEEKS[n-1].code}<input class="input" id="rfNom" placeholder="Prénom et nom" value="${esc(refOf(S.lieu,n).nom)}"></label>
+    <label class="f" for="rfTel">Téléphone du référent·e<input class="input" id="rfTel" type="tel" value="${esc(refOf(S.lieu,n).tel)}"></label>
+   </div>
+   <p class="hint">Le lieu et l'adresse valent pour toutes les semaines. Le référent se remplit semaine par semaine, même après les inscriptions.</p>
+   <button class="btn primary" type="submit" style="justify-self:start">Enregistrer</button>
+  </form>`:'<p class="hint">Choisissez un lieu pour renseigner son adresse et le référent de la semaine.</p>'}
+ </div>
+ <form class="card form" id="progForm" data-week="${n}" novalidate>
+  <label class="f" for="gTheme">Thème de la semaine<input class="input" id="gTheme" value="${esc(w.theme)}"></label>
+  <div class="grid g3">
+   <label class="f" for="gA">Alimentation <span class="hint">(une activité par ligne)</span>${ta("gA",w.program.alimentation)}</label>
+   <label class="f" for="gM">Mouvement <span class="hint">(une activité par ligne)</span>${ta("gM",w.program.mouvement)}</label>
+   <label class="f" for="gN">Nature <span class="hint">(une activité par ligne)</span>${ta("gN",w.program.nature)}</label>
+  </div>
+  <fieldset><legend>Jour par jour</legend>
+   ${w.days.map(([d,t],i)=>`<label class="f" for="gD${i}">${({Lun:"Lundi",Mar:"Mardi",Mer:"Mercredi",Jeu:"Jeudi",Ven:"Vendredi"})[d]}<input class="input" id="gD${i}" value="${esc(t)}"></label>`).join("")}
+  </fieldset>
+  <button class="btn primary" type="submit">Publier pour les familles</button>
+ </form>
+ </div>`;
+}
 function lieuSeg(){return `<div class="seg lieux" role="group" aria-label="Lieu"><button aria-pressed="${!S.lieu}" data-lieu="">Tous les lieux</button>${LIEUX.map(l=>`<button aria-pressed="${S.lieu===l}" data-lieu="${l}">${l} <span class="hint">(${kids.filter(k=>k.lieu===l).length})</span></button>`).join("")}</div>`}
 function applyFilter(list){
  const f=S.afilter,q=S.aq.trim().toLowerCase();
@@ -771,7 +833,7 @@ function applyFilter(list){
 function adminWeeks(){
  const wk=S.aweek, w=wk?WEEKS[wk-1]:null;
  const inLieu=kids.filter(k=>!S.lieu||k.lieu===S.lieu);
- const inWeek=inLieu.filter(k=>!wk||k.weeks.includes(wk));
+ const inWeek=inLieu.filter(k=>wk?k.weeks.includes(wk):k.weeks.some(n=>WEEKS[n-1].period===S.period));
  const list=applyFilter(inWeek).sort((a,b)=>ageOf(a)-ageOf(b)||a.prenom.localeCompare(b.prenom));
  const cnt=fn=>inWeek.filter(fn).length;
  const stat=(id,n,l,alert)=>`<button class="stat ${alert&&n?"alert":""}" aria-pressed="${S.afilter===id}" data-filter="${id}"><span class="n">${n}</span><span class="l">${l}</span></button>`;
@@ -789,11 +851,12 @@ function adminWeeks(){
     <span class="chips">${statusChips(k,{withPay:false})}</span></button>`).join("")}</div>`}).join("")||`<div class="card plain"><p>Aucun enfant ne correspond à ce filtre.</p></div>`;
  }
  return `<div class="section">
- <div class="section-head"><div><span class="eyebrow">${w?`Semaine ${wk} · du ${w.from} au ${w.to}`:"Été 2027 · 7 semaines"}</span><h1>${w?esc(w.theme):"Toutes les semaines"}</h1></div></div>
+ <div class="section-head"><div><span class="eyebrow">${w?`${wLabel(wk)} · du ${w.from} au ${w.to}`:`${S.period} · ${periodWeeks(S.period).length} semaines`}</span><h1>${w?esc(w.theme):"Toutes les semaines"}</h1></div></div>
+ ${periodSeg()}
  ${lieuSeg()}
  <div class="seg" role="group" aria-label="Semaine">
-  ${WEEKS.map(x=>`<button aria-pressed="${wk===x.n}" data-aweek="${x.n}">S${x.n} · ${x.from} <span class="hint">(${inLieu.filter(k=>k.weeks.includes(x.n)).length})</span></button>`).join("")}
-  <button aria-pressed="${!wk}" data-aweek="0">Tout l'été</button>
+  ${WEEKS.filter(x=>x.period===S.period).map(x=>`<button aria-pressed="${wk===x.n}" data-aweek="${x.n}">${x.code} · ${x.from} <span class="hint">(${inLieu.filter(k=>k.weeks.includes(x.n)).length})</span></button>`).join("")}
+  <button aria-pressed="${!wk}" data-aweek="0">Toute la période</button>
  </div>
  <div class="stats">
   ${stat("tous",inWeek.length,"Inscrits")}
@@ -815,14 +878,14 @@ function adminWeeks(){
 function kidSheet(id){return ()=>{const k=kids.find(x=>x.id===id);return `<div class="sheet-bg" data-act="closeSheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(kidName(k))}">
  <div class="grab"></div>
  <div style="display:flex;gap:12px;align-items:center"><span class="avatar" style="width:54px;height:54px;font-size:1.1rem">${esc(k.prenom[0]+k.nom[0])}</span>
-  <div><h2>${esc(kidName(k))}</h2><p class="hint">${ageOf(k)} ans · groupe ${groupOf(ageOf(k))} · ${esc(k.lieu)} · ${k.weeks.map(n=>"S"+n).join(", ")}</p></div></div>
+  <div><h2>${esc(kidName(k))}</h2><p class="hint">${ageOf(k)} ans · groupe ${groupOf(ageOf(k))} · ${esc(k.lieu)} · ${k.weeks.map(n=>WEEKS[n-1].code).join(", ")}</p></div></div>
  <div class="chips">${statusChips(k)}</div>
  <div class="toggle"><div><b>Inscription payée</b><p class="hint">Commande ${esc(k.order)} · ${chf(priceOf(k)*k.weeks.length)}. En cochant, l'attestation pour les impôts se débloque pour la famille.</p></div>
   <button class="switch" role="switch" aria-checked="${k.paid}" aria-label="Inscription payée" data-act="togglePaid" data-id="${k.id}"></button></div>
  ${k.allergies?`<div class="notice" style="${k.severe?"background:var(--bad-bg);color:var(--bad)":""}">${k.severe?"Allergie sévère : ":"Allergie : "}${esc(k.allergies)}</div>`:""}
  <dl class="kv">
   <dt>Retour</dt><dd>${k.seul?"<b>Rentre seul</b>":"Ne rentre pas seul"}${k.pickup?"<br>Autorisés : "+esc(k.pickup):""}</dd>
-  ${familyOf(k).length>1?`<dt>Fratrie</dt><dd>${familyOf(k).filter(x=>x!==k).map(x=>esc(x.prenom)+" ("+ageOf(x)+" ans, "+x.weeks.map(n=>"S"+n).join(", ")+")").join("<br>")}</dd>`:""}
+  ${familyOf(k).length>1?`<dt>Fratrie</dt><dd>${familyOf(k).filter(x=>x!==k).map(x=>esc(x.prenom)+" ("+ageOf(x)+" ans, "+x.weeks.map(n=>WEEKS[n-1].code).join(", ")+")").join("<br>")}</dd>`:""}
   <dt>Parent</dt><dd>${esc(k.parent)}</dd>
   <dt>Téléphone</dt><dd>${esc(k.tel)}</dd>
   <dt>E-mail</dt><dd>${esc(k.email)}</dd>
@@ -831,6 +894,7 @@ function kidSheet(id){return ()=>{const k=kids.find(x=>x.id===id);return `<div c
   <dt>Tél. parent 2</dt><dd>${esc(k.tel2)||"–"}</dd>
   <dt>Autres contacts</dt><dd>${k.contacts.map(c=>esc(c.name)+" · "+esc(c.tel)).join("<br>")||"–"}</dd>
   <dt>Régime</dt><dd>${esc(k.diet.join(", "))||"Aucun"}</dd>
+  <dt>Natation</dt><dd>${k.nage?"Sait nager":"<b>Ne sait pas nager</b>"}</dd>
   <dt>Santé</dt><dd>${esc(k.patho)||"Rien de signalé"}</dd>
   <dt>Médicaments</dt><dd>${k.meds.length?k.meds.map(m=>`<b>${esc(m.name)}</b> · ${esc(m.dose)} · ${esc(m.when)}`).join("<br>"):"Aucun"}</dd>
   <dt>Photos</dt><dd>${k.photos?"Autorisées":"<b>Refusées</b>"}</dd>
@@ -845,8 +909,9 @@ function adminMedia(){
  const n=S.mweek,list=media[n]||[];const noPhoto=kids.filter(k=>k.weeks.includes(n)&&!k.photos);
  const nPh=list.filter(m=>m.type==="photo").length,nV=list.length-nPh;
  return `<div class="section">
- <div class="section-head"><div><span class="eyebrow">Semaine ${n} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span><h1>Photos & vidéos</h1></div></div>
- ${weekSeg(WEEKS.map(w=>w.n),n,"mweek")}
+ <div class="section-head"><div><span class="eyebrow">${wLabel(n)} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span><h1>Photos & vidéos</h1></div></div>
+ ${periodSeg()}
+ ${weekSeg(periodWeeks(S.period),n,"mweek")}
  ${noPhoto.length?`<div class="notice">${noPhoto.length} enfant${noPhoto.length>1?"s":""} sans autorisation photo cette semaine : ${noPhoto.map(k=>esc(kidName(k))).join(", ")}</div>`:""}
  <label class="upload" for="upMedia"><b>Ajouter des photos ou vidéos</b><span class="hint">Depuis la pellicule du téléphone</span>
   <input type="file" id="upMedia" accept="image/*,video/*" multiple></label>
@@ -866,6 +931,7 @@ const PCOLS=[
  ["regime","Régime alimentaire",k=>k.diet.join(", ")],
  ["sante","Santé / pathologie",k=>k.patho],
  ["meds","Médicaments",k=>k.meds.map(m=>m.name+" "+m.dose+" ("+m.when+")").join(" ; ")],
+ ["nage","Sait nager",k=>k.nage?"Oui":"NON"],
  ["photos","Droit à l'image",k=>k.photos?"Oui":"NON"],
  ["retour","Retour à la maison",k=>k.seul?"Rentre seul":"Accompagné"+(k.pickup?" · autorisés : "+k.pickup:"")],
  ["parent","Parents et téléphones",k=>k.parent+" · "+k.tel+(k.tel2?" / "+(k.parent2?k.parent2+" · ":"")+k.tel2:"")],
@@ -887,14 +953,15 @@ function adminPrint(){
  const {wk,list,cols,groups}=printData();const w=WEEKS[wk-1];
  const days=["Lu","Ma","Me","Je","Ve"];
  const head=`<th>Enfant</th>${cols.map(c=>c[0]==="presence"?days.map(d=>`<th>${d}</th>`).join(""):`<th>${c[1]}</th>`).join("")}`;
- const cell=(c,k)=>{if(c[0]==="presence")return days.map(()=>'<td><span class="tick"></span></td>').join("");const v=c[2](k);const al=(c[0]==="paye"&&!k.paid)||(c[0]==="photos"&&!k.photos)||(c[0]==="allergies"&&k.severe);return `<td class="${al?"alert":""}">${esc(v)||"–"}</td>`};
+ const cell=(c,k)=>{if(c[0]==="presence")return days.map(()=>'<td><span class="tick"></span></td>').join("");const v=c[2](k);const al=(c[0]==="paye"&&!k.paid)||(c[0]==="photos"&&!k.photos)||(c[0]==="nage"&&!k.nage)||(c[0]==="allergies"&&k.severe);return `<td class="${al?"alert":""}">${esc(v)||"–"}</td>`};
  return `<div class="section">
  <div class="section-head"><div><span class="eyebrow">Fiches à imprimer</span><h1>Imprimer une semaine</h1></div></div>
  <div class="card print-opts">
   <div><b>Lieu</b></div>
   ${lieuSeg()}
-  <div><b>Semaine</b></div>
-  ${weekSeg(WEEKS.map(x=>x.n),wk,"prweek")}
+  <div><b>Période et semaine</b></div>
+  ${periodSeg()}
+  ${weekSeg(periodWeeks(S.period),wk,"prweek")}
   <div><b>Informations à imprimer</b></div>
   <div class="checks">${PCOLS.map(([id,l])=>`<label for="pc_${id}"><input type="checkbox" id="pc_${id}" data-pcol="${id}" ${S.prcols.has(id)?"checked":""}>${l}</label>`).join("")}</div>
   <div class="checks"><label for="pcGroup"><input type="checkbox" id="pcGroup" data-pgroup="1" ${S.prgroup?"checked":""}>Une liste par groupe d'âge</label></div>
@@ -906,7 +973,7 @@ function adminPrint(){
  </div>
  <h2>Aperçu</h2>
  <div class="paper">
-  <div class="paper-head"><div><h2>${S.lieu?esc(S.lieu)+" · ":""}Semaine ${wk} · du ${w.from} au ${w.to} 2027</h2><p class="sub">${esc(w.theme)} · ${list.length} enfants · imprimé le ${new Date().toLocaleDateString("fr-CH")}</p></div><img src="${LOGO_BLACK}" alt="Croc'n'Mouv"></div>
+  <div class="paper-head"><div><h2>${S.lieu?esc(S.lieu)+" · ":""}${wLabel(wk)} · du ${w.from} au ${w.to} 2027</h2><p class="sub">${S.lieu&&refOf(S.lieu,wk).nom?"Référent·e : "+esc(refOf(S.lieu,wk).nom)+" · "+esc(refOf(S.lieu,wk).tel)+" · ":""}${esc(w.theme)} · ${list.length} enfants · imprimé le ${new Date().toLocaleDateString("fr-CH")}</p></div><img src="${LOGO_BLACK}" alt="Croc'n'Mouv"></div>
   ${groups.map(([g,gl])=>`${g?`<h3>${g} · ${gl.length} enfant${gl.length>1?"s":""}</h3>`:""}
   <table><thead><tr>${head}</tr></thead><tbody>${gl.map(k=>`<tr><td><b>${esc(k.nom.toUpperCase())}</b> ${esc(k.prenom)}</td>${cols.map(c=>cell(c,k)).join("")}</tr>`).join("")}</tbody></table>`).join("")}
  </div>
@@ -963,7 +1030,7 @@ function recipeForm(){return `<div class="sheet-bg" data-act="closeSheet"><div c
   <label class="f" for="rT">Nom de la recette<input class="input" id="rT" placeholder="Ex. Smoothie vert du jardin" required></label>
   <div class="grid g2">
    <label class="f" for="rTime">Temps<input class="input" id="rTime" placeholder="20 min"></label>
-   <label class="f" for="rWeek">Cuisinée en<select class="input" id="rWeek">${WEEKS.map(w=>`<option value="${w.n}">Semaine ${w.n}</option>`).join("")}</select></label>
+   <label class="f" for="rWeek">Cuisinée en<select class="input" id="rWeek">${WEEKS.map(w=>`<option value="${w.n}">${wLabel(w.n)}</option>`).join("")}</select></label>
   </div>
   <label class="upload" for="rImg"><b id="rImgLbl">Ajouter une photo du plat</b><span class="hint">Facultatif</span><input type="file" id="rImg" accept="image/*"></label>
   <label class="f" for="rTags">Étiquettes<input class="input" id="rTags" placeholder="Végétarien, Sans cuisson"></label>
@@ -976,7 +1043,7 @@ function recipeForm(){return `<div class="sheet-bg" data-act="closeSheet"><div c
 /* ---------------- Interactions ---------------- */
 let pendingImg="";
 document.addEventListener("click",e=>{
- const t=e.target.closest("[data-act],[data-ptab],[data-atab],[data-pweek],[data-aweek],[data-mweek],[data-filter],[data-amode],[data-kid],[data-recipe],[data-msel],[data-prweek],[data-step],[data-lieu],[data-pkid],[data-kidfiche]");
+ const t=e.target.closest("[data-act],[data-ptab],[data-atab],[data-pweek],[data-aweek],[data-mweek],[data-filter],[data-amode],[data-kid],[data-recipe],[data-msel],[data-prweek],[data-step],[data-lieu],[data-pkid],[data-kidfiche],[data-period],[data-gweek]");
  if(!t)return;
  const d=t.dataset;
  if(d.act==="closeSheet"){if(t.classList.contains("sheet-bg")&&e.target!==t)return;S.sheet=null;return render()}
@@ -1005,6 +1072,8 @@ document.addEventListener("click",e=>{
  if(d.act==="clearSel"){S.msel.clear();return render()}
  if(d.act==="dlAll"){return toast(`Dans l'app finale : un fichier .zip avec les ${(media[S.mweek]||[]).length} fichiers de la semaine ${S.mweek} se télécharge.`)}
  if(d.act==="dlSel"){return toast(`Dans l'app finale : un fichier .zip avec les ${S.msel.size} fichiers choisis se télécharge.`)}
+ if(d.period){S.period=d.period;const f=periodWeeks(S.period)[0];S.aweek=f;S.mweek=f;S.prweek=f;S.gweek=f;S.msel.clear();return render()}
+ if(d.gweek){S.gweek=+d.gweek;return render()}
  if(d.pkid){S.me=kids.find(x=>x.id===+d.pkid);S.step=0;return render()}
  if(d.kidfiche){S.me=kids.find(x=>x.id===+d.kidfiche);S.ptab="enfant";S.step=0;scrollTo(0,0);return render()}
  if(d.lieu!==undefined){S.lieu=d.lieu||null;return render()}
@@ -1043,13 +1112,24 @@ document.addEventListener("submit",e=>{
   const k=S.me;
   if(!$("#fCgv").checked){const er=$("#kErr");er.hidden=false;er.scrollIntoView({block:"center"});return}
   k.cgv=true;k.parent=$("#fParent").value.trim()||k.parent;k.email=$("#fEmail").value.trim();k.adresse=$("#fAdr").value.trim();k.parent2=$("#fP2").value.trim();k.tel2=$("#fTel2").value.trim();
-  k.seul=$("#fSeulY").checked;k.pickup=$("#fPick").value.trim();k.assMaladie=$("#fAM").value.trim();k.assAccident=$("#fAA").value.trim();k.rc=$("#fRC").value.trim();
+  k.seul=$("#fSeulY").checked;k.nage=$("#fNageY").checked;k.pickup=$("#fPick").value.trim();k.assMaladie=$("#fAM").value.trim();k.assAccident=$("#fAA").value.trim();k.rc=$("#fRC").value.trim();
   k.prenom=$("#fPrenom").value.trim()||k.prenom;k.nom=$("#fNom").value.trim()||k.nom;k.naissance=$("#fNaiss").value||k.naissance;
   k.tel=$("#fTel").value.trim();k.contacts=[...document.querySelectorAll(".contact-row")].map(r=>{const [n,t]=r.querySelectorAll("input");return {name:n.value.trim(),tel:t.value.trim()}}).filter(c=>c.name||c.tel);
   const rg=$("#fRegime").value.trim();k.diet=rg?[rg]:[];k.allergies=$("#fAll").value.trim();k.severe=$("#fSev").checked&&!!k.allergies;
   k.patho=$("#fPatho").value.trim();k.obs=$("#fObs").value.trim();k.photos=$("#fPhY").checked;
   k.meds=[...document.querySelectorAll(".med-row")].map(r=>{const [n,d,w]=r.querySelectorAll("input");return {name:n.value.trim(),dose:d.value.trim(),when:w.value.trim()}}).filter(m=>m.name);
   k.done=true;syncFamily(k);S.step=0;S.ptab="accueil";render();scrollTo(0,0);return toast("Fiche enregistrée. Merci !");
+ }
+ if(e.target.id==="placeForm"){
+  const l=e.target.dataset.place,n=+e.target.dataset.week;
+  LIEU_INFO[l]={nom:$("#plNom").value.trim(),adresse:$("#plAdr").value.trim()};
+  REF[l+"|"+n]={nom:$("#rfNom").value.trim(),tel:$("#rfTel").value.trim()};
+  render();return toast("Lieu et référent enregistrés, visibles par les familles");
+ }
+ if(e.target.id==="progForm"){
+  const w=WEEKS[+e.target.dataset.week-1],lines=id=>$("#"+id).value.split("\n").map(x=>x.trim()).filter(Boolean);
+  w.theme=$("#gTheme").value.trim()||w.theme;w.program={alimentation:lines("gA"),mouvement:lines("gM"),nature:lines("gN")};
+  w.days=w.days.map(([d],i)=>[d,$("#gD"+i).value.trim()]);render();return toast("Programme publié, les familles le voient déjà");
  }
  if(e.target.id==="recipeForm"){
   const title=$("#rT").value.trim();if(!title){$("#rErr").hidden=false;return}

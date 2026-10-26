@@ -330,7 +330,7 @@ let kids=[
  {id:15,prenom:"Rose",nom:"Chevalley",naissance:"2017-05-22",weeks:[6,7],paid:false,order:"14896",email:"",parent:"Yann Chevalley",tel:"078 123 98 76",diet:["Vegan"],allergies:"Œuf",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""}
 ];
 const ASS=["CSS","Helsana","Groupe Mutuel","Swica","Visana"],RCS=["Vaudoise","Zurich","Baloise","AXA","Generali"];
-function fillDemo(){kids.forEach((k,i)=>Object.assign(k,{contacts:k.contacts??(k.urgence?[{name:k.urgence.split(",")[0]+" (papa)",tel:(k.urgence.split(",")[1]||"").trim()}]:[]),seul:k.seul??(ageOf(k)>=10&&i%2===0),pickup:k.pickup??(i%3===0?"Grand-maman, 079 000 00 0"+(i%10):""),adresse:k.adresse??("Rue des Exemples "+(i+3)+", 1233 Bernex"),parent2:k.parent2??(i%2?"":"Parent "+(i+1)+" bis"),tel2:k.tel2??(i%2?"":"078 000 11 "+String(10+i)),assMaladie:k.assMaladie??ASS[i%5],assAccident:k.assAccident??ASS[i%5],rc:k.rc??RCS[i%5],cgv:k.cgv??k.done,email:k.email||("parent"+(i+1)+"@exemple.ch")}))}
+function fillDemo(){kids.forEach((k,i)=>Object.assign(k,{lieu:k.lieu??LIEUX[[0,0,1,0,2,0,3,1,0,2,0,3,1,2,0][i]??0],contacts:k.contacts??(k.urgence?[{name:k.urgence.split(",")[0]+" (papa)",tel:(k.urgence.split(",")[1]||"").trim()}]:[]),seul:k.seul??(ageOf(k)>=10&&i%2===0),pickup:k.pickup??(i%3===0?"Grand-maman, 079 000 00 0"+(i%10):""),adresse:k.adresse??("Rue des Exemples "+(i+3)+", 1233 Bernex"),parent2:k.parent2??(i%2?"":"Parent "+(i+1)+" bis"),tel2:k.tel2??(i%2?"":"078 000 11 "+String(10+i)),assMaladie:k.assMaladie??ASS[i%5],assAccident:k.assAccident??ASS[i%5],rc:k.rc??RCS[i%5],cgv:k.cgv??k.done,email:k.email||("parent"+(i+1)+"@exemple.ch")}))}
 let recipes=[
  {id:1,title:"Brochettes arc-en-ciel",time:"15 min",level:"Facile",week:1,tags:["Sans cuisson","Végétarien"],ing:["1 barquette de fraises","2 kiwis","1 ananas","1 poignée de myrtilles","Piques en bois"],steps:["Laver et couper les fruits en cubes.","Enfiler les fruits en suivant les couleurs de l'arc-en-ciel.","Déguster bien frais !"],hue:"#E9EFA0",img:""},
  {id:2,title:"Houmous de betterave",time:"20 min",level:"Facile",week:1,tags:["Vegan","Sans gluten"],ing:["1 betterave cuite","1 boîte de pois chiches","2 c. à s. de tahini","1 citron","Sel, cumin"],steps:["Égoutter les pois chiches.","Mixer tous les ingrédients jusqu'à obtenir une crème lisse.","Servir avec des bâtonnets de légumes."],hue:"#D8E88A",img:""},
@@ -342,7 +342,7 @@ let media={};
 WEEKS.forEach(w=>{media[w.n]=MEDIA_CAPS.map((c,i)=>({id:w.n+"-"+i,type:i%5===3?"video":"photo",cap:c,hue:MEDIA_HUES[(i+w.n)%MEDIA_HUES.length],src:""})).slice(0,w.n<=2?12:(w.n===3?6:0))});
 
 /* ---------------- État ---------------- */
-const S={view:"login",me:null,ptab:"accueil",step:0,pweek:null,atab:"semaines",aweek:1,afilter:"tous",aq:"",amode:"liste",mweek:1,msel:new Set(),sheet:null,prweek:1,prgroup:true,prcols:new Set(["age","paye","allergies","regime","meds","photos","presence"])};
+const S={view:"login",me:null,ptab:"accueil",step:0,pweek:null,atab:"semaines",aweek:1,afilter:"tous",aq:"",amode:"liste",mweek:1,msel:new Set(),sheet:null,lieu:null,prweek:1,prgroup:true,prcols:new Set(["age","paye","allergies","regime","meds","photos","presence"])};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const ageOf=k=>{const b=new Date(k.naissance),r=new Date("2027-07-01");let a=r.getFullYear()-b.getFullYear();if(r<new Date(r.getFullYear(),b.getMonth(),b.getDate()))a--;return a};
@@ -408,7 +408,9 @@ const ILL={
 };
 const RECIPE_ILL=[ILL.food,ILL.leaf,ILL.sun];
 const WEEK_START=n=>new Date(2027,6,5+7*(n-1));
-const PRICE=350; // exemple, prix réel à confirmer
+const LIEUX=["Bernex","Laconnex","Ville de Genève","Cossonay"];
+const PRICES={"Bernex":350,"Laconnex":350,"Ville de Genève":350,"Cossonay":350}; // exemples, tarifs à définir par lieu
+const priceOf=k=>PRICES[k.lieu]||0;
 const chf=n=>"CHF "+n.toLocaleString("fr-CH")+".–";
 const PACK=["Crème solaire","Maillot de bain","Gourde","Casquette","Affaires de rechange","K-way","Tablier"];
 
@@ -492,7 +494,7 @@ function parentHome(k){
  <div class="hero-home">
   <span class="eyebrow">Bonjour ${esc(k.parent.split(" ")[0])} !</span>
   <div class="count-line">${c.num!==""?`<span class="count">${c.num}</span>`:""}<span class="count-txt">${c.txt}</span></div>
-  <div class="chips">${k.weeks.map(n=>`<span class="chip">S${n} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span>`).join("")}</div>
+  <div class="chips"><span class="chip">${esc(k.lieu)}</span>${k.weeks.map(n=>`<span class="chip">S${n} · ${WEEKS[n-1].from} au ${WEEKS[n-1].to}</span>`).join("")}</div>
   <p class="hero-theme">Première semaine : <b>${esc(w.theme)}</b></p>
   <span class="deco" aria-hidden="true"></span>
  </div>
@@ -504,7 +506,7 @@ function parentHome(k){
 
  <div class="card bill">
   <span class="pm-ill">${k.paid?I.doc:I.lock}</span>
-  <div><h2>Facturation</h2><p class="hint">${k.paid?"Votre attestation de paiement pour les impôts est disponible.":`Montant : ${chf(PRICE*k.weeks.length)}. L'attestation pour les impôts se débloque dès réception du paiement.`}</p></div>
+  <div><h2>Facturation</h2><p class="hint">${k.paid?"Votre attestation de paiement pour les impôts est disponible.":`Montant : ${chf(priceOf(k)*k.weeks.length)}. L'attestation pour les impôts se débloque dès réception du paiement.`}</p></div>
   <button class="btn small ${k.paid?"primary":""}" data-ptab="facture">${k.paid?"Télécharger":"Détails"}</button>
  </div>
 
@@ -530,8 +532,8 @@ function parentHome(k){
  </div>`;
 }
 function parentBill(k){
- const total=PRICE*k.weeks.length,yr=2027;
- const rows=k.weeks.map(n=>`<tr><td>Semaine ${n} · du ${WEEKS[n-1].from} au ${WEEKS[n-1].to} ${yr}</td><td class="num">${chf(PRICE)}</td></tr>`).join("");
+ const total=priceOf(k)*k.weeks.length,yr=2027;
+ const rows=k.weeks.map(n=>`<tr><td>Semaine ${n} · du ${WEEKS[n-1].from} au ${WEEKS[n-1].to} ${yr}</td><td class="num">${chf(priceOf(k))}</td></tr>`).join("");
  const head=`<div class="section-head"><div><span class="eyebrow">Commande ${esc(k.order)}</span><h1>Facturation</h1></div></div>`;
  if(!k.paid)return `<div class="section">${head}
   <div class="card locked"><span class="pm-ill">${I.lock}</span><div><h2>Attestation pour les impôts</h2><p>Elle sera disponible ici dès que nous aurons reçu votre paiement. Vous recevrez un e-mail à ce moment-là.</p></div></div>
@@ -545,6 +547,7 @@ function parentBill(k){
  <div class="paper">
   <div class="paper-head"><div><h2>Attestation de paiement ${yr}</h2><p class="sub">Frais de garde · centre aéré Croc'n'Mouv</p></div><img src="${LOGO_BLACK}" alt="Croc'n'Mouv"></div>
   <table style="min-width:0"><tbody>
+   <tr><th>Lieu</th><td>Centre aéré de ${esc(k.lieu)}</td></tr>
    <tr><th>Organisateur</th><td>Global Nutrition Sàrl · Croc'n'Mouv<br>Caroline Berney, 079 195 76 33</td></tr>
    <tr><th>Parent</th><td>${esc(k.parent)}<br>${esc(k.adresse)}</td></tr>
    <tr><th>Enfant</th><td>${esc(kidName(k))}, né·e le ${new Date(k.naissance).toLocaleDateString("fr-CH")}</td></tr>
@@ -744,6 +747,7 @@ function adminView(){
  </div></nav></div>`;
 }
 const FILTERS=[["tous","Tous"],["impayes","Non payés"],["fiche","Fiche à compléter"],["allergies","Allergies"],["meds","Médicaments"],["nophoto","Pas de photos"],["obs","Observations"]];
+function lieuSeg(){return `<div class="seg lieux" role="group" aria-label="Lieu"><button aria-pressed="${!S.lieu}" data-lieu="">Tous les lieux</button>${LIEUX.map(l=>`<button aria-pressed="${S.lieu===l}" data-lieu="${l}">${l} <span class="hint">(${kids.filter(k=>k.lieu===l).length})</span></button>`).join("")}</div>`}
 function applyFilter(list){
  const f=S.afilter,q=S.aq.trim().toLowerCase();
  return list.filter(k=>(f==="tous"||(f==="impayes"&&!k.paid)||(f==="fiche"&&!k.done)||(f==="allergies"&&k.allergies)||(f==="meds"&&k.meds.length)||(f==="nophoto"&&!k.photos)||(f==="obs"&&k.obs))
@@ -751,7 +755,8 @@ function applyFilter(list){
 }
 function adminWeeks(){
  const wk=S.aweek, w=wk?WEEKS[wk-1]:null;
- const inWeek=kids.filter(k=>!wk||k.weeks.includes(wk));
+ const inLieu=kids.filter(k=>!S.lieu||k.lieu===S.lieu);
+ const inWeek=inLieu.filter(k=>!wk||k.weeks.includes(wk));
  const list=applyFilter(inWeek).sort((a,b)=>ageOf(a)-ageOf(b)||a.prenom.localeCompare(b.prenom));
  const cnt=fn=>inWeek.filter(fn).length;
  const stat=(id,n,l,alert)=>`<button class="stat ${alert&&n?"alert":""}" aria-pressed="${S.afilter===id}" data-filter="${id}"><span class="n">${n}</span><span class="l">${l}</span></button>`;
@@ -764,14 +769,15 @@ function adminWeeks(){
   content=GROUPS.map(g=>{const gl=list.filter(k=>groupOf(ageOf(k))===g);if(!gl.length)return"";
    return `<div class="group"><div class="group-head"><h3>${g}</h3><span>${gl.length} enfant${gl.length>1?"s":""}</span></div>
    ${gl.map(k=>`<button class="kid-row" data-kid="${k.id}"><span class="avatar">${esc(k.prenom[0]+k.nom[0])}</span>
-    <span class="name">${esc(kidName(k))}<small>${ageOf(k)} ans · ${esc(k.parent)}</small></span>
+    <span class="name">${esc(kidName(k))}<small>${ageOf(k)} ans · ${esc(k.lieu)} · ${esc(k.parent)}</small></span>
     <span class="pay-dot chip ${k.paid?"ok":"bad"}">${k.paid?"Payé":"Non payé"}</span>
     <span class="chips">${statusChips(k,{withPay:false})}</span></button>`).join("")}</div>`}).join("")||`<div class="card plain"><p>Aucun enfant ne correspond à ce filtre.</p></div>`;
  }
  return `<div class="section">
  <div class="section-head"><div><span class="eyebrow">${w?`Semaine ${wk} · du ${w.from} au ${w.to}`:"Été 2027 · 7 semaines"}</span><h1>${w?esc(w.theme):"Toutes les semaines"}</h1></div></div>
+ ${lieuSeg()}
  <div class="seg" role="group" aria-label="Semaine">
-  ${WEEKS.map(x=>`<button aria-pressed="${wk===x.n}" data-aweek="${x.n}">S${x.n} · ${x.from} <span class="hint">(${kids.filter(k=>k.weeks.includes(x.n)).length})</span></button>`).join("")}
+  ${WEEKS.map(x=>`<button aria-pressed="${wk===x.n}" data-aweek="${x.n}">S${x.n} · ${x.from} <span class="hint">(${inLieu.filter(k=>k.weeks.includes(x.n)).length})</span></button>`).join("")}
   <button aria-pressed="${!wk}" data-aweek="0">Tout l'été</button>
  </div>
  <div class="stats">
@@ -794,9 +800,9 @@ function adminWeeks(){
 function kidSheet(id){return ()=>{const k=kids.find(x=>x.id===id);return `<div class="sheet-bg" data-act="closeSheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="${esc(kidName(k))}">
  <div class="grab"></div>
  <div style="display:flex;gap:12px;align-items:center"><span class="avatar" style="width:54px;height:54px;font-size:1.1rem">${esc(k.prenom[0]+k.nom[0])}</span>
-  <div><h2>${esc(kidName(k))}</h2><p class="hint">${ageOf(k)} ans · groupe ${groupOf(ageOf(k))} · ${k.weeks.map(n=>"S"+n).join(", ")}</p></div></div>
+  <div><h2>${esc(kidName(k))}</h2><p class="hint">${ageOf(k)} ans · groupe ${groupOf(ageOf(k))} · ${esc(k.lieu)} · ${k.weeks.map(n=>"S"+n).join(", ")}</p></div></div>
  <div class="chips">${statusChips(k)}</div>
- <div class="toggle"><div><b>Inscription payée</b><p class="hint">Commande ${esc(k.order)} · ${chf(PRICE*k.weeks.length)}. En cochant, l'attestation pour les impôts se débloque pour la famille.</p></div>
+ <div class="toggle"><div><b>Inscription payée</b><p class="hint">Commande ${esc(k.order)} · ${chf(priceOf(k)*k.weeks.length)}. En cochant, l'attestation pour les impôts se débloque pour la famille.</p></div>
   <button class="switch" role="switch" aria-checked="${k.paid}" aria-label="Inscription payée" data-act="togglePaid" data-id="${k.id}"></button></div>
  ${k.allergies?`<div class="notice" style="${k.severe?"background:var(--bad-bg);color:var(--bad)":""}">${k.severe?"Allergie sévère : ":"Allergie : "}${esc(k.allergies)}</div>`:""}
  <dl class="kv">
@@ -836,6 +842,7 @@ function adminMedia(){
  </div>`;
 }
 const PCOLS=[
+ ["lieu","Lieu",k=>k.lieu],
  ["age","Âge",k=>ageOf(k)+" ans"],
  ["groupe","Groupe",k=>groupOf(ageOf(k))],
  ["paye","Paiement",k=>k.paid?"Payé":"NON PAYÉ"],
@@ -855,7 +862,7 @@ const PCOLS=[
 ];
 function printData(){
  const wk=S.prweek;
- const list=kids.filter(k=>k.weeks.includes(wk)).sort((a,b)=>ageOf(a)-ageOf(b)||a.nom.localeCompare(b.nom));
+ const list=kids.filter(k=>k.weeks.includes(wk)&&(!S.lieu||k.lieu===S.lieu)).sort((a,b)=>ageOf(a)-ageOf(b)||a.nom.localeCompare(b.nom));
  const cols=PCOLS.filter(c=>S.prcols.has(c[0]));
  const groups=S.prgroup?GROUPS.map(g=>[g,list.filter(k=>groupOf(ageOf(k))===g)]).filter(g=>g[1].length):[["",list]];
  return {wk,list,cols,groups};
@@ -868,6 +875,8 @@ function adminPrint(){
  return `<div class="section">
  <div class="section-head"><div><span class="eyebrow">Fiches à imprimer</span><h1>Imprimer une semaine</h1></div></div>
  <div class="card print-opts">
+  <div><b>Lieu</b></div>
+  ${lieuSeg()}
   <div><b>Semaine</b></div>
   ${weekSeg(WEEKS.map(x=>x.n),wk,"prweek")}
   <div><b>Informations à imprimer</b></div>
@@ -881,7 +890,7 @@ function adminPrint(){
  </div>
  <h2>Aperçu</h2>
  <div class="paper">
-  <div class="paper-head"><div><h2>Semaine ${wk} · du ${w.from} au ${w.to} 2027</h2><p class="sub">${esc(w.theme)} · ${list.length} enfants · imprimé le ${new Date().toLocaleDateString("fr-CH")}</p></div><img src="${LOGO_BLACK}" alt="Croc'n'Mouv"></div>
+  <div class="paper-head"><div><h2>${S.lieu?esc(S.lieu)+" · ":""}Semaine ${wk} · du ${w.from} au ${w.to} 2027</h2><p class="sub">${esc(w.theme)} · ${list.length} enfants · imprimé le ${new Date().toLocaleDateString("fr-CH")}</p></div><img src="${LOGO_BLACK}" alt="Croc'n'Mouv"></div>
   ${groups.map(([g,gl])=>`${g?`<h3>${g} · ${gl.length} enfant${gl.length>1?"s":""}</h3>`:""}
   <table><thead><tr>${head}</tr></thead><tbody>${gl.map(k=>`<tr><td><b>${esc(k.nom.toUpperCase())}</b> ${esc(k.prenom)}</td>${cols.map(c=>cell(c,k)).join("")}</tr>`).join("")}</tbody></table>`).join("")}
  </div>
@@ -951,7 +960,7 @@ function recipeForm(){return `<div class="sheet-bg" data-act="closeSheet"><div c
 /* ---------------- Interactions ---------------- */
 let pendingImg="";
 document.addEventListener("click",e=>{
- const t=e.target.closest("[data-act],[data-ptab],[data-atab],[data-pweek],[data-aweek],[data-mweek],[data-filter],[data-amode],[data-kid],[data-recipe],[data-msel],[data-prweek],[data-step]");
+ const t=e.target.closest("[data-act],[data-ptab],[data-atab],[data-pweek],[data-aweek],[data-mweek],[data-filter],[data-amode],[data-kid],[data-recipe],[data-msel],[data-prweek],[data-step],[data-lieu]");
  if(!t)return;
  const d=t.dataset;
  if(d.act==="closeSheet"){if(t.classList.contains("sheet-bg")&&e.target!==t)return;S.sheet=null;return render()}
@@ -980,6 +989,7 @@ document.addEventListener("click",e=>{
  if(d.act==="clearSel"){S.msel.clear();return render()}
  if(d.act==="dlAll"){return toast(`Dans l'app finale : un fichier .zip avec les ${(media[S.mweek]||[]).length} fichiers de la semaine ${S.mweek} se télécharge.`)}
  if(d.act==="dlSel"){return toast(`Dans l'app finale : un fichier .zip avec les ${S.msel.size} fichiers choisis se télécharge.`)}
+ if(d.lieu!==undefined){S.lieu=d.lieu||null;return render()}
  if(d.step!==undefined){return goStep(+d.step)}
  if(d.act==="stepNext"){return goStep(S.step+1)}
  if(d.act==="stepPrev"){return goStep(S.step-1)}

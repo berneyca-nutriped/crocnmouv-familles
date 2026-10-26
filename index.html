@@ -259,6 +259,13 @@ td.num{font-variant-numeric:tabular-nums}
 .timeline b{font-size:.82rem;text-transform:uppercase;letter-spacing:.06em;padding-top:1px}
 .pack{display:grid;gap:10px}
 .gallery.feature .ph:first-child{grid-column:span 2;aspect-ratio:2/1}
+.btn svg{width:18px;height:18px;flex:none}
+td.num,th.num{white-space:nowrap;text-align:right}
+.bill,.locked{display:grid;grid-template-columns:44px 1fr auto;gap:14px;align-items:center}
+.locked{grid-template-columns:44px 1fr}
+.bill h2,.locked h2{font-size:1.1rem}
+@media (max-width:440px){.bill{grid-template-columns:44px 1fr}.bill .btn{grid-column:1/-1}}
+.paper th{text-align:left;width:34%}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 html,body{height:100%}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -351,6 +358,8 @@ const I={
  nocam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m2 2 20 20M9 4h6l2 3h4a2 2 0 0 1 2 2v9M3 7h1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h15"/></svg>',
  home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11 12 3l9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>',
  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>',
+ doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>',
+ lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-5M12 8h.01"/></svg>',
  print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
  sprout:'<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 56V30"/><path d="M32 34c-10 0-16-6-16-16 10 0 16 6 16 16zM32 30c0-10 6-16 16-16 0 10-6 16-16 16z"/></svg>'
@@ -390,6 +399,8 @@ const ILL={
 };
 const RECIPE_ILL=[ILL.food,ILL.leaf,ILL.sun];
 const WEEK_START=n=>new Date(2027,6,5+7*(n-1));
+const PRICE=350; // exemple, prix réel à confirmer
+const chf=n=>"CHF "+n.toLocaleString("fr-CH")+".–";
 const PACK=["Casquette","Gourde","Crème solaire","Habits qui peuvent se salir","Chaussures fermées"];
 
 /* ---------------- Connexion ---------------- */
@@ -435,6 +446,7 @@ function parentView(){
  if(S.ptab==="photos")body=parentPhotos(k);
  if(S.ptab==="recettes")body=recipesList(false);
  if(S.ptab==="infos")body=`<div class="section">${reglementHTML()}</div>`;
+ if(S.ptab==="facture")body=parentBill(k);
  return `<div class="app">
  <header class="topbar"><div class="wrap">
   <img class="logo-img logo-black" src="${LOGO_BLACK}" alt="Croc'n'Mouv">
@@ -482,6 +494,12 @@ function parentHome(k){
   ${todo.map(x=>`<div class="todo-row"><span class="dot ${x.ok?"ok":"warn"}" aria-hidden="true">${x.ok?I.check:"!"}</span><div><b>${x.t}</b><p class="hint">${x.s}</p></div>${x.a}</div>`).join("")}
  </div>
 
+ <div class="card bill">
+  <span class="pm-ill">${k.paid?I.doc:I.lock}</span>
+  <div><h2>Facturation</h2><p class="hint">${k.paid?"Votre attestation de paiement pour les impôts est disponible.":`Montant : ${chf(PRICE*k.weeks.length)}. L'attestation pour les impôts se débloque dès réception du paiement.`}</p></div>
+  <button class="btn small ${k.paid?"primary":""}" data-ptab="facture">${k.paid?"Télécharger":"Détails"}</button>
+ </div>
+
  <div class="section-head"><h2>Ce qui l'attend</h2><button class="link" data-ptab="programme">Voir le programme</button></div>
  <div class="pillar-mini">
   <button class="pm" data-ptab="programme"><span class="pm-ill">${ILL.food}</span><b>Alimentation</b><span class="hint">Cuisiner, goûter, découvrir</span></button>
@@ -501,6 +519,31 @@ function parentHome(k){
    <p class="hint">Du lundi au vendredi. À prendre chaque jour : ${PACK.slice(0,3).join(", ").toLowerCase()}.</p>
    <button class="btn small ghost" data-ptab="infos" style="justify-self:start">Règlement et contact</button>
   </div>
+ </div>
+ </div>`;
+}
+function parentBill(k){
+ const total=PRICE*k.weeks.length,yr=2027;
+ const rows=k.weeks.map(n=>`<tr><td>Semaine ${n} · du ${WEEKS[n-1].from} au ${WEEKS[n-1].to} ${yr}</td><td class="num">${chf(PRICE)}</td></tr>`).join("");
+ const head=`<div class="section-head"><div><span class="eyebrow">Commande ${esc(k.order)}</span><h1>Facturation</h1></div></div>`;
+ if(!k.paid)return `<div class="section">${head}
+  <div class="card locked"><span class="pm-ill">${I.lock}</span><div><h2>Attestation pour les impôts</h2><p>Elle sera disponible ici dès que nous aurons reçu votre paiement. Vous recevrez un e-mail à ce moment-là.</p></div></div>
+  <div class="card plain" style="display:grid;gap:10px"><h3>Montant à régler</h3>
+   <div class="table-wrap"><table style="min-width:0"><tbody>${rows}<tr><th>Total</th><th class="num">${chf(total)}</th></tr></tbody></table></div>
+   <p class="hint">Par virement bancaire dans les 10 jours après l'inscription. Les coordonnées bancaires figurent dans l'e-mail de confirmation.</p></div>
+ </div>`;
+ return `<div class="section">${head}
+ <div class="card bill"><span class="pm-ill">${I.check}</span><div><h2>Paiement reçu, merci !</h2><p class="hint">Vous pouvez joindre cette attestation à votre déclaration d'impôts (frais de garde des enfants).</p></div></div>
+ <div class="toolbar"><button class="btn primary" data-act="dlBill">${I.dl}Télécharger l'attestation (PDF)</button></div>
+ <div class="paper">
+  <div class="paper-head"><div><h2>Attestation de paiement ${yr}</h2><p class="sub">Frais de garde · centre aéré Croc'n'Mouv</p></div><img src="${LOGO_BLACK}" alt="Croc'n'Mouv"></div>
+  <table style="min-width:0"><tbody>
+   <tr><th>Organisateur</th><td>Global Nutrition · Croc'n'Mouv<br>Caroline Berney, 079 195 76 33</td></tr>
+   <tr><th>Parent</th><td>${esc(k.parent)}<br>${esc(k.adresse)}</td></tr>
+   <tr><th>Enfant</th><td>${esc(kidName(k))}, né·e le ${new Date(k.naissance).toLocaleDateString("fr-CH")}</td></tr>
+  </tbody></table>
+  <table style="min-width:0"><thead><tr><th>Prestation</th><th>Montant</th></tr></thead><tbody>${rows}<tr><th>Total payé</th><th class="num">${chf(total)}</th></tr></tbody></table>
+  <p class="sub">Paiement reçu par virement bancaire. Commande n° ${esc(k.order)}. Document établi le ${new Date().toLocaleDateString("fr-CH")}.</p>
  </div>
  </div>`;
 }
@@ -745,7 +788,7 @@ function kidSheet(id){return ()=>{const k=kids.find(x=>x.id===id);return `<div c
  <div style="display:flex;gap:12px;align-items:center"><span class="avatar" style="width:54px;height:54px;font-size:1.1rem">${esc(k.prenom[0]+k.nom[0])}</span>
   <div><h2>${esc(kidName(k))}</h2><p class="hint">${ageOf(k)} ans · groupe ${groupOf(ageOf(k))} · ${k.weeks.map(n=>"S"+n).join(", ")}</p></div></div>
  <div class="chips">${statusChips(k)}</div>
- <div class="toggle"><div><b>Inscription payée</b><p class="hint">Commande ${esc(k.order)}</p></div>
+ <div class="toggle"><div><b>Inscription payée</b><p class="hint">Commande ${esc(k.order)} · ${chf(PRICE*k.weeks.length)}. En cochant, l'attestation pour les impôts se débloque pour la famille.</p></div>
   <button class="switch" role="switch" aria-checked="${k.paid}" aria-label="Inscription payée" data-act="togglePaid" data-id="${k.id}"></button></div>
  ${k.allergies?`<div class="notice" style="${k.severe?"background:var(--bad-bg);color:var(--bad)":""}">${k.severe?"Allergie sévère : ":"Allergie : "}${esc(k.allergies)}</div>`:""}
  <dl class="kv">
@@ -919,6 +962,7 @@ document.addEventListener("click",e=>{
  if(d.act==="doPrint"){try{window.print()}catch(_){}return toast("Dans l'app finale, la fenêtre d'impression s'ouvre avec cette page (bloquée dans la maquette).")}
  if(d.act==="copyPrint"){const {list,cols}=printData();const rows=[["Enfant",...cols.filter(c=>c[2]).map(c=>c[1])].join("\t"),...list.map(k=>[kidName(k),...cols.filter(c=>c[2]).map(c=>c[2](k))].join("\t"))].join("\n");
   navigator.clipboard?.writeText(rows).then(()=>toast("Tableau copié, collez-le dans Excel ou Word"),()=>toast("Copie impossible dans cet affichage"));return}
+ if(d.act==="dlBill"){return toast("Dans l'app finale, l'attestation se télécharge en PDF (bloqué dans la maquette).")}
  if(d.act==="newRecipe"){pendingImg="";S.sheet=recipeForm;return render()}
 });
 document.addEventListener("input",e=>{

@@ -111,6 +111,8 @@ legend{font-weight:600;font-size:1.05rem;margin-bottom:4px;padding:0}
 .checks label{display:inline-flex;align-items:center;gap:8px;background:var(--bg);border:2px solid var(--line);border-radius:999px;padding:8px 14px;font-size:.9rem;cursor:pointer}
 .checks input{accent-color:var(--lime-strong);width:18px;height:18px}
 .checks label:has(input:checked){border-color:var(--lime-strong);background:var(--surface-2)}
+.contact-row{display:grid;grid-template-columns:2fr 1.2fr auto;gap:8px;align-items:center}
+@media (max-width:560px){.contact-row{grid-template-columns:1fr auto}.contact-row .input:nth-child(2){grid-column:1}.contact-row .iconbtn{grid-row:1/3;grid-column:2}}
 .med-row{display:grid;grid-template-columns:2fr 1fr 1.4fr auto;gap:8px;align-items:center}
 @media (max-width:560px){.med-row{grid-template-columns:1fr 1fr}.med-row .input:first-child{grid-column:1/-1}}
 .pillars{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px}
@@ -254,7 +256,7 @@ let kids=[
  {id:15,prenom:"Rose",nom:"Chevalley",naissance:"2017-05-22",weeks:[6,7],paid:false,order:"14896",email:"",parent:"Yann Chevalley",tel:"078 123 98 76",diet:["Vegan"],allergies:"Œuf",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""}
 ];
 const ASS=["CSS","Helsana","Groupe Mutuel","Swica","Visana"],RCS=["Vaudoise","Zurich","Baloise","AXA","Generali"];
-function fillDemo(){kids.forEach((k,i)=>Object.assign(k,{seul:k.seul??(ageOf(k)>=10&&i%2===0),pickup:k.pickup??(i%3===0?"Grand-maman, 079 000 00 0"+(i%10):""),adresse:k.adresse??("Rue des Exemples "+(i+3)+", 1233 Bernex"),parent2:k.parent2??(i%2?"":"Parent "+(i+1)+" bis"),tel2:k.tel2??(i%2?"":"078 000 11 "+String(10+i)),assMaladie:k.assMaladie??ASS[i%5],assAccident:k.assAccident??ASS[i%5],rc:k.rc??RCS[i%5],cgv:k.cgv??k.done,email:k.email||("parent"+(i+1)+"@exemple.ch")}))}
+function fillDemo(){kids.forEach((k,i)=>Object.assign(k,{contacts:k.contacts??(k.urgence?[{name:k.urgence.split(",")[0]+" (papa)",tel:(k.urgence.split(",")[1]||"").trim()}]:[]),seul:k.seul??(ageOf(k)>=10&&i%2===0),pickup:k.pickup??(i%3===0?"Grand-maman, 079 000 00 0"+(i%10):""),adresse:k.adresse??("Rue des Exemples "+(i+3)+", 1233 Bernex"),parent2:k.parent2??(i%2?"":"Parent "+(i+1)+" bis"),tel2:k.tel2??(i%2?"":"078 000 11 "+String(10+i)),assMaladie:k.assMaladie??ASS[i%5],assAccident:k.assAccident??ASS[i%5],rc:k.rc??RCS[i%5],cgv:k.cgv??k.done,email:k.email||("parent"+(i+1)+"@exemple.ch")}))}
 let recipes=[
  {id:1,title:"Brochettes arc-en-ciel",time:"15 min",level:"Facile",week:1,tags:["Sans cuisson","Végétarien"],ing:["1 barquette de fraises","2 kiwis","1 ananas","1 poignée de myrtilles","Piques en bois"],steps:["Laver et couper les fruits en cubes.","Enfiler les fruits en suivant les couleurs de l'arc-en-ciel.","Déguster bien frais !"],hue:"#F2A9A0",img:""},
  {id:2,title:"Houmous de betterave",time:"20 min",level:"Facile",week:1,tags:["Vegan","Sans gluten"],ing:["1 betterave cuite","1 boîte de pois chiches","2 c. à s. de tahini","1 citron","Sel, cumin"],steps:["Égoutter les pois chiches.","Mixer tous les ingrédients jusqu'à obtenir une crème lisse.","Servir avec des bâtonnets de légumes."],hue:"#C9708C",img:""},
@@ -287,6 +289,7 @@ const I={
  warn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 3 2 21h20zM12 10v4M12 18h.01"/></svg>',
  pill:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><rect x="2" y="8" width="20" height="8" rx="4" transform="rotate(-35 12 12)"/><path d="m9 9 6 6" /></svg>',
  nocam:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m2 2 20 20M9 4h6l2 3h4a2 2 0 0 1 2 2v9M3 7h1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h15"/></svg>',
+ info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-5M12 8h.01"/></svg>',
  print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
  sprout:'<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 56V30"/><path d="M32 34c-10 0-16-6-16-16 10 0 16 6 16 16zM32 30c0-10 6-16 16-16 0 10-6 16-16 16z"/></svg>'
 };
@@ -349,12 +352,13 @@ function loginView(){return `
 /* ---------------- Espace parent ---------------- */
 function parentView(){
  const k=S.me;
- const tabs=[["enfant","Mon enfant",I.kid],["programme","Programme",I.cal],["photos","Photos",I.cam],["recettes","Recettes",I.pot]];
+ const tabs=[["enfant","Mon enfant",I.kid],["programme","Programme",I.cal],["photos","Photos",I.cam],["recettes","Recettes",I.pot],["infos","Infos",I.info]];
  let body="";
  if(S.ptab==="enfant")body=parentKid(k);
  if(S.ptab==="programme")body=parentProgram(k);
  if(S.ptab==="photos")body=parentPhotos(k);
  if(S.ptab==="recettes")body=recipesList(false);
+ if(S.ptab==="infos")body=`<div class="section">${reglementHTML()}</div>`;
  return `<div class="app">
  <header class="topbar"><div class="wrap">
   <img class="logo-img logo-black" src="${LOGO_BLACK}" alt="Croc'n'Mouv">
@@ -368,7 +372,7 @@ function parentView(){
 }
 function completion(k){
  let n=0;const t=6;
- if(k.prenom&&k.naissance)n++; if(k.tel)n++; if(k.urgence)n++;
+ if(k.prenom&&k.naissance)n++; if(k.tel)n++; if(k.contacts&&k.contacts.length)n++;
  if(k.done){n=t}else{ if(k.diet.length||k.allergies)n++; }
  return Math.round(n/t*100);
 }
@@ -408,7 +412,11 @@ function parentKid(k){
     <label class="f" for="fP2">Nom du parent 2<input class="input" id="fP2" placeholder="Facultatif" value="${esc(k.parent2)}"></label>
     <label class="f" for="fTel2">Téléphone du parent 2<input class="input" id="fTel2" type="tel" placeholder="Facultatif" value="${esc(k.tel2)}"></label>
    </div>
-   <label class="f" for="fUrg">Autre personne à contacter en urgence<input class="input" id="fUrg" placeholder="Nom, lien, téléphone" value="${esc(k.urgence)}"></label>
+   <div class="f" style="display:grid;gap:8px">
+    <span style="font-weight:500;font-size:.9rem">Autres personnes de contact</span>
+    <div id="contacts" style="display:grid;gap:8px">${k.contacts.map((c,i)=>contactRow(c,i)).join("")}</div>
+    <button type="button" class="btn ghost small" data-act="addContact" style="justify-self:start">+ Ajouter une personne</button>
+   </div>
   </fieldset>
   <fieldset>
    <legend>Retour à la maison</legend>
@@ -448,7 +456,7 @@ function parentKid(k){
    <p>Pendant la semaine de camp, notre équipe prend des photos et des vidéos des activités. Elles sont partagées sur cet espace avec les familles de la semaine et projetées lors de l'apéritif de fin de camp.</p>
    <p>Si vous préférez ne pas donner votre accord, nous veillons à ce que votre enfant n'apparaisse sur aucune photo ni vidéo diffusée. Il participe bien sûr à toutes les activités, comme les autres.</p>
    <div class="checks">
-    <label for="fPhY"><input type="radio" name="photos" id="fPhY" value="1" ${k.photos?"checked":""}>J'autorise Global Nutrition (Croc'n'Mouv) à utiliser les photos et vidéos de mon enfant</label>
+    <label for="fPhY"><input type="radio" name="photos" id="fPhY" value="1" ${k.photos?"checked":""}>J'autorise Croc'n'Mouv à utiliser les photos et vidéos de mon enfant</label>
     <label for="fPhN"><input type="radio" name="photos" id="fPhN" value="0" ${!k.photos?"checked":""}>Je refuse</label>
    </div>
    <p class="hint">Les photos restent visibles uniquement par les familles inscrites la même semaine.</p>
@@ -458,14 +466,19 @@ function parentKid(k){
    <label class="f" for="fObs"><span class="hint">Habitudes, peurs, sieste, doudou…</span><textarea class="input" id="fObs">${esc(k.obs)}</textarea></label>
   </fieldset>
   <fieldset>
-   <legend>Conditions générales</legend>
-   <div class="checks"><label for="fCgv"><input type="checkbox" id="fCgv" ${k.cgv?"checked":""}>J'ai lu et j'accepte les conditions générales de Croc'n'Mouv</label></div>
+   <legend>Règlement général</legend>
+   <button type="button" class="btn ghost small" data-act="readRules" style="justify-self:start">Lire le règlement général</button>
+   <div class="checks"><label for="fCgv"><input type="checkbox" id="fCgv" ${k.cgv?"checked":""}>J'ai lu et j'accepte le règlement général de Croc'n'Mouv</label></div>
   </fieldset>
-  <p class="err" id="kErr" hidden>Merci d'accepter les conditions générales pour enregistrer la fiche.</p>
+  <p class="err" id="kErr" hidden>Merci d'accepter le règlement général pour enregistrer la fiche.</p>
   <button class="btn primary" type="submit">Enregistrer la fiche</button>
  </form>
  </div>`;
 }
+function contactRow(c,i){return `<div class="contact-row">
+ <input class="input" id="cN${i}" placeholder="Nom et lien (ex. grand-maman)" value="${esc(c.name)}" aria-label="Nom et lien">
+ <input class="input" id="cT${i}" type="tel" placeholder="Téléphone" value="${esc(c.tel)}" aria-label="Téléphone">
+ <button type="button" class="iconbtn" data-act="delRow" aria-label="Retirer">✕</button></div>`}
 function medRow(m,i){return `<div class="med-row">
  <input class="input" id="mN${i}" placeholder="Médicament" value="${esc(m.name)}" aria-label="Médicament">
  <input class="input" id="mD${i}" placeholder="Dose" value="${esc(m.dose)}" aria-label="Dose">
@@ -601,13 +614,13 @@ function kidSheet(id){return ()=>{const k=kids.find(x=>x.id===id);return `<div c
   <dt>Adresse</dt><dd>${esc(k.adresse)||"–"}</dd>
   <dt>Parent 2</dt><dd>${esc(k.parent2)||"–"}</dd>
   <dt>Tél. parent 2</dt><dd>${esc(k.tel2)||"–"}</dd>
-  <dt>Urgence</dt><dd>${esc(k.urgence)||"–"}</dd>
+  <dt>Autres contacts</dt><dd>${k.contacts.map(c=>esc(c.name)+" · "+esc(c.tel)).join("<br>")||"–"}</dd>
   <dt>Régime</dt><dd>${esc(k.diet.join(", "))||"Aucun"}</dd>
   <dt>Santé</dt><dd>${esc(k.patho)||"Rien de signalé"}</dd>
   <dt>Médicaments</dt><dd>${k.meds.length?k.meds.map(m=>`<b>${esc(m.name)}</b> · ${esc(m.dose)} · ${esc(m.when)}`).join("<br>"):"Aucun"}</dd>
   <dt>Photos</dt><dd>${k.photos?"Autorisées":"<b>Refusées</b>"}</dd>
   <dt>Assurances</dt><dd>Maladie : ${esc(k.assMaladie)||"–"}<br>Accident : ${esc(k.assAccident)||"–"}<br>RC : ${esc(k.rc)||"–"}</dd>
-  <dt>Conditions</dt><dd>${k.cgv?"Acceptées":"<b>Pas encore acceptées</b>"}</dd>
+  <dt>Règlement</dt><dd>${k.cgv?"Accepté":"<b>Pas encore accepté</b>"}</dd>
  </dl>
  <label class="f" for="aObs">Observations de l'équipe<textarea class="input" id="aObs">${esc(k.obs)}</textarea></label>
  <div class="toolbar"><button class="btn primary" data-act="saveObs" data-id="${k.id}">Enregistrer</button><button class="btn" data-act="closeSheet">Fermer</button></div>
@@ -641,7 +654,7 @@ const PCOLS=[
  ["parent","Parents et téléphones",k=>k.parent+" · "+k.tel+(k.tel2?" / "+(k.parent2?k.parent2+" · ":"")+k.tel2:"")],
  ["adresse","Adresse",k=>k.adresse],
  ["assurances","Assurances",k=>"Maladie : "+k.assMaladie+" · Accident : "+k.assAccident+" · RC : "+k.rc],
- ["urgence","Contact d'urgence",k=>k.urgence],
+ ["contacts","Autres personnes de contact",k=>k.contacts.map(c=>c.name+" · "+c.tel).join(" ; ")],
  ["obs","Observations",k=>k.obs],
  ["commande","N° de commande",k=>k.order],
  ["presence","Cases de présence (lun.–ven.)",null]
@@ -680,6 +693,37 @@ function adminPrint(){
  </div>
  </div>`;
 }
+function reglementHTML(){return `
+ <div><span class="eyebrow">À lire attentivement et à conserver</span><h1>Règlement général</h1></div>
+ <div class="kid-hero">
+  <h2>Horaires</h2>
+  <div style="display:grid;gap:4px">
+   <span><b>Du lundi au vendredi, de 8h à 17h</b></span>
+   <span>Accueil du matin : entre 8h et 9h</span>
+   <span>Retour des enfants : entre 16h45 et 17h00</span>
+  </div>
+ </div>
+ <div class="card plain" style="display:grid;gap:10px">
+  <h3>Conditions d'inscription</h3>
+  <ol style="margin:0;padding-left:1.2em;display:grid;gap:6px">
+   <li>Le formulaire d'inscription doit être complet.</li>
+   <li>Le règlement de la facture se fait par virement bancaire dans les 10 jours.</li>
+   <li>Après inscription, il n'est plus possible d'annuler.</li>
+  </ol>
+ </div>
+ <div class="card plain" style="display:grid;gap:10px">
+  <h3>Consignes aux parents</h3>
+  <p>Les parents sont priés de rappeler à leur enfant qu'il doit respecter les consignes données par les animatrices responsables. En cas de désobéissance, la responsabilité des parents et celle de leur enfant pourra être engagée.</p>
+  <p>En cas d'urgence, le ou la responsable légal·e autorise les animatrices responsables à prendre toutes les mesures nécessaires à la santé de l'enfant, y compris celles préconisées par un médecin.</p>
+  <p>Le ou la responsable légal·e s'acquitte des frais occasionnés pour les soins donnés à son enfant, y compris les frais de transport. Il ou elle déclare que son enfant est assuré contre la maladie et les accidents en Suisse.</p>
+  <p>Global Nutrition décline toute responsabilité concernant les effets personnels des enfants participants (vols, pertes, dégâts et autres).</p>
+ </div>
+ <div class="card plain" style="display:grid;gap:4px">
+  <h3>Contact</h3>
+  <p>Caroline Berney, fondatrice et diététicienne diplômée HES</p>
+  <p style="font-variant-numeric:tabular-nums">079 195 76 33</p>
+  <p class="hint">L'équipe d'animation Croc'n'Mouv</p>
+ </div>`}
 function recipeForm(){return `<div class="sheet-bg" data-act="closeSheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="Nouvelle recette">
  <div class="grab"></div><h2>Nouvelle recette</h2>
  <form class="form" id="recipeForm" novalidate>
@@ -719,7 +763,10 @@ document.addEventListener("click",e=>{
  if(d.act==="togglePaid"){const k=kids.find(x=>x.id===+d.id);k.paid=!k.paid;render();return toast(k.paid?`${kidName(k)} : paiement reçu`:`${kidName(k)} : marqué non payé`)}
  if(d.act==="saveObs"){const k=kids.find(x=>x.id===+d.id);k.obs=$("#aObs").value.trim();S.sheet=null;render();return toast("Observation enregistrée")}
  if(d.act==="addMed"){const box=$("#meds");box.insertAdjacentHTML("beforeend",medRow({name:"",dose:"",when:""},box.children.length));return}
- if(d.act==="delMed"){t.parentElement.remove();return}
+ if(d.act==="delMed"||d.act==="delRow"){t.parentElement.remove();return}
+ if(d.act==="addContact"){const box=$("#contacts");box.insertAdjacentHTML("beforeend",contactRow({name:"",tel:""},box.children.length+Date.now()%1000));box.lastElementChild.querySelector("input").focus();return}
+ if(d.act==="readRules"){$("#root").insertAdjacentHTML("beforeend",`<div class="sheet-bg" id="rulesSheet" data-act="closeRules"><div class="sheet" role="dialog" aria-modal="true" aria-label="Règlement général"><div class="grab"></div>${reglementHTML()}<button type="button" class="btn" data-act="closeRules">Fermer</button></div></div>`);return}
+ if(d.act==="closeRules"){if(t.classList.contains("sheet-bg")&&e.target!==t)return;$("#rulesSheet")?.remove();return}
  if(d.act==="clearSel"){S.msel.clear();return render()}
  if(d.act==="dlAll"){return toast(`Dans l'app finale : un fichier .zip avec les ${(media[S.mweek]||[]).length} fichiers de la semaine ${S.mweek} se télécharge.`)}
  if(d.act==="dlSel"){return toast(`Dans l'app finale : un fichier .zip avec les ${S.msel.size} fichiers choisis se télécharge.`)}
@@ -756,7 +803,7 @@ document.addEventListener("submit",e=>{
   k.cgv=true;k.parent=$("#fParent").value.trim()||k.parent;k.email=$("#fEmail").value.trim();k.adresse=$("#fAdr").value.trim();k.parent2=$("#fP2").value.trim();k.tel2=$("#fTel2").value.trim();
   k.seul=$("#fSeulY").checked;k.pickup=$("#fPick").value.trim();k.assMaladie=$("#fAM").value.trim();k.assAccident=$("#fAA").value.trim();k.rc=$("#fRC").value.trim();
   k.prenom=$("#fPrenom").value.trim()||k.prenom;k.nom=$("#fNom").value.trim()||k.nom;k.naissance=$("#fNaiss").value||k.naissance;
-  k.tel=$("#fTel").value.trim();k.urgence=$("#fUrg").value.trim();
+  k.tel=$("#fTel").value.trim();k.contacts=[...document.querySelectorAll(".contact-row")].map(r=>{const [n,t]=r.querySelectorAll("input");return {name:n.value.trim(),tel:t.value.trim()}}).filter(c=>c.name||c.tel);
   const rg=$("#fRegime").value.trim();k.diet=rg?[rg]:[];k.allergies=$("#fAll").value.trim();k.severe=$("#fSev").checked&&!!k.allergies;
   k.patho=$("#fPatho").value.trim();k.obs=$("#fObs").value.trim();k.photos=$("#fPhY").checked;
   k.meds=[...document.querySelectorAll(".med-row")].map(r=>{const [n,d,w]=r.querySelectorAll("input");return {name:n.value.trim(),dose:d.value.trim(),when:w.value.trim()}}).filter(m=>m.name);
@@ -769,7 +816,7 @@ document.addEventListener("submit",e=>{
   S.sheet=null;render();return toast("Recette publiée, les familles la voient déjà");
  }
 });
-document.addEventListener("keydown",e=>{if(e.key==="Escape"&&S.sheet){S.sheet=null;render()}});
+document.addEventListener("keydown",e=>{if(e.key!=="Escape")return;if($("#rulesSheet")){$("#rulesSheet").remove();return}if(S.sheet){S.sheet=null;render()}});
 fillDemo();
 render();
 </script>

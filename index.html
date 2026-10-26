@@ -436,6 +436,7 @@ const LIEU_INFO={"Bernex":{nom:"Exemple : salle communale de Bernex",adresse:"Ex
 const REF={"Bernex|8":{nom:"Julie (exemple)",tel:"079 000 00 00",email:"julie@exemple.ch"},"Bernex|1":{nom:"Julie (exemple)",tel:"079 000 00 00",email:"julie@exemple.ch"}};
 const refOf=(lieu,n)=>REF[lieu+"|"+n]||{nom:"",tel:""};
 const priceOf=k=>PRICES[k.lieu]||0;
+const IBAN="CH51 8080 8001 6377 4728 3";
 const chf=n=>n?"CHF "+n.toLocaleString("fr-CH")+".–":"tarif à définir";
 const PACK=["Crème solaire","Maillot de bain","Gourde","Casquette","Affaires de rechange","K-way","Tablier"];
 
@@ -575,7 +576,16 @@ function parentBill(k){
   <div class="card locked"><span class="pm-ill">${I.lock}</span><div><h2>Attestation pour les impôts</h2><p>Elle sera disponible ici dès que nous aurons reçu votre paiement. Vous recevrez un e-mail à ce moment-là.</p></div></div>
   <div class="card plain" style="display:grid;gap:10px"><h3>Montant à régler</h3>
    <div class="table-wrap"><table style="min-width:0"><tbody>${rows}<tr><th>Total</th><th class="num">${chf(total)}</th></tr></tbody></table></div>
-   <p class="hint">Par virement bancaire dans les 10 jours après l'inscription. Les coordonnées bancaires figurent dans l'e-mail de confirmation.</p></div>
+   <p class="hint">Par virement bancaire dans les 10 jours après l'inscription, avec le numéro de commande en communication.</p></div>
+  <div class="card plain" style="display:grid;gap:10px"><h3>Coordonnées pour le virement</h3>
+   <div class="table-wrap"><table style="min-width:0"><tbody>
+    <tr><th>Titulaire</th><td>Global Nutrition Sàrl, Caroline Berney<br>Chemin de Vuillonnex 36, 1232 Confignon</td></tr>
+    <tr><th>IBAN</th><td style="white-space:normal">${IBAN}</td></tr>
+    <tr><th>Montant</th><td>${chf(total)}</td></tr>
+    <tr><th>Communication</th><td><b>Commande ${esc(k.order)}</b></td></tr>
+   </tbody></table></div>
+   <div class="toolbar"><button class="btn" data-act="copyIban">${I.check}Copier l'IBAN</button></div>
+   <p class="hint">Nous validons votre paiement à sa réception sur notre compte (quelques jours). L'attestation apparaît alors ici.</p></div>
  </div>`;
  return `<div class="section">${head}
  <div class="card bill"><span class="pm-ill">${I.check}</span><div><h2>Paiement reçu, merci !</h2><p class="hint">Vous pouvez joindre cette attestation à votre déclaration d'impôts (frais de garde des enfants).</p></div></div>
@@ -1057,6 +1067,7 @@ document.addEventListener("click",e=>{
  const d=t.dataset;
  if(d.act==="closeSheet"){if(t.classList.contains("sheet-bg")&&e.target!==t)return;S.sheet=null;return render()}
  if(d.act==="demoParent"){S.me=kids[0];S.view="parent";S.ptab="accueil";S.step=0;return render()}
+ if(d.act==="copyIban"){try{navigator.clipboard.writeText(IBAN.replace(/ /g,""))}catch(_){}return toast("IBAN copié")}
  if(d.act==="demoAdmin"){Object.assign(S,{view:"admin",role:"direction",lieu:null,atab:"semaines"});return render()}
  if(d.act==="demoResp"){Object.assign(S,{view:"admin",role:"resp",respName:"Julie",lieu:"Bernex",respWeeks:Object.keys(REF).filter(k=>k.startsWith("Bernex|")&&REF[k].email==="julie@exemple.ch").map(k=>+k.split("|")[1]),period:"Été 2027",aweek:1,mweek:1,prweek:1,atab:"semaines",afilter:"tous"});return render()}
  if(d.act==="logout"){Object.assign(S,{view:"login",me:null,sheet:null,role:"direction",lieu:null,period:"Été 2027",aweek:1,mweek:1,prweek:1});return render()}

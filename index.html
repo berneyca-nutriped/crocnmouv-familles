@@ -198,7 +198,6 @@ td.num{font-variant-numeric:tabular-nums}
   @page{size:A4 landscape;margin:12mm}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
-
 html,body{height:100%}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0}
@@ -254,6 +253,8 @@ let kids=[
  {id:14,prenom:"Adam",nom:"Fontana",naissance:"2019-12-01",weeks:[5,6,7],paid:true,order:"14890",email:"",parent:"Rita Fontana",tel:"079 999 00 11",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:false,urgence:""},
  {id:15,prenom:"Rose",nom:"Chevalley",naissance:"2017-05-22",weeks:[6,7],paid:false,order:"14896",email:"",parent:"Yann Chevalley",tel:"078 123 98 76",diet:["Vegan"],allergies:"Œuf",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""}
 ];
+const ASS=["CSS","Helsana","Groupe Mutuel","Swica","Visana"],RCS=["Vaudoise","Zurich","Baloise","AXA","Generali"];
+function fillDemo(){kids.forEach((k,i)=>Object.assign(k,{seul:k.seul??(ageOf(k)>=10&&i%2===0),pickup:k.pickup??(i%3===0?"Grand-maman, 079 000 00 0"+(i%10):""),adresse:k.adresse??("Rue des Exemples "+(i+3)+", 1233 Bernex"),parent2:k.parent2??"",assMaladie:k.assMaladie??ASS[i%5],assAccident:k.assAccident??ASS[i%5],rc:k.rc??RCS[i%5],cgv:k.cgv??k.done,email:k.email||("parent"+(i+1)+"@exemple.ch")}))}
 let recipes=[
  {id:1,title:"Brochettes arc-en-ciel",time:"15 min",level:"Facile",week:1,tags:["Sans cuisson","Végétarien"],ing:["1 barquette de fraises","2 kiwis","1 ananas","1 poignée de myrtilles","Piques en bois"],steps:["Laver et couper les fruits en cubes.","Enfiler les fruits en suivant les couleurs de l'arc-en-ciel.","Déguster bien frais !"],hue:"#F2A9A0",img:""},
  {id:2,title:"Houmous de betterave",time:"20 min",level:"Facile",week:1,tags:["Vegan","Sans gluten"],ing:["1 betterave cuite","1 boîte de pois chiches","2 c. à s. de tahini","1 citron","Sel, cumin"],steps:["Égoutter les pois chiches.","Mixer tous les ingrédients jusqu'à obtenir une crème lisse.","Servir avec des bâtonnets de légumes."],hue:"#C9708C",img:""},
@@ -300,6 +301,7 @@ function statusChips(k,{withPay=true}={}){
  if(k.patho)c.push(`<span class="chip info">${esc(k.patho)}</span>`);
  k.diet.forEach(d=>c.push(`<span class="chip">${esc(d)}</span>`));
  c.push(k.photos?'<span class="chip ok">Photos OK</span>':`<span class="chip bad">${I.nocam}Pas de photos</span>`);
+ if(k.seul)c.push('<span class="chip info">Rentre seul</span>');
  if(k.obs)c.push('<span class="chip">Observation</span>');
  return c.join("");
 }
@@ -387,14 +389,41 @@ function parentKid(k){
  </div>
  <form class="card form" id="kidForm" novalidate>
   <fieldset>
-   <legend>Identité</legend>
+   <legend>Enfant</legend>
    <div class="grid g2">
     <label class="f" for="fPrenom">Prénom<input class="input" id="fPrenom" value="${esc(k.prenom)}"></label>
     <label class="f" for="fNom">Nom<input class="input" id="fNom" value="${esc(k.nom)}"></label>
     <label class="f" for="fNaiss">Date de naissance<input class="input" id="fNaiss" type="date" value="${esc(k.naissance)}"></label>
-    <label class="f" for="fTel">Téléphone du parent<input class="input" id="fTel" value="${esc(k.tel)}"></label>
    </div>
+  </fieldset>
+  <fieldset>
+   <legend>Parents</legend>
+   <div class="grid g2">
+    <label class="f" for="fParent">Nom du parent<input class="input" id="fParent" value="${esc(k.parent)}"></label>
+    <label class="f" for="fTel">Téléphone<input class="input" id="fTel" type="tel" value="${esc(k.tel)}"></label>
+    <label class="f" for="fEmail">E-mail<input class="input" id="fEmail" type="email" value="${esc(k.email)}"></label>
+    <label class="f" for="fAdr">Adresse (rue, NPA, localité)<input class="input" id="fAdr" value="${esc(k.adresse)}"></label>
+   </div>
+   <label class="f" for="fP2">Deuxième parent (facultatif)<input class="input" id="fP2" placeholder="Nom, téléphone" value="${esc(k.parent2)}"></label>
    <label class="f" for="fUrg">Autre personne à contacter en urgence<input class="input" id="fUrg" placeholder="Nom, lien, téléphone" value="${esc(k.urgence)}"></label>
+  </fieldset>
+  <fieldset>
+   <legend>Retour à la maison</legend>
+   <span style="font-weight:500;font-size:.9rem">Mon enfant peut rentrer seul</span>
+   <div class="checks">
+    <label for="fSeulY"><input type="radio" name="seul" id="fSeulY" ${k.seul?"checked":""}>Oui</label>
+    <label for="fSeulN"><input type="radio" name="seul" id="fSeulN" ${!k.seul?"checked":""}>Non</label>
+   </div>
+   <label class="f" for="fPick">Personnes autorisées à venir chercher l'enfant<input class="input" id="fPick" placeholder="Nom, lien, téléphone" value="${esc(k.pickup)}"></label>
+   <p class="hint">Une pièce d'identité pourra être demandée à une personne que l'équipe ne connaît pas.</p>
+  </fieldset>
+  <fieldset>
+   <legend>Assurances</legend>
+   <div class="grid g2">
+    <label class="f" for="fAM">Assurance maladie<input class="input" id="fAM" value="${esc(k.assMaladie)}"></label>
+    <label class="f" for="fAA">Assurance accident<input class="input" id="fAA" value="${esc(k.assAccident)}"></label>
+   </div>
+   <label class="f" for="fRC">Responsabilité civile (RC) des parents<input class="input" id="fRC" value="${esc(k.rc)}"></label>
   </fieldset>
   <fieldset>
    <legend>Alimentation</legend>
@@ -416,7 +445,7 @@ function parentKid(k){
    <p>Pendant la semaine de camp, notre équipe prend des photos et des vidéos des activités. Elles sont partagées sur cet espace avec les familles de la semaine et projetées lors de l'apéritif de fin de camp.</p>
    <p>Si vous préférez ne pas donner votre accord, nous veillons à ce que votre enfant n'apparaisse sur aucune photo ni vidéo diffusée. Il participe bien sûr à toutes les activités, comme les autres.</p>
    <div class="checks">
-    <label for="fPhY"><input type="radio" name="photos" id="fPhY" value="1" ${k.photos?"checked":""}>J'autorise les photos et vidéos de mon enfant</label>
+    <label for="fPhY"><input type="radio" name="photos" id="fPhY" value="1" ${k.photos?"checked":""}>J'autorise Global Nutrition (Croc'n'Mouv) à utiliser les photos et vidéos de mon enfant</label>
     <label for="fPhN"><input type="radio" name="photos" id="fPhN" value="0" ${!k.photos?"checked":""}>Je refuse</label>
    </div>
    <p class="hint">Les photos restent visibles uniquement par les familles inscrites la même semaine.</p>
@@ -425,6 +454,11 @@ function parentKid(k){
    <legend>Autre chose à nous dire ?</legend>
    <label class="f" for="fObs"><span class="hint">Habitudes, peurs, sieste, doudou…</span><textarea class="input" id="fObs">${esc(k.obs)}</textarea></label>
   </fieldset>
+  <fieldset>
+   <legend>Conditions générales</legend>
+   <div class="checks"><label for="fCgv"><input type="checkbox" id="fCgv" ${k.cgv?"checked":""}>J'ai lu et j'accepte les conditions générales de Croc'n'Mouv</label></div>
+  </fieldset>
+  <p class="err" id="kErr" hidden>Merci d'accepter les conditions générales pour enregistrer la fiche.</p>
   <button class="btn primary" type="submit">Enregistrer la fiche</button>
  </form>
  </div>`;
@@ -557,13 +591,19 @@ function kidSheet(id){return ()=>{const k=kids.find(x=>x.id===id);return `<div c
   <button class="switch" role="switch" aria-checked="${k.paid}" aria-label="Inscription payée" data-act="togglePaid" data-id="${k.id}"></button></div>
  ${k.allergies?`<div class="notice" style="${k.severe?"background:var(--bad-bg);color:var(--bad)":""}">${k.severe?"Allergie sévère : ":"Allergie : "}${esc(k.allergies)}</div>`:""}
  <dl class="kv">
+  <dt>Retour</dt><dd>${k.seul?"<b>Rentre seul</b>":"Ne rentre pas seul"}${k.pickup?"<br>Autorisés : "+esc(k.pickup):""}</dd>
   <dt>Parent</dt><dd>${esc(k.parent)}</dd>
   <dt>Téléphone</dt><dd>${esc(k.tel)}</dd>
+  <dt>E-mail</dt><dd>${esc(k.email)}</dd>
+  <dt>Adresse</dt><dd>${esc(k.adresse)||"–"}</dd>
+  <dt>2e parent</dt><dd>${esc(k.parent2)||"–"}</dd>
   <dt>Urgence</dt><dd>${esc(k.urgence)||"–"}</dd>
   <dt>Régime</dt><dd>${esc(k.diet.join(", "))||"Aucun"}</dd>
   <dt>Santé</dt><dd>${esc(k.patho)||"Rien de signalé"}</dd>
   <dt>Médicaments</dt><dd>${k.meds.length?k.meds.map(m=>`<b>${esc(m.name)}</b> · ${esc(m.dose)} · ${esc(m.when)}`).join("<br>"):"Aucun"}</dd>
   <dt>Photos</dt><dd>${k.photos?"Autorisées":"<b>Refusées</b>"}</dd>
+  <dt>Assurances</dt><dd>Maladie : ${esc(k.assMaladie)||"–"}<br>Accident : ${esc(k.assAccident)||"–"}<br>RC : ${esc(k.rc)||"–"}</dd>
+  <dt>Conditions</dt><dd>${k.cgv?"Acceptées":"<b>Pas encore acceptées</b>"}</dd>
  </dl>
  <label class="f" for="aObs">Observations de l'équipe<textarea class="input" id="aObs">${esc(k.obs)}</textarea></label>
  <div class="toolbar"><button class="btn primary" data-act="saveObs" data-id="${k.id}">Enregistrer</button><button class="btn" data-act="closeSheet">Fermer</button></div>
@@ -593,7 +633,10 @@ const PCOLS=[
  ["sante","Santé / pathologie",k=>k.patho],
  ["meds","Médicaments",k=>k.meds.map(m=>m.name+" "+m.dose+" ("+m.when+")").join(" ; ")],
  ["photos","Droit à l'image",k=>k.photos?"Oui":"NON"],
+ ["retour","Retour à la maison",k=>k.seul?"Rentre seul":"Accompagné"+(k.pickup?" · autorisés : "+k.pickup:"")],
  ["parent","Parent et téléphone",k=>k.parent+" · "+k.tel],
+ ["adresse","Adresse",k=>k.adresse],
+ ["assurances","Assurances",k=>"Maladie : "+k.assMaladie+" · Accident : "+k.assAccident+" · RC : "+k.rc],
  ["urgence","Contact d'urgence",k=>k.urgence],
  ["obs","Observations",k=>k.obs],
  ["commande","N° de commande",k=>k.order],
@@ -705,6 +748,9 @@ document.addEventListener("submit",e=>{
  }
  if(e.target.id==="kidForm"){
   const k=S.me;
+  if(!$("#fCgv").checked){const er=$("#kErr");er.hidden=false;er.scrollIntoView({block:"center"});return}
+  k.cgv=true;k.parent=$("#fParent").value.trim()||k.parent;k.email=$("#fEmail").value.trim();k.adresse=$("#fAdr").value.trim();k.parent2=$("#fP2").value.trim();
+  k.seul=$("#fSeulY").checked;k.pickup=$("#fPick").value.trim();k.assMaladie=$("#fAM").value.trim();k.assAccident=$("#fAA").value.trim();k.rc=$("#fRC").value.trim();
   k.prenom=$("#fPrenom").value.trim()||k.prenom;k.nom=$("#fNom").value.trim()||k.nom;k.naissance=$("#fNaiss").value||k.naissance;
   k.tel=$("#fTel").value.trim();k.urgence=$("#fUrg").value.trim();
   k.diet=DIETS.filter((d,i)=>$("#fd"+i).checked);k.allergies=$("#fAll").value.trim();k.severe=$("#fSev").checked&&!!k.allergies;
@@ -720,6 +766,7 @@ document.addEventListener("submit",e=>{
  }
 });
 document.addEventListener("keydown",e=>{if(e.key==="Escape"&&S.sheet){S.sheet=null;render()}});
+fillDemo();
 render();
 </script>
 

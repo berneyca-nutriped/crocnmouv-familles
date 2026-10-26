@@ -314,7 +314,7 @@ let kids=[
  {id:4,prenom:"Gabriel",nom:"Favre",naissance:"2015-05-09",weeks:[1,4,5],paid:true,order:"14834",email:"",parent:"Anne Favre",tel:"079 888 12 34",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""},
  {id:5,prenom:"Chloé",nom:"Perret",naissance:"2018-01-30",weeks:[1,2,3],paid:false,order:"14841",email:"",parent:"Julie Perret",tel:"077 432 10 98",diet:["Sans gluten"],allergies:"Gluten (maladie cœliaque)",severe:true,patho:"Maladie cœliaque",meds:[],photos:true,obs:"",done:false,urgence:""},
  {id:6,prenom:"Elias",nom:"Bonvin",naissance:"2016-06-17",weeks:[1],paid:true,order:"14845",email:"",parent:"Karim Bonvin",tel:"079 310 20 30",diet:["Halal"],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""},
- {id:7,prenom:"Zoé",nom:"Mercier",naissance:"2019-09-05",weeks:[1,6],paid:true,order:"14850",email:"",parent:"Laura Mercier",tel:"078 901 23 45",diet:[],allergies:"Kiwi",severe:false,patho:"",meds:[],photos:false,obs:"Sieste possible après le repas",done:true,urgence:""},
+ {id:7,prenom:"Zoé",nom:"Mercier",naissance:"2019-09-05",weeks:[1,6],paid:true,order:"14850",email:"",parent:"Laura Mercier",tel:"078 901 23 45",diet:[],allergies:"Kiwi",severe:false,patho:"",meds:[],photos:false,obs:"Porte des lunettes",done:true,urgence:""},
  {id:8,prenom:"Liam",nom:"Gerber",naissance:"2014-12-12",weeks:[1,2],paid:true,order:"14853",email:"",parent:"Tom Gerber",tel:"076 210 98 76",diet:[],allergies:"",severe:false,patho:"TDAH",meds:[{name:"Ritaline",dose:"10 mg",when:"12h00 après le repas"}],photos:true,obs:"",done:true,urgence:""},
  {id:9,prenom:"Alice",nom:"Jaquet",naissance:"2020-04-28",weeks:[1,2],paid:false,order:"14860",email:"",parent:"Nina Jaquet",tel:"079 654 32 10",diet:[],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:false,urgence:""},
  {id:10,prenom:"Hugo",nom:"Pittet",naissance:"2017-02-11",weeks:[2,3],paid:true,order:"14866",email:"",parent:"Eva Pittet",tel:"078 777 88 99",diet:["Végétarien"],allergies:"",severe:false,patho:"",meds:[],photos:true,obs:"",done:true,urgence:""},
@@ -637,7 +637,7 @@ function parentKid(k){
   </fieldset>
   <fieldset>
    <legend>Autre chose à nous dire ?</legend>
-   <label class="f" for="fObs"><span class="hint">Habitudes, peurs, sieste, doudou…</span><textarea class="input" id="fObs">${esc(k.obs)}</textarea></label>
+   <label class="f" for="fObs"><span class="hint">Habitudes, peurs, informations utiles à l'équipe…</span><textarea class="input" id="fObs">${esc(k.obs)}</textarea></label>
   </fieldset>
   <fieldset>
    <legend>Règlement général</legend>
@@ -912,7 +912,7 @@ function reglementHTML(){return `
  </div>
  <div class="card plain" style="display:grid;gap:4px">
   <h3>Contact</h3>
-  <p>Caroline Berney, fondatrice et diététicienne diplômée HES</p>
+  <p>Caroline Berney, directrice et diététicienne HES</p>
   <p style="font-variant-numeric:tabular-nums">079 195 76 33</p>
   <p class="hint">L'équipe d'animation Croc'n'Mouv</p>
  </div>`}

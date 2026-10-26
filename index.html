@@ -270,6 +270,9 @@ td.num,th.num{white-space:nowrap;text-align:right}
 .bag .checks label:has(input:checked){text-decoration:line-through;color:var(--muted)}
 .friday{background:var(--lime);color:var(--on-lime);border-radius:var(--r-sm);padding:12px 14px;display:grid;gap:4px}
 .friday .t{font-weight:700;font-size:1.05rem}
+.remind-bar{display:grid;grid-template-columns:44px 1fr auto;gap:12px;align-items:center;background:var(--warn-bg);border-radius:var(--r-sm);padding:12px 14px}
+.remind-bar .pm-ill{margin:0}
+@media (max-width:440px){.remind-bar{grid-template-columns:44px 1fr}.remind-bar .btn{grid-column:1/-1}}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 html,body{height:100%}
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
@@ -364,6 +367,7 @@ const I={
  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>',
  doc:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M8 13h8M8 17h5"/></svg>',
  lock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>',
+ mail:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>',
  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-5M12 8h.01"/></svg>',
  print:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9V2h12v7M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>',
  sprout:'<svg viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M32 56V30"/><path d="M32 34c-10 0-16-6-16-16 10 0 16 6 16 16zM32 30c0-10 6-16 16-16 0 10-6 16-16 16z"/></svg>'
@@ -381,6 +385,7 @@ function statusChips(k,{withPay=true}={}){
  c.push(k.photos?'<span class="chip ok">Photos OK</span>':`<span class="chip bad">${I.nocam}Pas de photos</span>`);
  if(k.seul)c.push('<span class="chip info">Rentre seul</span>');
  if(k.obs)c.push('<span class="chip">Observation</span>');
+ if(k.reminded&&(!k.paid||!k.done))c.push(`<span class="chip">${I.mail}Relancé le ${k.reminded}</span>`);
  return c.join("");
 }
 
@@ -782,6 +787,7 @@ function adminWeeks(){
   <div class="seg" role="group" aria-label="Affichage"><button aria-pressed="${S.amode==="liste"}" data-amode="liste">Par âge</button><button aria-pressed="${S.amode==="tableau"}" data-amode="tableau">Tableau</button></div>
  </div>
  <div class="seg" role="group" aria-label="Filtre">${FILTERS.map(([id,l])=>`<button aria-pressed="${S.afilter===id}" data-filter="${id}">${l}</button>`).join("")}</div>
+ ${(S.afilter==="impayes"||S.afilter==="fiche")&&list.length?`<div class="remind-bar"><span class="pm-ill">${I.mail}</span><div><b>${list.length} famille${list.length>1?"s":""} à relancer</b><p class="hint">${S.afilter==="impayes"?"Rappel du paiement":"Rappel pour compléter la fiche"}</p></div><button class="btn small primary" data-act="remind" data-type="${S.afilter==="impayes"?"pay":"form"}" data-ids="${list.map(k=>k.id).join(",")}">Envoyer un rappel</button></div>`:""}
  ${content}
  </div>`;
 }
@@ -810,6 +816,7 @@ function kidSheet(id){return ()=>{const k=kids.find(x=>x.id===id);return `<div c
   <dt>Règlement</dt><dd>${k.cgv?"Accepté":"<b>Pas encore accepté</b>"}</dd>
  </dl>
  <label class="f" for="aObs">Observations de l'équipe<textarea class="input" id="aObs">${esc(k.obs)}</textarea></label>
+ ${!k.paid||!k.done?`<div class="toolbar">${!k.paid?`<button class="btn small ghost" data-act="remind" data-type="pay" data-ids="${k.id}">${I.mail}Rappel paiement</button>`:""}${!k.done?`<button class="btn small ghost" data-act="remind" data-type="form" data-ids="${k.id}">${I.mail}Rappel fiche</button>`:""}</div>`:""}
  <div class="toolbar"><button class="btn primary" data-act="saveObs" data-id="${k.id}">Enregistrer</button><button class="btn" data-act="closeSheet">Fermer</button></div>
  </div></div>`}}
 function adminMedia(){
@@ -912,6 +919,19 @@ function reglementHTML(){return `
   <p style="font-variant-numeric:tabular-nums">079 195 76 33</p>
   <p class="hint">L'équipe d'animation Croc'n'Mouv</p>
  </div>`}
+const REMIND={
+ pay:{sub:"Rappel : paiement de l'inscription Croc'n'Mouv",body:"Bonjour,\n\nNous n'avons pas encore reçu le paiement de l'inscription de {enfant} ({semaines}). Merci d'effectuer le virement dès que possible.\n\nSi le paiement vient d'être fait, merci de ne pas tenir compte de ce message.\n\nÀ très vite,\nCaroline et l'équipe Croc'n'Mouv"},
+ form:{sub:"Rappel : la fiche de votre enfant est à compléter",body:"Bonjour,\n\nIl manque encore quelques informations dans la fiche de {enfant}. Vous pouvez la compléter en quelques minutes sur votre espace familles, avec votre numéro de commande {commande}.\n\nMerci et à très vite,\nCaroline et l'équipe Croc'n'Mouv"}
+};
+function remindSheet(type,ids){return ()=>{const t=REMIND[type],ks=ids.map(i=>kids.find(k=>k.id===i));
+ return `<div class="sheet-bg" data-act="closeSheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="Envoyer un rappel"><div class="grab"></div>
+ <h2>${type==="pay"?"Rappel de paiement":"Rappel pour la fiche"}</h2>
+ <div><b>À :</b> <span class="hint">${ks.map(k=>esc(k.parent)+" ("+esc(k.prenom)+")").join(", ")}</span></div>
+ <label class="f" for="rmSub">Objet<input class="input" id="rmSub" value="${esc(t.sub)}"></label>
+ <label class="f" for="rmBody">Message<textarea class="input" id="rmBody" style="min-height:220px">${esc(t.body)}</textarea></label>
+ <p class="hint">{enfant}, {semaines} et {commande} sont remplacés automatiquement pour chaque famille.</p>
+ <div class="toolbar"><button class="btn primary" data-act="sendRemind" data-ids="${ids.join(",")}">${I.mail}Envoyer à ${ks.length} famille${ks.length>1?"s":""}</button><button class="btn" data-act="closeSheet">Annuler</button></div>
+ </div></div>`}}
 function recipeForm(){return `<div class="sheet-bg" data-act="closeSheet"><div class="sheet" role="dialog" aria-modal="true" aria-label="Nouvelle recette">
  <div class="grab"></div><h2>Nouvelle recette</h2>
  <form class="form" id="recipeForm" novalidate>
@@ -948,6 +968,8 @@ document.addEventListener("click",e=>{
  if(d.kid){S.sheet=kidSheet(+d.kid);return render()}
  if(d.recipe){S.sheet=recipeSheet(recipes.find(r=>r.id===+d.recipe));return render()}
  if(d.msel){S.msel.has(d.msel)?S.msel.delete(d.msel):S.msel.add(d.msel);return render()}
+ if(d.act==="remind"){S.sheet=remindSheet(d.type,d.ids.split(",").map(Number));return render()}
+ if(d.act==="sendRemind"){const ids=d.ids.split(",").map(Number),today=new Date().toLocaleDateString("fr-CH",{day:"2-digit",month:"2-digit"});ids.forEach(i=>kids.find(k=>k.id===i).reminded=today);S.sheet=null;render();return toast(`Rappel envoyé à ${ids.length} famille${ids.length>1?"s":""} (dans l'app finale, les e-mails partent vraiment)`)}
  if(d.act==="togglePaid"){const k=kids.find(x=>x.id===+d.id);k.paid=!k.paid;render();return toast(k.paid?`${kidName(k)} : paiement reçu`:`${kidName(k)} : marqué non payé`)}
  if(d.act==="saveObs"){const k=kids.find(x=>x.id===+d.id);k.obs=$("#aObs").value.trim();S.sheet=null;render();return toast("Observation enregistrée")}
  if(d.act==="addMed"){const box=$("#meds");box.insertAdjacentHTML("beforeend",medRow({name:"",dose:"",when:""},box.children.length));return}
